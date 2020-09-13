@@ -1,21 +1,42 @@
 <html>
 
 <head>
+    
+    <meta name="viewport" content="width=device-width" />
     <script src='https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.js'></script>
     <link href='https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.css' rel='stylesheet' />
 </head>
 
 <body>
-    <div id='map' style='width: 700px; height: 600px;'></div>
+    <div id="map" style="width: calc(100% - 10px); height: calc(100% - 10px); position: absolute;">
+    </div>
     <script>
         mapboxgl.accessToken = 'pk.eyJ1IjoiYWNlbWltdWhlbmRpcyIsImEiOiJjajNvZnZvd3IwMDI0MnJydHhpZjZ5bnRsIn0.mVZMKTNJSZ0rWxy1F7nXhg';
         var map = new mapboxgl.Map({
             container: 'map',
-            style: 'mapbox://styles/mapbox/navigation-guidance-night-v4', // stylesheet location
-            center: [-74.5, 40], // starting position [lng, lat]
-            
-            zoom: 9 // starting zoom
+            style: 'mapbox://styles/mapbox/navigation-guidance-day-v4', // stylesheet location
+            center: [39, 40], // starting position [lng, lat]
+
+            zoom: 4 // starting zoom
         });
+        map.addControl(new mapboxgl.NavigationControl());
+
+        map.on('load', function () {
+            // Define a source before using it to create a new layer
+            map.addSource('turkey-city-data', {
+                type: 'geojson',
+                data: '../data/turkey.geojson'
+            });
+
+            map.addLayer({
+                id: 'cities',
+                // References the GeoJSON source defined above
+                // and does not require a `source-layer`
+                source: 'turkey-city-data',
+                type: 'line'
+            });
+        });
+
     </script>
 </body>
 
