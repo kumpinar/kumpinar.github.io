@@ -35,6 +35,17 @@
                 source: 'turkey-city-data',
                 type: 'line'
             });
+
+            fetch("../data/national-parks.json")
+                .then(response => response.json())
+                .then(parks =>{
+                    parks.forEach(park => {
+                        console.log(park.name);
+                        new mapboxgl.Marker({})
+                            .setLngLat([park.lon, park.lat])
+                            .addTo(map);
+                    });
+                } );
         });
 
     </script>
