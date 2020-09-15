@@ -1,0 +1,632 @@
+[
+    {
+        "name": "Çeşme",
+        "order": 1,
+        "id": 7
+    },
+    {
+        "name": "Telesiyej",
+        "order": 2,
+        "id": 56
+    },
+    {
+        "name": "Telefirik",
+        "order": 3,
+        "id": 57
+    },
+    {
+        "name": "Şelale",
+        "order": 4,
+        "id": 58
+    },
+    {
+        "name": "Otopark Alanı",
+        "order": 5,
+        "id": 5
+    },
+    {
+        "name": "Etkinlik Alanı",
+        "order": 6,
+        "id": 6
+    },
+    {
+        "name": "Konaklama Tesisi",
+        "order": 7,
+        "id": 54
+    },
+    {
+        "name": "İdare ve Ziyaretçi Merkezi",
+        "order": 7,
+        "id": 55
+    },
+    {
+        "name": "Büfe",
+        "order": 8,
+        "id": 8
+    },
+    {
+        "name": "Piknik Alanları",
+        "order": 9,
+        "id": 9
+    },
+    {
+        "name": "WC",
+        "order": 10,
+        "id": 10
+    },
+    {
+        "name": "Tarihi Yapı",
+        "order": 11,
+        "id": 11
+    },
+    {
+        "name": "Mescit",
+        "order": 12,
+        "id": 12
+    },
+    {
+        "name": "Gölet",
+        "order": 13,
+        "id": 13
+    },
+    {
+        "name": "Dere",
+        "order": 14,
+        "id": 14
+    },
+    {
+        "name": "Su Bendi",
+        "order": 15,
+        "id": 15
+    },
+    {
+        "name": "Su Kemeri",
+        "order": 16,
+        "id": 16
+    },
+    {
+        "name": "Kır Evi",
+        "order": 17,
+        "id": 17
+    },
+    {
+        "name": "Çocuk Oyun Alanı",
+        "order": 18,
+        "id": 18
+    },
+    {
+        "name": "Yüzme Havuzu",
+        "order": 19,
+        "id": 19
+    },
+    {
+        "name": "Çay Bahçesi",
+        "order": 20,
+        "id": 20
+    },
+    {
+        "name": "Spor Sahası",
+        "order": 21,
+        "id": 21
+    },
+    {
+        "name": "Sahil",
+        "order": 22,
+        "id": 22
+    },
+    {
+        "name": "Plaj",
+        "order": 23,
+        "id": 23
+    },
+    {
+        "name": "Su Sporu Parkuru",
+        "order": 24,
+        "id": 24
+    },
+    {
+        "name": "Kamp Alanı",
+        "order": 25,
+        "id": 25
+    },
+    {
+        "name": "Koşu Parkuru",
+        "order": 26,
+        "id": 26
+    },
+    {
+        "name": "Su Pınarı",
+        "order": 27,
+        "id": 27
+    },
+    {
+        "name": "Orman Yolları",
+        "order": 28,
+        "id": 28
+    },
+    {
+        "name": "Seyir Terası",
+        "order": 29,
+        "id": 29
+    },
+    {
+        "name": "Seyir Kulesi",
+        "order": 30,
+        "id": 30
+    },
+    {
+        "name": "Yangın Kulesi",
+        "order": 31,
+        "id": 31
+    },
+    {
+        "name": "Kuş Gözetleme Kulesi",
+        "order": 32,
+        "id": 32
+    },
+    {
+        "name": "Gezi Rotası",
+        "order": 33,
+        "id": 33
+    },
+    {
+        "name": "Yaban Hayatı Koruma Alanı",
+        "order": 34,
+        "id": 34
+    },
+    {
+        "name": "Yaban Hayvanı Üretim İstasyonu",
+        "order": 35,
+        "id": 35
+    },
+    {
+        "name": "Kayak Pisti",
+        "order": 36,
+        "id": 36
+    },
+    {
+        "name": "Yürüyüş Yolu",
+        "order": 37,
+        "id": 37
+    },
+    {
+        "name": "Tırmanma Parkuru",
+        "order": 38,
+        "id": 38
+    },
+    {
+        "name": "Soyunma Kabini ve Duşlar",
+        "order": 39,
+        "id": 39
+    },
+    {
+        "name": "Rehabilitasyon Merkezi",
+        "order": 40,
+        "id": 40
+    },
+    {
+        "name": "Sosyal Tesisler",
+        "order": 41,
+        "id": 41
+    },
+    {
+        "name": "Konferans Salonu",
+        "order": 42,
+        "id": 42
+    },
+    {
+        "name": "Kameriyeler",
+        "order": 43,
+        "id": 43
+    },
+    {
+        "name": "Güvenlik Noktaları",
+        "order": 44,
+        "id": 44
+    },
+    {
+        "name": "Yöresel Ürün Satış Noktaları",
+        "order": 45,
+        "id": 45
+    },
+    {
+        "name": "Bisiklet Yolu",
+        "order": 46,
+        "id": 46
+    },
+    {
+        "name": "Seyir Noktası",
+        "order": 47,
+        "id": 47
+    },
+    {
+        "name": "Orman Köşkü",
+        "order": 48,
+        "id": 48
+    },
+    {
+        "name": "Şehitlik",
+        "order": 49,
+        "id": 49
+    },
+    {
+        "name": "Anıt Ağaç Noktaları",
+        "order": 50,
+        "id": 50
+    },
+    {
+        "name": "Yağmur Barınağı",
+        "order": 51,
+        "id": 51
+    },
+    {
+        "name": "İdari Hizmet Binası",
+        "order": 52,
+        "id": 52
+    },
+    {
+        "name": "Lokanta",
+        "order": 53,
+        "id": 53
+    },
+    {
+        "name": "Mağara",
+        "order": 54,
+        "id": 59
+    },
+    {
+        "name": "NELER VAR?",
+        "order": 55,
+        "id": 60
+    },
+    {
+        "name": "Göl",
+        "order": 56,
+        "id": 61
+    },
+    {
+        "name": "Milli Park Giriş Kapısı",
+        "order": 57,
+        "id": 62
+    },
+    {
+        "name": "Su Deposu",
+        "order": 58,
+        "id": 63
+    },
+    {
+        "name": "Akarsu Köprüsü",
+        "order": 59,
+        "id": 64
+    },
+    {
+        "name": "Ağaç Türü Gen Koruma Bölgesi",
+        "order": 60,
+        "id": 65
+    },
+    {
+        "name": "Bekçi Evi",
+        "order": 61,
+        "id": 66
+    },
+    {
+        "name": "Konuk Evi",
+        "order": 62,
+        "id": 67
+    },
+    {
+        "name": "Tanıtım Ziyaretçi Merkezi",
+        "order": 63,
+        "id": 68
+    },
+    {
+        "name": "Depo",
+        "order": 64,
+        "id": 69
+    },
+    {
+        "name": "Kır Lokantası",
+        "order": 65,
+        "id": 70
+    },
+    {
+        "name": "Kır Kahvesi",
+        "order": 66,
+        "id": 71
+    },
+    {
+        "name": "Basketbol Sahası",
+        "order": 67,
+        "id": 72
+    },
+    {
+        "name": "Tematik Bahçeler",
+        "order": 68,
+        "id": 73
+    },
+    {
+        "name": "Basketbol Sahası",
+        "order": 69,
+        "id": 74
+    },
+    {
+        "name": "Voleybol Sahası",
+        "order": 70,
+        "id": 75
+    },
+    {
+        "name": "Gözetleme Kulesi",
+        "order": 71,
+        "id": 76
+    },
+    {
+        "name": "İzci Kampı",
+        "order": 72,
+        "id": 77
+    },
+    {
+        "name": "Futbol sahası",
+        "order": 73,
+        "id": 78
+    },
+    {
+        "name": "Hizmet evı",
+        "order": 74,
+        "id": 79
+    },
+    {
+        "name": "Doğa Okulu",
+        "order": 75,
+        "id": 80
+    },
+    {
+        "name": "İşçi Barakası",
+        "order": 76,
+        "id": 81
+    },
+    {
+        "name": "Pergola",
+        "order": 77,
+        "id": 82
+    },
+    {
+        "name": "Kır Gazinosu",
+        "order": 78,
+        "id": 83
+    },
+    {
+        "name": "Havuz",
+        "order": 79,
+        "id": 84
+    },
+    {
+        "name": "İskele",
+        "order": 80,
+        "id": 85
+    },
+    {
+        "name": "Oyun alanı",
+        "order": 81,
+        "id": 86
+    },
+    {
+        "name": "Fitness Grubu",
+        "order": 82,
+        "id": 87
+    },
+    {
+        "name": "Tel İhata",
+        "order": 83,
+        "id": 88
+    },
+    {
+        "name": "Rüzgar Enerji Santrali",
+        "order": 84,
+        "id": 89
+    },
+    {
+        "name": "İbadethane",
+        "order": 85,
+        "id": 90
+    },
+    {
+        "name": "Soyunma Kabini",
+        "order": 86,
+        "id": 91
+    },
+    {
+        "name": "Barbekü",
+        "order": 87,
+        "id": 92
+    },
+    {
+        "name": "Giriş Kontrol Noktası",
+        "order": 88,
+        "id": 93
+    },
+    {
+        "name": "Kıl Çadırı",
+        "order": 89,
+        "id": 94
+    },
+    {
+        "name": "Sezonluk Lunapark",
+        "order": 90,
+        "id": 95
+    },
+    {
+        "name": "Daire ve Ziyaretçi Merkezi",
+        "order": 91,
+        "id": 96
+    },
+    {
+        "name": "Yönetim Merkezi",
+        "order": 92,
+        "id": 97
+    },
+    {
+        "name": "Ahşap Köprüler",
+        "order": 93,
+        "id": 98
+    },
+    {
+        "name": "Anfi tiyatro",
+        "order": 94,
+        "id": 99
+    },
+    {
+        "name": "Kamelya",
+        "order": 95,
+        "id": 100
+    },
+    {
+        "name": "Sıhhi tesis",
+        "order": 96,
+        "id": 101
+    },
+    {
+        "name": "Doğa Sporları Alanı",
+        "order": 97,
+        "id": 102
+    },
+    {
+        "name": "Kuş Gözlem Evi",
+        "order": 98,
+        "id": 103
+    },
+    {
+        "name": "Sunum Merkezi",
+        "order": 99,
+        "id": 104
+    },
+    {
+        "name": "Hayvanat Bahçesi",
+        "order": 100,
+        "id": 105
+    },
+    {
+        "name": "Geçici Hayvan Bakım Evi",
+        "order": 101,
+        "id": 106
+    },
+    {
+        "name": "Çocuk Bakım Evi",
+        "order": 102,
+        "id": 107
+    },
+    {
+        "name": "Dondurma ve Gözleme Reyonu",
+        "order": 103,
+        "id": 108
+    },
+    {
+        "name": "Hediyelik Eşya Reyonu",
+        "order": 104,
+        "id": 109
+    },
+    {
+        "name": "Kafe İşletmeciliği",
+        "order": 105,
+        "id": 110
+    },
+    {
+        "name": "Çadır",
+        "order": 106,
+        "id": 111
+    },
+    {
+        "name": "Parkur",
+        "order": 107,
+        "id": 112
+    },
+    {
+        "name": "Cami",
+        "order": 108,
+        "id": 113
+    },
+    {
+        "name": "Bungalow",
+        "order": 109,
+        "id": 114
+    },
+    {
+        "name": "Su Terfi Deposu",
+        "order": 110,
+        "id": 115
+    },
+    {
+        "name": "Bulaşık Yıkama Yeri",
+        "order": 111,
+        "id": 116
+    },
+    {
+        "name": "Fosseptik Çürütme Deposu",
+        "order": 112,
+        "id": 117
+    },
+    {
+        "name": "Piknik Masası",
+        "order": 113,
+        "id": 118
+    },
+    {
+        "name": "Kapalı Piknik Masası",
+        "order": 114,
+        "id": 119
+    },
+    {
+        "name": "Çöp Konteynerları",
+        "order": 115,
+        "id": 120
+    },
+    {
+        "name": "Elektrik, Su, Kanalizasyon Altyapı Çalışmaları",
+        "order": 116,
+        "id": 121
+    },
+    {
+        "name": "İdari –Ziyaretçi Tanıtım Merkezi",
+        "order": 117,
+        "id": 122
+    },
+    {
+        "name": "Spor Destek Üniteleri",
+        "order": 118,
+        "id": 123
+    },
+    {
+        "name": "Mini Çim Futbol Sahası",
+        "order": 119,
+        "id": 124
+    },
+    {
+        "name": "Seyir Terasları",
+        "order": 120,
+        "id": 125
+    },
+    {
+        "name": "Doğa müzesi",
+        "order": 121,
+        "id": 126
+    },
+    {
+        "name": "Vali Konağı",
+        "order": 122,
+        "id": 127
+    },
+    {
+        "name": "Mutfak",
+        "order": 123,
+        "id": 128
+    },
+    {
+        "name": "Turgut Özal Tabiat Parkı",
+        "order": 124,
+        "id": 129
+    },
+    {
+        "name": "POI",
+        "order": 125,
+        "id": 130
+    }
+]

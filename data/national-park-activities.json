@@ -1,0 +1,272 @@
+[
+    {
+        "name": "Olta Balıkçılığı",
+        "order": 1,
+        "id": 1
+    },
+    {
+        "name": "Bisiklet Sporu",
+        "order": 2,
+        "id": 2
+    },
+    {
+        "name": "Piknik",
+        "order": 3,
+        "id": 3
+    },
+    {
+        "name": "Doğa Yürüyüşü",
+        "order": 4,
+        "id": 4
+    },
+    {
+        "name": "Fotoğrafçılık",
+        "order": 5,
+        "id": 5
+    },
+    {
+        "name": "Yaban Hayatı Gözlemciliği",
+        "order": 6,
+        "id": 6
+    },
+    {
+        "name": "Dağcılık",
+        "order": 7,
+        "id": 7
+    },
+    {
+        "name": "Kayak",
+        "order": 8,
+        "id": 8
+    },
+    {
+        "name": "Çadırlı Kampçılık",
+        "order": 9,
+        "id": 9
+    },
+    {
+        "name": "Yayla Turizmi",
+        "order": 10,
+        "id": 10
+    },
+    {
+        "name": "Oryantiring",
+        "order": 11,
+        "id": 11
+    },
+    {
+        "name": "Yamaç Paraşütü",
+        "order": 12,
+        "id": 12
+    },
+    {
+        "name": "Kaya Tırmanışı",
+        "order": 13,
+        "id": 13
+    },
+    {
+        "name": "Kuş Gözlemciliği",
+        "order": 14,
+        "id": 14
+    },
+    {
+        "name": "Mağara Araştırma",
+        "order": 15,
+        "id": 15
+    },
+    {
+        "name": "Yüzme",
+        "order": 16,
+        "id": 16
+    },
+    {
+        "name": "Atlı Yürüyüş",
+        "order": 17,
+        "id": 17
+    },
+    {
+        "name": "Rafting",
+        "order": 18,
+        "id": 18
+    },
+    {
+        "name": "Kanyoning",
+        "order": 19,
+        "id": 19
+    },
+    {
+        "name": "Botanik Gezisi",
+        "order": 20,
+        "id": 20
+    },
+    {
+        "name": "Karavanlı Kampçılık",
+        "order": 21,
+        "id": 21
+    },
+    {
+        "name": "Kano Sporu",
+        "order": 22,
+        "id": 22
+    },
+    {
+        "name": "Dağ Bisikleti",
+        "order": 23,
+        "id": 23
+    },
+    {
+        "name": "Yön Bulma",
+        "order": 24,
+        "id": 24
+    },
+    {
+        "name": "Kültür Turizmi",
+        "order": 25,
+        "id": 25
+    },
+    {
+        "name": "Doğa Temalı Şenlikler",
+        "order": 26,
+        "id": 26
+    },
+    {
+        "name": "Deniz Turizmi",
+        "order": 27,
+        "id": 27
+    },
+    {
+        "name": "Konaklama",
+        "order": 28,
+        "id": 28
+    },
+    {
+        "name": "Doğa Turizmi",
+        "order": 29,
+        "id": 29
+    },
+    {
+        "name": "Trenle Göl Turu",
+        "order": 30,
+        "id": 30
+    },
+    {
+        "name": "Paintball",
+        "order": 31,
+        "id": 31
+    },
+    {
+        "name": "ATV Safari",
+        "order": 32,
+        "id": 32
+    },
+    {
+        "name": "Atla Göl Turu",
+        "order": 33,
+        "id": 33
+    },
+    {
+        "name": "Deve Gezintisi",
+        "order": 34,
+        "id": 34
+    },
+    {
+        "name": "Ekolojik Turlar",
+        "order": 35,
+        "id": 35
+    },
+    {
+        "name": "Doğa Sporları",
+        "order": 36,
+        "id": 36
+    },
+    {
+        "name": "İp parkuru ve Pentantlon",
+        "order": 37,
+        "id": 37
+    },
+    {
+        "name": "Okçuluk",
+        "order": 38,
+        "id": 38
+    },
+    {
+        "name": "Basketbol",
+        "order": 39,
+        "id": 39
+    },
+    {
+        "name": "Av Turizmı",
+        "order": 39,
+        "id": 42
+    },
+    {
+        "name": "Voleybol",
+        "order": 40,
+        "id": 40
+    },
+    {
+        "name": "Tenis",
+        "order": 41,
+        "id": 41
+    },
+    {
+        "name": "Gastronomi",
+        "order": 42,
+        "id": 43
+    },
+    {
+        "name": "Uçurtma Festivali",
+        "order": 43,
+        "id": 44
+    },
+    {
+        "name": "Fırın",
+        "order": 43,
+        "id": 47
+    },
+    {
+        "name": "Teleferik",
+        "order": 44,
+        "id": 45
+    },
+    {
+        "name": "Resim Çizim Aktivitesi",
+        "order": 45,
+        "id": 46
+    },
+    {
+        "name": "Manzara Seyiri",
+        "order": 46,
+        "id": 48
+    },
+    {
+        "name": "Mavi Gölde Yüzme",
+        "order": 47,
+        "id": 49
+    },
+    {
+        "name": "Günübirlik kullanım",
+        "order": 48,
+        "id": 50
+    },
+    {
+        "name": "Doğa Resmi Aktivitesi",
+        "order": 49,
+        "id": 51
+    },
+    {
+        "name": "Bilimsel Tur",
+        "order": 50,
+        "id": 52
+    },
+    {
+        "name": "Tabiat Eğitimi",
+        "order": 51,
+        "id": 53
+    },
+    {
+        "name": "Köy Pazarı",
+        "order": 52,
+        "id": 54
+    }
+]
