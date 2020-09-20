@@ -4,48 +4,46 @@
  *
  * @param  {H.Map} map      A HERE Map instance within the application
  */
-function showPostcodes(map, bubble){
+
+
+function showPostcodes(map) {
   var service = platform.getPlatformDataService();
 
-  style = new H.map.SpatialStyle();
+  style = {
+    strokeColor: '#05A',
+    fillColor: 'rgba(0, 85, 170, 0.05)',
+    lineWidth: 2,
+    lineCap: 'round',
+    lineJoin: 'miter',
+    miterLimit: 1,
+    lineDash: [],
+    lineDashOffset: 0
+  };
   // create tile provider and layer that displays postcode boundaries
   var boundariesProvider = new H.service.extension.platformData.TileProvider(service,
-  {
-    layerId: 'PSTLCB_GEN', level: 12
-  }, {
-      resultType: H.service.extension.platformData.TileProvider.ResultType.POLYLINE,
-      styleCallback: function(data) {return style}
+    {
+      layerId: 'PSTLCB_GEN',
+      level: 12,
+      rowFilter: function (row, layerId) {
+        // Filter rows from layer "ROAD_GEOM_FC1" with link ID "123"
+        //return layerId == 'ROAD_GEOM_FC1' && row.getCell('LINK_ID') == '123';    
+        //return row.getCell('POSTAL_CODE')==20123;  
+        return true;
+      }
+    }, {
+    resultType: H.service.extension.platformData.TileProvider.ResultType.POLYGON,
+    styleCallback: function (data) { return style }
   });
   var boundaries = new H.map.layer.TileLayer(boundariesProvider);
-  map.addLayer(boundaries);
-
-  // create tile provider and layer that displays postcode centroids
-  var centroidsProvider = new H.service.extension.platformData.TileProvider(service,
-  {
-    layerId: 'PSTLCB_MP', level: 12
-  }, {
-      resultType: H.service.extension.platformData.TileProvider.ResultType.MARKER
-  });
-  var centroids = new H.map.layer.MarkerTileLayer(centroidsProvider);
-  map.addLayer(centroids);
+  map.addLayer(boundaries, 1);
 
   // add event listener that shows infobubble with basic information
   // about the postcode
-  centroidsProvider.addEventListener('tap', function(ev) {
-    var marker = ev.target;
-    bubble.setPosition(marker.getGeometry());
-    var str = '<nobr>Postal code: ' + marker.getData().getCell('POSTAL_CODE') + '</nobr><br>' +
-              'Country code: ' + marker.getData().getCell('ISO_COUNTRY_CODE') + '<br>'
-    bubble.setContent(str);
-    bubble.open();
+  boundariesProvider.addEventListener('tap', function (ev) {
+    AddRedBoundaries(map);
   });
 }
 
-/**
- * Boilerplate map initialization code starts below:
- */
-
-//Step 1: initialize communication with the platform
 // In your own code, replace variable window.apikey with your own apikey
 var platform = new H.service.Platform({
   apikey: 'kCGZElk30Gj5anj2geQ020tZZxM8uZiuKjP7qNUC16E'
@@ -56,12 +54,12 @@ var defaultLayers = platform.createDefaultLayers();
 //Step 2: initialize a map  - not specificing a location will give a whole world view.
 var map = new H.Map(document.getElementById('map'),
   defaultLayers.vector.normal.map, {
-    pixelRatio: window.devicePixelRatio || 1
-  });
+  pixelRatio: window.devicePixelRatio || 1
+});
 // add a resize listener to make sure that the map occupies the whole container
 window.addEventListener('resize', () => map.getViewPort().resize());
 
-map.setCenter({lat:52.5159, lng:13.3777});
+map.setCenter({ lat: 45.464211, lng: 9.191383 });
 map.setZoom(13);
 
 //Step 3: make the map interactive
@@ -69,15 +67,37 @@ map.setZoom(13);
 // Behavior implements default interactions for pan/zoom (also on mobile touch environments)
 var behavior = new H.mapevents.Behavior(new H.mapevents.MapEvents(map));
 
-// Create the default UI components
-var ui = H.ui.UI.createDefault(map, defaultLayers);
-
-// create info bubble that is used to display the postcode data
-bubble = new H.ui.InfoBubble(map.getCenter(), {
-  content: ''
-});
-bubble.close();
-ui.addBubble(bubble);
-
 // Now use the map as required...
-showPostcodes(map, bubble);
+showPostcodes(map);
+
+
+function AddRedBoundaries(map) {
+  service=platform.getPlatformDataService();
+  let styleSub = {
+    strokeColor: '#05A',
+    fillColor: 'rgba(255, 255, 255, 0.05)',
+    lineWidth: 2,
+    lineCap: 'round',
+    lineJoin: 'miter',
+    miterLimit: 1,
+    lineDash: [],
+    lineDashOffset: 0
+  };
+  console.log(redArray);
+  var arr=redArray;
+  // create tile provider and layer that displays postcode boundaries
+  let boundariesProviderSub = new H.service.extension.platformData.TileProvider(service,
+    {
+      layerId: 'PSTLCB_GEN',
+      level: 12,
+      rowFilter: function (row, layerId) {        
+        return 20123==row.getCell('POSTAL_CODE');
+      }
+    }, {
+    resultType: H.service.extension.platformData.TileProvider.ResultType.POLYGON,
+    styleCallback: function (data) { return styleSub }
+  });
+  let boundariesSub = new H.map.layer.TileLayer(boundariesProviderSub);
+  //map.removeLayer(boundariesSub);
+  map.addLayer(boundariesSub, 2);
+}
