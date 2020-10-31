@@ -10,98 +10,137 @@
 
     <style>
         body {
-            margin:0px;
-            padding:0px;
-        }
-        #map{
-            width:100vw;
-            height:100vh;
+            margin: 0px;
+            padding: 0px;
         }
 
-        
+        #map {
+            width: 100vw;
+            height: 100vh;
+        }
+
+
         .info {
             padding: 6px 8px;
             font: 14px/16px Arial, Helvetica, sans-serif;
             background: white;
-            background: rgba(255,255,255,0.8);
-            box-shadow: 0 0 15px rgba(0,0,0,0.2);
+            background: rgba(255, 255, 255, 0.8);
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
             border-radius: 5px;
-            }
-            .info h4 {
-                margin: 0 0 5px;
-                color: #777;
-            }
-            .legend {
-                line-height: 40px;
-                color: #555;
-            }
-            .legend i {
-                width: 50px;
-                height: 18px;
-                float: left;
-                margin-right: 8px;
-                opacity: 0.7;
-            }
+        }
 
+        .info h4 {
+            margin: 0 0 5px;
+            color: #777;
+        }
+
+        .legend {
+            line-height: 40px;
+            color: #555;
+        }
+
+        .legend i {
+            width: 50px;
+            height: 18px;
+            float: left;
+            margin-right: 8px;
+            opacity: 0.7;
+            margin-top: 10px;
+        }
     </style>
 
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
-integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
-crossorigin=""/>
-<link href="assets/leaflet-sidebar.css" rel="stylesheet" />
-<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+        integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+        crossorigin="" />
+    <link href="assets/leaflet-sidebar.css" rel="stylesheet" />
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="assets/bootstrap.min.css" rel="stylesheet" />
+    <link href="assets/toastr.min.css" rel="stylesheet" />
+    <link href="assets/bootstrap-table.min.css" rel="stylesheet" />
 
-<script src="assets/jquery-3.5.1.min.js"></script>
-<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
-   integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
-   crossorigin=""></script>
-<script src="assets/leaflet-sidebar.js"></script>
-    
+    <script src="assets/jquery-3.5.1.min.js"></script>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+        integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+        crossorigin=""></script>
+    <script src="assets/leaflet-sidebar.js"></script>
+    <script src="assets/papaparse.min.js"></script>
+    <script src="assets/bootstrap.min.js"></script>
+    <script src="assets/toastr.min.js"></script>
+    <script src="assets/bootstrap-table.min.js"></script>
+
 </head>
 
-<body>   
+<body>
 
     <!-- optionally define the sidebar content via HTML markup -->
-<div id="sidebar" class="leaflet-sidebar collapsed">
+    <div id="sidebar" class="leaflet-sidebar collapsed">
 
-    <!-- nav tabs -->
-    <div class="leaflet-sidebar-tabs">
-        <!-- top aligned tabs -->
-        <ul role="tablist">
-            <li><a href="#home" role="tab"><i class="fa fa-bars active"></i></a></li>
-        </ul>
+        <!-- nav tabs -->
+        <div class="leaflet-sidebar-tabs">
+            <!-- top aligned tabs -->
+            <ul role="tablist">
+                <li><a href="#home" role="tab"><i class="fa fa-bars active"></i></a></li>
+            </ul>
 
-    </div>
+        </div>
 
-    <!-- panel content -->
-    <div class="leaflet-sidebar-content">
-        <div class="leaflet-sidebar-pane" id="home">
-            <h1 class="leaflet-sidebar-header">
-                Platypus Atlas
-                <span class="leaflet-sidebar-close"><i class="fa fa-caret-left"></i></span>
-            </h1>
-            
-            <h2> Platypus Records</h2>
-            <div>
-                
+        <!-- panel content -->
+        <div class="leaflet-sidebar-content">
+            <div class="leaflet-sidebar-pane" id="home">
+                <h1 class="leaflet-sidebar-header">
+                    Platypus Atlas
+                    <span class="leaflet-sidebar-close"><i class="fa fa-caret-left"></i></span>
+                </h1>
+
+                <h2> Platypus Records</h2>
+                <div>
+                    <table id="table" data-toggle="table" data-min-height="460" data-pagination="true">
+                        <thead>
+                            <tr>
+                                <th data-formatter="tableLinkFormatter"></th>
+                                <th data-field="Event Date - parsed">Event Date</th>
+                                <th data-field="Data Resource Name">Data Resource</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+
+            <div class="leaflet-sidebar-pane" id="messages">
+                <h1 class="leaflet-sidebar-header">Messages<span class="leaflet-sidebar-close"><i
+                            class="fa fa-caret-left"></i></span></h1>
             </div>
         </div>
-
-        <div class="leaflet-sidebar-pane" id="messages">
-            <h1 class="leaflet-sidebar-header">Messages<span class="leaflet-sidebar-close"><i class="fa fa-caret-left"></i></span></h1>
-        </div>
     </div>
-</div>
 
     <div id="map"></div>
 
     <script>
+        var csvUrlOfRecords = 'data/platypus-records.csv';
+        var platypusRecords, filteredRecords;
+        var dataFilters = {
+            minYear: 1600,
+            maxYear: 3000
+        }
+        var dataLoaded = false;
+        setTimeout(() => {
+            $("#table").bootstrapTable('showLoading');
+        }, 50);
 
-        var map = L.map('map',{
+
+
+        var map = L.map('map', {
             renderer: L.canvas()
         });
 
-        var platypusGruop = L.layerGroup().addTo(map);
+        var platypusGruop = L.layerGroup([], {
+            attribution: '&copy; <a id="citation" target="_blank" href="#">Atlas of Living Australia</a>'
+        }).addTo(map);
+
+        setTimeout(function () {
+            $("#map").find("#citation").attr('href', 'https://bie.ala.org.au/species/urn:lsid:biodiversity.org.au:afd.taxon:ac61fd14-4950-4566-b384-304bd99ca75f#');
+        }, 2000);
+
 
         var markers = [
             L.marker([-45.3228175, 105.2460938]),
@@ -115,11 +154,11 @@ crossorigin=""/>
             group.remove();
         }, 1000);
 
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        var osmTileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(map);
 
-         // create the sidebar instance and add it to the map
+        // create the sidebar instance and add it to the map
         var sidebar = L.control.sidebar({ container: 'sidebar' })
             .addTo(map)
             .open('home');
@@ -134,75 +173,178 @@ crossorigin=""/>
             fillOpacity: 0.8
         };
 
-        function onEachFeature(feature, layer) {    
-            const year= feature.properties['Event Date - parsed'].split(".").length==3 ? feature.properties['Event Date - parsed'].split(".")[2] : '';
-            const uncertaintyInMeters= feature.properties['Coordinate Uncertainty in Metres']==null ? '' : feature.properties['Coordinate Uncertainty in Metres'];
-            layer.bindPopup('<b>Year:</b>' + year
-                + '<br/><b>Spatial uncertainty in metres:</b>' + uncertaintyInMeters
-            );
-            platypusGruop.addLayer(layer);
-        }
 
-        function LoadData(minYear, maxYear){
-            platypusGruop.clearLayers();
-            $.getJSON("data/records-2020-10-29-simplified.geojson?v=3", function(data) {
-                L.geoJSON(data, {
-                    pointToLayer: function (feature, latlng) {   
-                        const eventDate=feature.properties['Event Date - parsed'];                        
-                        if (eventDate.split(".").length==3 && !isNaN(parseInt(eventDate.split(".")[2]))) {
-                            const year= eventDate.split(".")[2];
-                            if(year>=2011){
-                                geojsonMarkerOptions.fillColor='#00DD00';
-                            }
-                            else if(year>=2001){
-                                geojsonMarkerOptions.fillColor='#2EB42E';
-                            }
-                            else if(year>=1991){
-                                geojsonMarkerOptions.fillColor='#A47B00';
-                            }
-                            else{
-                                geojsonMarkerOptions.fillColor='#981921';
-                            }
-                        }
-                        else{
-                            geojsonMarkerOptions.fillColor='#6c0102';
-                        }            
-                        return L.circleMarker(latlng, geojsonMarkerOptions);                    
-                    },
-                    onEachFeature: onEachFeature,
-                    filter: function(feature, layer) {
-                        const year= feature.properties['Event Date - parsed'].split(".").length==3 ? feature.properties['Event Date - parsed'].split(".")[2] : 1801;
-                        return year>=minYear && year<=maxYear;
-                    }
-                });
-            });
-        }
-
-        LoadData(1800, 3000);
-
-        var legend = L.control({position: 'bottomright'});
+        var legend = L.control({ position: 'bottomright' });
 
         legend.onAdd = function (map) {
 
             var div = L.DomUtil.create('div', 'info legend'),
-                colors = ['#00DD00', '#2EB42E','#A47B00','#981921','#6c0102'],
-                labels = ['2011+', '2001-2010','1991-2000','&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-1990','No Year Information'],
-                minYears = [2011, 2001,1991,1802,1800],
-                maxYears = [3000, 2010,2000,1990,1801];
+                colors = ['#00DD00', '#2EB42E', '#A47B00', '#6c0102'],
+                labels = ['2011 - Present', '2001-2010', '1991-2000', 'No Year Information'],
+                minYears = [2011, 2001, 1991, 1600],
+                maxYears = [3000, 2010, 2000, 1990];
+
+            div.innerHTML += '<h5>Last Year Of Records</h5>'
 
             // loop through our density intervals and generate a label with a colored square for each interval
             for (var i = 0; i < colors.length; i++) {
                 div.innerHTML +=
-                    '<i style="background:' + colors[i] + '; cursor: pointer;" onclick="LoadData('+minYears[i]+', '+maxYears[i]+')"></i> ' +
-                     labels[i] + '<br>';
+                    '<i style="background:' + colors[i] + '; cursor: pointer;" onclick="FilterDataByYear(' + minYears[i] + ', ' + maxYears[i] + ')"></i> ' +
+                    labels[i] + '<br>';
             }
 
-            div.innerHTML +='<i style="background:#e2dada; cursor: pointer;" onclick="LoadData(1800, 3000)"></i> All <br>';
+            div.innerHTML += '<i style="background:#e2dada; cursor: pointer;" onclick="FilterDataByYear(1600, 3000)"></i> All <br>';
 
             return div;
         };
 
-        legend.addTo(map);
+
+
+        function LoadRecordsFromCSV() {
+            Papa.parse(csvUrlOfRecords, {
+                download: true,
+                header: true,
+                complete: function (results) {
+                    console.log(results.data);
+                    platypusRecords = results.data;
+                    platypusRecords.forEach(r => {
+                        if (!Number.isInteger(r['Year'])) {
+                            let year = 1601;
+                            if (r['Event Date - parsed']) {
+                                year = r['Event Date - parsed'].split("-").length == 3 ? parseInt(r['Event Date - parsed'].split("-")[0]) : 1601;
+                            }
+                            r['Year'] = year;
+                        }
+                        else {
+                            r['Year'] = parseInt(r['Year']);
+                        }
+
+                        if (!Number.isInteger(r['Month'])) {
+                            let month = 1;
+                            if (r['Event Date - parsed']) {
+                                month = r['Event Date - parsed'].split("-").length == 3 ? parseInt(r['Event Date - parsed'].split("-")[1]) : 1;
+                            }
+                            r['Month'] = month;
+                        }
+                        else {
+                            r['Month'] = parseInt(r['Month']);
+                        }
+
+                        if (!Number.isInteger(r['Day'])) {
+                            let day = 1;
+                            if (r['Event Date - parsed']) {
+                                day = r['Event Date - parsed'].split("-").length == 3 ? parseInt(r['Event Date - parsed'].split("-")[2]) : 1;
+                            }
+                            r['Day'] = day;
+                        }
+                        else {
+                            r['Day'] = parseInt(r['Day']);
+                        }
+                    });
+
+                    platypusRecords = platypusRecords.sort(function (a, b) {
+
+                        if (a.Year > b.Year) return 1;
+                        if (a.Year < b.Year) return -1;
+
+                        if (a.Month > b.Month) return 1;
+                        if (a.Month < b.Month) return -1;
+
+                        if (a.Day > b.Day) return 1;
+                        if (a.Day < b.Day) return -1;
+
+                    });
+
+                    AddRecordsToMap();
+                    legend.addTo(map);
+                }
+            });
+        }
+
+        var loadingToast;
+
+
+
+        osmTileLayer.on('loading', function () {
+            if (dataLoaded == false) {
+                loadingToast = toastr["info"]('Platypus data is loding...', '', { timeOut: 0, extendedTimeOut: 0 });
+            }
+        });
+
+        osmTileLayer.on('load', function () {
+            if (dataLoaded == false) {
+                setTimeout(() => {
+                    LoadRecordsFromCSV();
+                }, 300);
+            }
+        });
+
+
+        function AddRecordsToMap() {
+            $("#table").bootstrapTable('removeAll');
+            $("#table").bootstrapTable('refresh');
+            $("#table").bootstrapTable('resetView');
+            $("#table").bootstrapTable('showLoading');
+            platypusGruop.clearLayers();
+            filteredRecords = platypusRecords.filter(r => {
+                return r['Year'] >= dataFilters.minYear && r['Year'] <= dataFilters.maxYear;
+            });
+            filteredRecords.forEach(r => {
+                if (!(r['Latitude'] && r['Longitude'])) return;
+                geojsonMarkerOptions.fillColor = GetColorByYear(r['Year']);
+
+                const recordLayer = L.circleMarker(L.latLng(r['Latitude'], r['Longitude']), geojsonMarkerOptions);
+                $popupContent = $('<table/>').addClass('table').addClass('table-striped');
+                $popupTBody = $('<tbody/>');
+                $popupTBody.append('<tr><th>Year of record</th><td>' + (r['Year'] == 1601 ? '' : r['Year']) + '</td></td>');
+                $popupTBody.append('<tr><th>Data resource</th><td>' + r['Data Resource Name'] + '</td></td>');
+                $popupTBody.append('<tr><th>Spatial uncertainty in metres</th><td>' + r['Coordinate Uncertainty in Metres'] + '</td></td>');
+                $popupTBody.append('<tr><td class="text-right" colspan="2"> <a href="https://biocache.ala.org.au/occurrences/' + r["Record ID"] + '" target="_blank" class="btn btn-sm btn-info" style="color:white;">View Record on ala.org.au</a> </td></td>');
+                $popupContent.append($popupTBody);
+                recordLayer.bindPopup($popupContent[0]);
+                platypusGruop.addLayer(recordLayer);
+            });
+
+            $("#table").bootstrapTable('hideLoading');
+            let reversedRecords = filteredRecords;
+            reversedRecords.reverse();
+            $("#table").bootstrapTable('append', reversedRecords);
+
+            loadingToast.remove();
+            dataLoaded = true;
+        }
+
+        function GetColorByYear(year) {
+            if (year >= 2011) {
+                return '#00DD00';
+            }
+            else if (year >= 2001) {
+                return '#2EB42E';
+            }
+            else if (year >= 1991) {
+                return '#A47B00';
+            }
+            else if (year >= 1602) {
+                return '#981921';
+            }
+
+            //else
+            return '#6c0102';
+
+        }
+
+        function FilterDataByYear(minYear, maxYear) {
+            dataFilters.minYear = minYear;
+            dataFilters.maxYear = maxYear;
+            AddRecordsToMap();
+        }
+
+        function tableLinkFormatter(value, row, index) {
+            return [
+                '<a target="_blank" href="https://biocache.ala.org.au/occurrences/'+row['Record ID']+'">',
+                '<i class="fa fa-eye" aria-hidden="true"></i>',
+                '</a>'].join('');
+        }
 
     </script>
 
