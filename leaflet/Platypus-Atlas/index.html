@@ -180,7 +180,7 @@
 
             var div = L.DomUtil.create('div', 'info legend'),
                 colors = ['#00DD00', '#2EB42E', '#A47B00', '#6c0102'],
-                labels = ['2011 - Present', '2001-2010', '1991-2000', 'No Year Information'],
+                labels = ['2011 - Present', '2001-2010', '1991-2000', 'Prior to 1990'],
                 minYears = [2011, 2001, 1991, 1600],
                 maxYears = [3000, 2010, 2000, 1990];
 
@@ -193,7 +193,7 @@
                     labels[i] + '<br>';
             }
 
-            div.innerHTML += '<i style="background:#e2dada; cursor: pointer;" onclick="FilterDataByYear(1600, 3000)"></i> All <br>';
+            //div.innerHTML += '<i style="background:#e2dada; cursor: pointer;" onclick="FilterDataByYear(1600, 3000)"></i> All <br>';
 
             return div;
         };
@@ -209,9 +209,9 @@
                     platypusRecords = results.data;
                     platypusRecords.forEach(r => {
                         if (!Number.isInteger(r['Year'])) {
-                            let year = 1601;
+                            let year = 1602;
                             if (r['Event Date - parsed']) {
-                                year = r['Event Date - parsed'].split("-").length == 3 ? parseInt(r['Event Date - parsed'].split("-")[0]) : 1601;
+                                year = r['Event Date - parsed'].split("-").length == 3 ? parseInt(r['Event Date - parsed'].split("-")[0]) : 1602;
                             }
                             r['Year'] = year;
                         }
@@ -296,7 +296,7 @@
                 const recordLayer = L.circleMarker(L.latLng(r['Latitude'], r['Longitude']), geojsonMarkerOptions);
                 $popupContent = $('<table/>').addClass('table').addClass('table-striped');
                 $popupTBody = $('<tbody/>');
-                $popupTBody.append('<tr><th>Year of record</th><td>' + (r['Year'] == 1601 ? '' : r['Year']) + '</td></td>');
+                $popupTBody.append('<tr><th>Year of record</th><td>' + (r['Year'] == 1602 ? '' : r['Year']) + '</td></td>');
                 $popupTBody.append('<tr><th>Data resource</th><td>' + r['Data Resource Name'] + '</td></td>');
                 $popupTBody.append('<tr><th>Spatial uncertainty in metres</th><td>' + r['Coordinate Uncertainty in Metres'] + '</td></td>');
                 $popupTBody.append('<tr><td class="text-right" colspan="2"> <a href="https://biocache.ala.org.au/occurrences/' + r["Record ID"] + '" target="_blank" class="btn btn-sm btn-info" style="color:white;">View Record on ala.org.au</a> </td></td>');
@@ -336,12 +336,20 @@
         function FilterDataByYear(minYear, maxYear) {
             dataFilters.minYear = minYear;
             dataFilters.maxYear = maxYear;
-            AddRecordsToMap();
+            $("#table").bootstrapTable('removeAll');
+            $("#table").bootstrapTable('refresh');
+            $("#table").bootstrapTable('resetView');
+            $("#table").bootstrapTable('showLoading');
+
+            setTimeout(() => {
+                AddRecordsToMap();
+            }, 50);
+
         }
 
         function tableLinkFormatter(value, row, index) {
             return [
-                '<a target="_blank" href="https://biocache.ala.org.au/occurrences/'+row['Record ID']+'">',
+                '<a target="_blank" href="https://biocache.ala.org.au/occurrences/' + row['Record ID'] + '">',
                 '<i class="fa fa-eye" aria-hidden="true"></i>',
                 '</a>'].join('');
         }
