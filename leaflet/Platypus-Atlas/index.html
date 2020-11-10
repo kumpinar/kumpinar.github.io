@@ -96,7 +96,7 @@
                     <span class="leaflet-sidebar-close"><i class="fa fa-caret-left"></i></span>
                 </h1>
                 <br />
-                <h3> Visualize platypus records from the Atlas of Living Australia by:</h3>
+                <h5><b> Visualize platypus records from the Atlas of Living Australia by:</b></h5>
                 <br />
                 <div class="radio">
                     <label><input type="radio" name="layeradio" value="points"> Observations</label>
@@ -109,8 +109,8 @@
                         Government
                         Areas</label>
                 </div>
-                <div style="bottom: 20px; position: absolute; width: 100%;" class="text-center">
-                    <img src="assets/images/platypus_logo_combined.png" class="img-fluid" alt="">
+                <div style="bottom: 20px; position: absolute; width: 75%;" class="text-center">
+                    <img src="assets/images/PCI_CES.png" class="img-fluid" alt="">
                     
                 </div>
                 <div>
@@ -166,7 +166,7 @@
 
 
         var geojsonMarkerOptions = {
-            radius: 8,
+            radius: 6,
             fillColor: "#6c0102",
             color: "#000",
             weight: 1,
@@ -288,28 +288,37 @@
 
         $.get("data/grid-10km.geojson", function (data) {
             grid10 = L.geoJson(data, { style: GridStyle, attribution: '10X10 Km Grid', onEachFeature: GridEachFeature });
+            AddGridLayerToMap();
         });
         $.get("data/grid-25km.geojson", function (data) {
             grid25 = L.geoJson(data, { style: GridStyle, attribution: '25X25 Km Grid', onEachFeature: GridEachFeature });
+            AddGridLayerToMap();
         });
         $.get("data/grid-50km.geojson", function (data) {
             grid50 = L.geoJson(data, { style: GridStyle, attribution: '50X50 Km Grid', onEachFeature: GridEachFeature });
+            AddGridLayerToMap();
         });
         $.get("data/grid-75km.geojson", function (data) {
             grid75 = L.geoJson(data, { style: GridStyle, attribution: '75X75 Km Grid', onEachFeature: GridEachFeature });
+            AddGridLayerToMap();
         });
         $.get("data/grid-100km.geojson", function (data) {
             grid100 = L.geoJson(data, { style: GridStyle, attribution: '100X100 Km Grid', onEachFeature: GridEachFeature });
+            AddGridLayerToMap();
         });
 
         var gridLayers = [grid10, grid25, grid50, grid75, grid100];
-        map.on('moveend', function (e) {
+        
+        map.on('zoomend', function (e) {
 
             RemoveGridLayers();
             if ($('input[name=layeradio]:checked').val() == 'grid') {
+                platypusGruop.remove();
                 AddGridLayerToMap();
             }
         });
+        
+        
 
         function GridStyle(feature) {
             var style = {
@@ -348,8 +357,10 @@
             var zoomLevel = map.getZoom();
             if (zoomLevel > 10) {
                 map.addLayer(grid10);
+                map.addLayer(platypusGruop);
             } else if (zoomLevel > 8) {
                 map.addLayer(grid25);
+                map.addLayer(platypusGruop);
             } else if (zoomLevel > 6) {
                 map.addLayer(grid50);
             } else if (zoomLevel > 4) {
