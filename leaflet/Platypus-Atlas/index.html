@@ -104,8 +104,8 @@
                 <div class="radio">
                     <label><input type="radio" name="layeradio" value="grid" checked> Grids</label>
                 </div>
-                <div class="radio disabled">
-                    <label><input type="radio" name="layeradio" value="local_government_areas" disabled> Local
+                <div class="radio">
+                    <label><input type="radio" name="layeradio" value="local_government_areas"> Local
                         Government
                         Areas</label>
                 </div>
@@ -129,6 +129,7 @@
         var platypusRecords, platypusRecordsGeojson;
         var dataLoaded = false;
         var grid10 = L.geoJson(), grid25 = L.geoJson(), grid50 = L.geoJson(), grid75 = L.geoJson(), grid100 = L.geoJson();
+        var auLga = L.geoJson();
 
         var map = L.map('map', {
             renderer: L.canvas(),
@@ -138,10 +139,8 @@
         var platypusGruop = L.layerGroup();
 
 
-        var alaAttribution = L.control.attribution({ prefix: false });
         let alaCitation = '<a target="_blank" href="https://bie.ala.org.au/species/urn:lsid:biodiversity.org.au:afd.taxon:ac61fd14-4950-4566-b384-304bd99ca75f#" title="ala.org.au">Atlas of Living Australia</a>'
-        alaAttribution.addAttribution(alaCitation);
-        alaAttribution.addTo(map);
+        map.attributionControl.addAttribution(alaCitation);
 
         var markers = [
             L.marker([-45.3228175, 105.2460938]),
@@ -306,6 +305,9 @@
             grid100 = L.geoJson(data, { style: GridStyle, attribution: '100X100 Km Grid', onEachFeature: GridEachFeature });
             AddGridLayerToMap();
         });
+        $.get("data/au_lga_filtered_simplified.geojson", function (data) {
+            auLga = L.geoJson(data, { style: LgaStyle, onEachFeature: LgaEachFeature });
+        });
 
         var gridLayers = [grid10, grid25, grid50, grid75, grid100];
         
@@ -315,6 +317,10 @@
             if ($('input[name=layeradio]:checked').val() == 'grid') {
                 platypusGruop.remove();
                 AddGridLayerToMap();
+            }else if ($('input[name=layeradio]:checked').val() == 'local_government_areas') {
+                if (map.getZoom() > 8) {
+                    map.addLayer(platypusGruop);
+                }
             }
         });
         
@@ -325,6 +331,15 @@
                 fillOpacity: 0.8,
                 weight: 1,
                 fillColor: GetColorByYear(feature.properties.LastYear)
+            };
+            return style;
+        }
+
+        function LgaStyle(feature) {
+            var style = {
+                fillOpacity: 0.8,
+                weight: 1,
+                fillColor: GetColorByYear(feature.properties.last_year_of_records)
             };
             return style;
         }
@@ -346,8 +361,19 @@
                 $popupContent.append($popupTBody);
                 layer.bindPopup($popupContent[0]).openPopup();
             });
+        }
 
-
+        function LgaEachFeature(feature, layer) {
+            layer.once('click', function (e) {
+                $popupContent = $('<table/>').addClass('table').addClass('table-striped');
+                $popupTBody = $('<tbody/>');
+                $popupTBody.append('<tr><th colspan="2">'+ feature.properties.lga_s2 +'</th></tr>');
+                //$popupTBody.append('<tr><th colspan="2">'+ feature.properties.lga_s3 +'</th></tr>');
+                $popupTBody.append('<tr><th>Last Year of record</th><td>' + (feature.properties.last_year_of_records == 0 ?'':feature.properties.last_year_of_records) + '</td></tr>');
+                $popupTBody.append('<tr><th>RecordCount</th><td>' + feature.properties.record_count + '</td></tr>');
+                $popupContent.append($popupTBody);
+                layer.bindPopup($popupContent[0]).openPopup();
+            });
         }
 
         function RemoveGridLayers() {
@@ -375,12 +401,22 @@
         $('input[name=layeradio]').on('change', function () {
             if ($('input[name=layeradio]:checked').val() == 'grid') {
                 map.removeLayer(platypusGruop);
+                map.removeLayer(auLga);
                 AddGridLayerToMap();
                 $(document).find("#legendTitle").html("Last Year Of Records");
             } else if ($('input[name=layeradio]:checked').val() == 'points') {
                 RemoveGridLayers();
+                map.removeLayer(auLga);
                 map.addLayer(platypusGruop);
                 $(document).find("#legendTitle").html("Year Of Records");
+            }else if ($('input[name=layeradio]:checked').val() == 'local_government_areas') {
+                RemoveGridLayers();
+                map.removeLayer(platypusGruop);
+                map.addLayer(auLga);                
+                $(document).find("#legendTitle").html("Year Of Records");                
+                if (map.getZoom() > 8) {
+                    map.addLayer(platypusGruop);
+                }
             }
         });
 
