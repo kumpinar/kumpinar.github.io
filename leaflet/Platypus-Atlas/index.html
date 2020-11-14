@@ -320,6 +320,8 @@
             }else if ($('input[name=layeradio]:checked').val() == 'local_government_areas') {
                 if (map.getZoom() > 8) {
                     map.addLayer(platypusGruop);
+                }else{
+                    map.removeLayer(platypusGruop);
                 }
             }
         });
