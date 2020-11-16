@@ -352,8 +352,8 @@
             layer.once('click', function (e) {
                 $popupContent = $('<table/>').addClass('table').addClass('table-striped');
                 $popupTBody = $('<tbody/>');
-                $popupTBody.append('<tr><th>Last Year of record</th><td>' + feature.properties.LastYear + '</td></tr>');
-                $popupTBody.append('<tr><th>RecordCount</th><td>' + feature.properties.RecordCount + '</td></tr>');
+                $popupTBody.append('<tr><th>Last Year of Records</th><td>' + feature.properties.LastYear + '</td></tr>');
+                $popupTBody.append('<tr><th>Record Count</th><td>' + feature.properties.RecordCount + '</td></tr>');
 
                 const b = layer.getBounds();
                 const south = b.getSouth(), north = b.getNorth(), west = b.getWest(), east = b.getEast();
