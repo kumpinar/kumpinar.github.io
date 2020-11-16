@@ -373,8 +373,8 @@
                 $popupTBody = $('<tbody/>');
                 $popupTBody.append('<tr><th colspan="2">'+ feature.properties.lga_s2 +'</th></tr>');
                 //$popupTBody.append('<tr><th colspan="2">'+ feature.properties.lga_s3 +'</th></tr>');
-                $popupTBody.append('<tr><th>Last Year of record</th><td>' + (feature.properties.last_year_of_records == 0 ?'':feature.properties.last_year_of_records) + '</td></tr>');
-                $popupTBody.append('<tr><th>RecordCount</th><td>' + feature.properties.record_count + '</td></tr>');
+                $popupTBody.append('<tr><th>Last Year of Records</th><td>' + (feature.properties.last_year_of_records == 0 ?'':feature.properties.last_year_of_records) + '</td></tr>');
+                $popupTBody.append('<tr><th>Record Count</th><td>' + feature.properties.record_count + '</td></tr>');
                 $popupContent.append($popupTBody);
                 layer.bindPopup($popupContent[0]).openPopup();
             });
