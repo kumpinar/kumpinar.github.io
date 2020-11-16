@@ -235,6 +235,8 @@
                 setTimeout(() => {
                     LoadRecordsFromCSV();
                 }, 300);
+                map.attributionControl.addAttribution('<span id="gridAttr"></span>');  
+                AddGridLayerToMap();
             }
         });
 
@@ -380,31 +382,27 @@
 
         function RemoveGridLayers() {
             grid10.remove(); grid25.remove(); grid50.remove(); grid75.remove(); grid100.remove();
-                map.attributionControl.removeAttribution('10X10 Km Grid');
-                map.attributionControl.removeAttribution('25X25 Km Grid');
-                map.attributionControl.removeAttribution('50X50 Km Grid');
-                map.attributionControl.removeAttribution('75X75 Km Grid');
-                map.attributionControl.removeAttribution('100X100 Km Grid');
+            $(document).find('#gridAttr').text('');
         }
         function AddGridLayerToMap() {
             var zoomLevel = map.getZoom();
             if (zoomLevel > 10) {
                 map.addLayer(grid10);
-                map.attributionControl.addAttribution('10X10 Km Grid');
+                $(document).find('#gridAttr').text('10X10 Km Grid');
                 map.addLayer(platypusGruop);
             } else if (zoomLevel > 8) {
                 map.addLayer(grid25);
-                map.attributionControl.addAttribution('25X25 Km Grid');
+                $(document).find('#gridAttr').text('25X25 Km Grid');
                 map.addLayer(platypusGruop);
             } else if (zoomLevel > 6) {
                 map.addLayer(grid50);
-                map.attributionControl.addAttribution('50X50 Km Grid');
+                $(document).find('#gridAttr').text('50X50 Km Grid');
             } else if (zoomLevel > 4) {
                 map.addLayer(grid75);
-                map.attributionControl.addAttribution('75X75 Km Grid');
+                $(document).find('#gridAttr').text('75X75 Km Grid');
             } else {
                 map.addLayer(grid100);
-                map.attributionControl.addAttribution('100X100 Km Grid');
+                $(document).find('#gridAttr').text('100X100 Km Grid');
             }
         }
 
