@@ -140,7 +140,7 @@
 
 
         let alaCitation = '<a target="_blank" href="https://bie.ala.org.au/species/urn:lsid:biodiversity.org.au:afd.taxon:ac61fd14-4950-4566-b384-304bd99ca75f#" title="ala.org.au">Atlas of Living Australia</a>'
-        map.attributionControl.addAttribution(alaCitation);
+        map.attributionControl.addAttribution(alaCitation);        
 
         var markers = [
             L.marker([-45.3228175, 105.2460938]),
@@ -286,24 +286,24 @@
         }
 
         $.get("data/grid-10km.geojson", function (data) {
-            grid10 = L.geoJson(data, { style: GridStyle, attribution: '10X10 Km Grid', onEachFeature: GridEachFeature });
-            AddGridLayerToMap();
+            grid10 = L.geoJson(data, { style: GridStyle,  onEachFeature: GridEachFeature });
+            //AddGridLayerToMap();
         });
         $.get("data/grid-25km.geojson", function (data) {
-            grid25 = L.geoJson(data, { style: GridStyle, attribution: '25X25 Km Grid', onEachFeature: GridEachFeature });
-            AddGridLayerToMap();
+            grid25 = L.geoJson(data, { style: GridStyle,  onEachFeature: GridEachFeature });
+            //AddGridLayerToMap();
         });
         $.get("data/grid-50km.geojson", function (data) {
-            grid50 = L.geoJson(data, { style: GridStyle, attribution: '50X50 Km Grid', onEachFeature: GridEachFeature });
-            AddGridLayerToMap();
+            grid50 = L.geoJson(data, { style: GridStyle,  onEachFeature: GridEachFeature });
+            //AddGridLayerToMap();
         });
         $.get("data/grid-75km.geojson", function (data) {
-            grid75 = L.geoJson(data, { style: GridStyle, attribution: '75X75 Km Grid', onEachFeature: GridEachFeature });
-            AddGridLayerToMap();
+            grid75 = L.geoJson(data, { style: GridStyle,  onEachFeature: GridEachFeature });
+            //AddGridLayerToMap();
         });
         $.get("data/grid-100km.geojson", function (data) {
-            grid100 = L.geoJson(data, { style: GridStyle, attribution: '100X100 Km Grid', onEachFeature: GridEachFeature });
-            AddGridLayerToMap();
+            grid100 = L.geoJson(data, { style: GridStyle, onEachFeature: GridEachFeature });
+            //AddGridLayerToMap();
         });
         $.get("data/au_lga_filtered_simplified.geojson", function (data) {
             auLga = L.geoJson(data, { style: LgaStyle, onEachFeature: LgaEachFeature });
@@ -380,21 +380,31 @@
 
         function RemoveGridLayers() {
             grid10.remove(); grid25.remove(); grid50.remove(); grid75.remove(); grid100.remove();
+                map.attributionControl.removeAttribution('10X10 Km Grid');
+                map.attributionControl.removeAttribution('25X25 Km Grid');
+                map.attributionControl.removeAttribution('50X50 Km Grid');
+                map.attributionControl.removeAttribution('75X75 Km Grid');
+                map.attributionControl.removeAttribution('100X100 Km Grid');
         }
         function AddGridLayerToMap() {
             var zoomLevel = map.getZoom();
             if (zoomLevel > 10) {
                 map.addLayer(grid10);
+                map.attributionControl.addAttribution('10X10 Km Grid');
                 map.addLayer(platypusGruop);
             } else if (zoomLevel > 8) {
                 map.addLayer(grid25);
+                map.attributionControl.addAttribution('25X25 Km Grid');
                 map.addLayer(platypusGruop);
             } else if (zoomLevel > 6) {
                 map.addLayer(grid50);
+                map.attributionControl.addAttribution('50X50 Km Grid');
             } else if (zoomLevel > 4) {
                 map.addLayer(grid75);
+                map.attributionControl.addAttribution('75X75 Km Grid');
             } else {
                 map.addLayer(grid100);
+                map.attributionControl.addAttribution('100X100 Km Grid');
             }
         }
 
