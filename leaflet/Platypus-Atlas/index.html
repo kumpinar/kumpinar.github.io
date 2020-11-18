@@ -92,7 +92,7 @@
         <div class="leaflet-sidebar-content">
             <div class="leaflet-sidebar-pane" style="height: 98%;" id="home">
                 <h1 class="leaflet-sidebar-header">
-                    Platypus Atlas
+                    Platypus Observations
                     <span class="leaflet-sidebar-close"><i class="fa fa-caret-left"></i></span>
                 </h1>
                 <br />
@@ -179,7 +179,7 @@
         legend.onAdd = function (map) {
 
             var div = L.DomUtil.create('div', 'info legend'),
-                colors = ['#00DD00', '#2EB42E', '#A47B00', '#6c0102'],
+                colors = ['#00DD00', '#FFFF00', '#A47B00', '#6c0102'],
                 labels = ['2011 - Present', '2001 - 2010', '1991 - 2000', 'Prior to 1990'];
 
             div.innerHTML += '<h5 id="legendTitle">Last Year Of Records</h5>'
@@ -226,7 +226,7 @@
 
         osmTileLayer.on('loading', function () {
             if (dataLoaded == false) {
-                loadingToast = toastr["info"]('Platypus data is loding...', '', { timeOut: 0, extendedTimeOut: 0 });
+                loadingToast = toastr["info"]('Platypus data is loading...', '', { timeOut: 0, extendedTimeOut: 0 });
             }
         });
 
@@ -277,7 +277,7 @@
                 return '#00DD00';
             }
             else if (year >= 2001) {
-                return '#2EB42E';
+                return '#FFFF00';
             }
             else if (year >= 1991) {
                 return '#A47B00';
