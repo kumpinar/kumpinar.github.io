@@ -287,27 +287,22 @@
             return '#981921';
         }
 
-        $.get("data/grid-10km.geojson", function (data) {
+        $.get("data/grid-10km.json", function (data) {
             grid10 = L.geoJson(data, { style: GridStyle,  onEachFeature: GridEachFeature });
-            //AddGridLayerToMap();
         });
-        $.get("data/grid-25km.geojson", function (data) {
+        $.get("data/grid-25km.json", function (data) {
             grid25 = L.geoJson(data, { style: GridStyle,  onEachFeature: GridEachFeature });
-            //AddGridLayerToMap();
         });
-        $.get("data/grid-50km.geojson", function (data) {
+        $.get("data/grid-50km.json", function (data) {
             grid50 = L.geoJson(data, { style: GridStyle,  onEachFeature: GridEachFeature });
-            //AddGridLayerToMap();
         });
-        $.get("data/grid-75km.geojson", function (data) {
+        $.get("data/grid-75km.json", function (data) {
             grid75 = L.geoJson(data, { style: GridStyle,  onEachFeature: GridEachFeature });
-            //AddGridLayerToMap();
         });
-        $.get("data/grid-100km.geojson", function (data) {
+        $.get("data/grid-100km.json", function (data) {
             grid100 = L.geoJson(data, { style: GridStyle, onEachFeature: GridEachFeature });
-            //AddGridLayerToMap();
         });
-        $.get("data/au_lga_filtered_simplified.geojson", function (data) {
+        $.get("data/au_lga_filtered_simplified.json", function (data) {
             auLga = L.geoJson(data, { style: LgaStyle, onEachFeature: LgaEachFeature });
         });
 
