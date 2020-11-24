@@ -48,14 +48,15 @@
 
         var map =  L.map('map',{
             renderer: L.canvas()
-        }).setView([38.899851, -77.033469], 14);
+        }).setView([38.899851, -77.033469], 12);
 
        
         var osmTileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(map);
 
-        const query = '~"^(shop|tourism|amenity|leisure)$"~"."';
+        //const query = '~"^(shop|tourism|amenity|leisure)$"~"."';
+        const query = '~"^(tourism)$"~"."';
         const url = build_overpass_url(query);
 
         var loadingToast;  
@@ -63,7 +64,7 @@
         $.get(url, (osmDataAsJson) => {
             const resultAsGeojson = osmtogeojson(osmDataAsJson);
             if (layer_pois !== null) {
-                map.removeLayer(self.layer_pois);
+                map.removeLayer(layer_pois);
                 layer_pois = null;
             }
             layer_pois = L.geoJson(resultAsGeojson, {
@@ -100,7 +101,7 @@
         const node_query = `node[${query}](${bounds});`;
         const way_query = `way[${query}](${bounds});`;
         const relation_query = `relation[${query}](${bounds});`;
-        const query_string = `?data=[out:json][timeout:15];(${node_query}${way_query}${relation_query});out ${limit} body geom;`;
+        const query_string = `?data=[out:json][timeout:40];(${node_query}${way_query}${relation_query});out ${limit} body geom;`;
         return `https://overpass-api.de/api/interpreter${query_string}`;
     }
 
