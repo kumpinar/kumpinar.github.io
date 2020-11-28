@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="initial-scale=1, maximum-scale=1">
     <meta http-equiv="pragma" content="no-cache" />
+    <meta http-equiv='expires' content='0'> 
     <meta http-equiv="cache-control" content="no-cache">
     <link rel="icon" type="image/png" href="assets/images/PCI_CES.ico" />
     <title>Platypus Atlas</title>
@@ -125,7 +126,7 @@
 
     <script>
 
-        var csvUrlOfRecords = 'data/platypus-records.csv';
+        var recordsCsvFile = 'data/platypus-records.csv';
         var platypusRecords, platypusRecordsGeojson;
         var dataLoaded = false;
         var grid10 = L.geoJson(), grid25 = L.geoJson(), grid50 = L.geoJson(), grid75 = L.geoJson(), grid100 = L.geoJson();
@@ -196,7 +197,7 @@
 
 
         function LoadRecordsFromCSV() {
-            Papa.parse(csvUrlOfRecords, {
+            Papa.parse(recordsCsvFile, {
                 download: true,
                 header: true,
                 complete: function (results) {

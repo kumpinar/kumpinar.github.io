@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+    <meta http-equiv="pragma" content="no-cache" />
+    <meta http-equiv="cache-control" content="no-cache">
+    <title>Generate Grid Layers</title>
+
+
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="assets/bootstrap.min.css" rel="stylesheet" />
+
+    <script src="assets/jquery-3.5.1.min.js"></script>
+
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+        integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+        crossorigin=""></script>
+    <script src="assets/papaparse.min.js"></script>
+    <script src="assets/bootstrap.min.js"></script>
+    <script src="assets/turf.min.js"></script>
+</head>
+
+<body>
+
+    <div class="container-fluid" id="main">
+
+        <div class="container" id="main-content">
+
+
+            <div class="row">
+                <div class="col-md-10 col-md-offset-1">
+
+                    <h2 class="heading-medium">Generate Grid Layers and Local Government Areas Layers</h2>
+
+
+                    <!-- Long download warning -->
+
+                    <div class="alert alert-info" role="alert">
+                        <strong>
+                            First of all download platypus records from <a
+                                href="https://biocache.ala.org.au/occurrences/search?q=lsid:urn:lsid:biodiversity.org.au:afd.taxon:ac61fd14-4950-4566-b384-304bd99ca75f#tab_recordsView"
+                                target="_blank">
+                                ala.org.au
+                            </a> then unzip and select the csv file below.
+
+                        </strong>
+                    </div>
+
+                    <div class="well mb-2">
+                        <div class="progress" style="display: none;">
+                            <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%"></div>
+                          </div>
+                    </div>
+
+
+                    <div class="well">
+                        <div class="row ">
+                            <div class="col-md-6">
+                                <h4>Select Records File(csv)</h4>
+                            </div>
+
+                            <div class="col-md-6">
+                                <input type="file" id="files" multiple>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="well generator-buttons" style="display: none;">
+                        <div class="row border rounded bg-light">
+                            <div class="col-md-6">
+                                <h4>Local Governtment Areas</h4>
+                            </div>
+
+                            <div class="col-md-6">
+                                <button id="btnLgaCalc" class="btn btn-primary" type="button">Generate</button>
+                            </div>
+                        </div>
+                        <div class="row  border rounded ">
+                            <div class="col-md-6">
+                                <h4>Generate Grid: 100X100 Km</h4>
+                            </div>
+
+                            <div class="col-md-6">
+                                <button class="btn btn-secondary btnGenerateGrid" size-km="100"
+                                    type="button">Generate</button>
+                            </div>
+                        </div>
+                        <div class="row  border rounded bg-light">
+                            <div class="col-md-6">
+                                <h4>Generate Grid: 75X75 Km</h4>
+                            </div>
+
+                            <div class="col-md-6">
+                                <button class="btn btn-primary btnGenerateGrid" size-km="75"
+                                    type="button">Generate</button>
+                            </div>
+                        </div>
+                        <div class="row  border rounded ">
+                            <div class="col-md-6">
+                                <h4>Generate Grid: 50X50 Km</h4>
+                            </div>
+
+                            <div class="col-md-6">
+                                <button class="btn btn-secondary btnGenerateGrid" size-km="50"
+                                    type="button">Generate</button>
+                            </div>
+                        </div>
+                        <div class="row  border rounded bg-light">
+                            <div class="col-md-6">
+                                <h4>Generate Grid: 25X25 Km</h4>
+                            </div>
+
+                            <div class="col-md-6">
+                                <button class="btn btn-primary btnGenerateGrid" size-km="25"
+                                    type="button">Generate</button>
+                            </div>
+                        </div>
+                        <div class="row  border rounded ">
+                            <div class="col-md-6">
+                                <h4>Generate Grid: 10X10 Km</h4>
+                            </div>
+
+                            <div class="col-md-6">
+                                <button class="btn btn-secondary btnGenerateGrid" size-km="10"
+                                    type="button">Generate</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="width: 100%; padding-top: 50px;">
+                        <div class="row">
+                            <div class="col-4 text-secondary">
+                               <h4> Make sure the data folder structure should be like that:</h4>
+                            </div>
+                            <div class="col-8">
+                                <img src="assets/data_folder_structure.png" class="img-fluid" alt="">
+                            </div>
+                        </div>
+                        
+                        
+                    </div>
+
+
+                </div><!-- /.col-md-10  -->
+            </div><!-- /.row-fuid  -->
+
+        </div>
+        <!--/.container-->
+
+
+
+
+    </div>
+
+
+
+    <script>
+
+        var lgaUrl = 'lga-data/au_lga_simplified.json';
+        var platypusData, platypusRecordsGeojson, lgaData;
+
+        const inputElement = document.getElementById("files");
+        inputElement.addEventListener("change", handleFiles, false);
+        function handleFiles() {
+            const selectedFile = document.getElementById('files').files[0];
+            Papa.parse(selectedFile, {
+                header: true,
+                complete: function (results) {
+                    platypusRecords = results.data;
+                    platypusRecords=platypusRecords.filter(m => m['Record ID'] != '');
+                    platypusRecords.forEach(r => {
+                        const parsedYear = r['Event Date - parsed'].split('-')[0];
+                       
+                        if (isNaN(parsedYear) == false ) {
+                            r['Year'] = parseInt(parsedYear);
+                        }
+                        else {
+                            r['Year'] = 0;
+                        }
+                    });
+
+                    platypusRecords = platypusRecords.sort(function (a, b) {
+
+                        if (a.Year > b.Year) return 1;
+                        if (a.Year < b.Year) return -1;
+
+                    });
+
+                    platypusRecordsGeojson = L.geoJson().toGeoJSON();
+                    platypusRecords.forEach(r => {
+                        if (!(r['Latitude'] && r['Longitude'])) return;
+
+                        const recordLayer = L.circleMarker(L.latLng(r['Latitude'], r['Longitude']));
+                        let geoJson = recordLayer.toGeoJSON();
+                        geoJson.properties.Id = r['Record ID'];
+                        geoJson.properties.Year = r['Year'];
+                        platypusRecordsGeojson.features.push(geoJson);
+                    });
+                    $(".generator-buttons").show();
+                }
+            });
+
+        }
+
+
+        var foundFeatures = [];
+        var totalItemCountToCalculate = 0;
+        var calculatedItemsCount = 0;
+
+        $("#btnLgaCalc").click(function () {
+            foundFeatures = [];
+            totalItemCountToCalculate = 0;
+            calculatedItemsCount = 0;
+            $('#btnLgaCalc').prop('disabled', true);
+            $('.btnGenerateGrid').prop('disabled', true);
+            $('.progress').show();
+            $.get(lgaUrl, function (data) {
+                lgaData = data;
+                totalItemCountToCalculate=lgaData.features.length;
+                lgaData.features.forEach(gridElement => {
+                    setTimeout(() => {
+                        CalculateLgaGridFeature(gridElement)
+                    }, 100);
+                });
+            });
+
+        });
+
+        function CalculateLgaGridFeature(gridElement) {
+
+            if (calculatedItemsCount != totalItemCountToCalculate) {
+                
+                if (gridElement.geometry.coordinates.length > 0) {
+                    const points = turf.pointsWithinPolygon(platypusRecordsGeojson, gridElement);
+                    if (points.features.length > 0) {
+                        gridElement.properties.last_year_of_records = points.features[points.features.length - 1].properties.Year;
+                        gridElement.properties.record_count = points.features.length;
+                        foundFeatures.push(gridElement);
+                    }
+                    calculatedItemsCount++;
+                }
+                else{
+                    calculatedItemsCount++;
+                }
+            }
+
+            console.log((100*calculatedItemsCount)/totalItemCountToCalculate);
+            $(".progress-bar").attr('aria-valuenow', ((100*calculatedItemsCount)/totalItemCountToCalculate));
+            $(".progress-bar").css('width', ((100*calculatedItemsCount)/totalItemCountToCalculate)+'%');
+
+            if (calculatedItemsCount == totalItemCountToCalculate) {
+                lgaData.features = foundFeatures;
+                calculatedItemsCount=-1;
+                $('#btnLgaCalc').prop('disabled', false);
+                $('.btnGenerateGrid').prop('disabled', false);
+                $('.progress').hide();
+                Save("au_lga_filtered_simplified.json", lgaData);
+            }
+        }
+
+
+        $(".btnGenerateGrid").click(function () {
+            foundFeatures = [];
+            totalItemCountToCalculate = 0;
+            calculatedItemsCount = 0;
+            $('#btnLgaCalc').prop('disabled', true);
+            $('.btnGenerateGrid').prop('disabled', true);
+            $('.progress').show();
+            const cellSize=$(this).attr('size-km');
+
+            let bounds = [135, -44, 155, -12];
+            let squareGrid = turf.squareGrid(bounds, cellSize);
+            totalItemCountToCalculate=squareGrid.features.length;
+            squareGrid.features.forEach(gridElement => {
+                setTimeout(() => {
+                        CalculateGridFeature(gridElement, cellSize)
+                }, 100);
+            });
+
+        });
+
+        function CalculateGridFeature(gridElement, cellSize){
+            
+            if (calculatedItemsCount != totalItemCountToCalculate) {       
+                const points = turf.pointsWithinPolygon(platypusRecordsGeojson, gridElement);
+                if (points.features.length > 0) {
+                    gridElement.properties.LastYear=points.features[points.features.length - 1].properties.Year;
+                    gridElement.properties.RecordCount=points.features.length;
+                    foundFeatures.push(gridElement);
+                }
+
+                calculatedItemsCount++;
+            }
+
+            console.log((100*calculatedItemsCount)/totalItemCountToCalculate);
+            $(".progress-bar").attr('aria-valuenow', ((100*calculatedItemsCount)/totalItemCountToCalculate));
+            $(".progress-bar").css('width', ((100*calculatedItemsCount)/totalItemCountToCalculate)+'%');
+
+            if (calculatedItemsCount == totalItemCountToCalculate) {
+                let generatedGeoJson = L.geoJson().toGeoJSON();
+                generatedGeoJson.features=foundFeatures
+                calculatedItemsCount=-1;
+                $('#btnLgaCalc').prop('disabled', false);
+                $('.btnGenerateGrid').prop('disabled', false);
+                $('.progress').hide();
+                Save("grid-"+cellSize+"km.json", generatedGeoJson);
+            }
+        }
+
+
+        function Save(filename, data) {
+            var blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
+            if (window.navigator.msSaveOrOpenBlob) {
+                window.navigator.msSaveBlob(blob, filename);
+            }
+            else {
+                var elem = window.document.createElement('a');
+                elem.href = window.URL.createObjectURL(blob);
+                elem.download = filename;
+                document.body.appendChild(elem);
+                elem.click();
+                document.body.removeChild(elem);
+            }
+        }
+
+
+    </script>
+
+</body>
+
+</html>
