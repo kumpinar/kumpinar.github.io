@@ -202,9 +202,15 @@
                 header: true,
                 complete: function (results) {
                     platypusRecords = results.data;
+                    platypusRecords=platypusRecords.filter(m => m['Record ID'] != '');
                     platypusRecords.forEach(r => {
-                        if (Number.isInteger(r['Year'])) {
-                            r['Year'] = parseInt(r['Year']);
+                        const parsedYear = r['Event Date - parsed'].split('-')[0];
+                       
+                        if (isNaN(parsedYear) == false ) {
+                            r['Year'] = parseInt(parsedYear);
+                        }
+                        else {
+                            r['Year'] = 0;
                         }
                     });
 
@@ -214,7 +220,7 @@
                         if (a.Year < b.Year) return -1;
 
                     });
-
+                    
                     AddRecordsToMap();
                     legend.addTo(map);
                 }
