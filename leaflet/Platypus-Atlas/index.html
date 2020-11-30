@@ -220,7 +220,7 @@
                         if (a.Year < b.Year) return -1;
 
                     });
-                    
+
                     AddRecordsToMap();
                     legend.addTo(map);
                 }
@@ -336,7 +336,7 @@
             var style = {
                 fillOpacity: 0.8,
                 weight: 1,
-                fillColor: GetColorByYear(feature.properties.LastYear)
+                fillColor: GetColorByYear(feature.properties.last_year_of_records)
             };
             return style;
         }
@@ -354,8 +354,8 @@
             layer.once('click', function (e) {
                 $popupContent = $('<table/>').addClass('table').addClass('table-striped');
                 $popupTBody = $('<tbody/>');
-                $popupTBody.append('<tr><th>Last Year of Records</th><td>' + feature.properties.LastYear + '</td></tr>');
-                $popupTBody.append('<tr><th>Record Count</th><td>' + feature.properties.RecordCount + '</td></tr>');
+                $popupTBody.append('<tr><th>Last Year of Records</th><td>' + (feature.properties.last_year_of_records == 0 ?'':feature.properties.last_year_of_records) + '</td></tr>');
+                $popupTBody.append('<tr><th>Record Count</th><td>' + feature.properties.record_count + '</td></tr>');
 
                 const b = layer.getBounds();
                 const south = b.getSouth(), north = b.getNorth(), west = b.getWest(), east = b.getEast();

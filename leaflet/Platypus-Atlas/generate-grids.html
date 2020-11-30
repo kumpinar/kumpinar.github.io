@@ -50,8 +50,9 @@
 
                     <div class="well mb-2">
                         <div class="progress" style="display: none;">
-                            <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%"></div>
-                          </div>
+                            <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar"
+                                aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%"></div>
+                        </div>
                     </div>
 
 
@@ -133,14 +134,14 @@
                     <div style="width: 100%; padding-top: 50px;">
                         <div class="row">
                             <div class="col-4 text-secondary">
-                               <h4> Make sure the data folder structure should be like that:</h4>
+                                <h4> Make sure the data folder structure should be like that:</h4>
                             </div>
                             <div class="col-8">
                                 <img src="assets/data_folder_structure.png" class="img-fluid" alt="">
                             </div>
                         </div>
-                        
-                        
+
+
                     </div>
 
 
@@ -170,11 +171,11 @@
                 header: true,
                 complete: function (results) {
                     platypusRecords = results.data;
-                    platypusRecords=platypusRecords.filter(m => m['Record ID'] != '');
+                    platypusRecords = platypusRecords.filter(m => m['Record ID'] != '');
                     platypusRecords.forEach(r => {
                         const parsedYear = r['Event Date - parsed'].split('-')[0];
-                       
-                        if (isNaN(parsedYear) == false ) {
+
+                        if (isNaN(parsedYear) == false) {
                             r['Year'] = parseInt(parsedYear);
                         }
                         else {
@@ -219,7 +220,7 @@
             $('.progress').show();
             $.get(lgaUrl, function (data) {
                 lgaData = data;
-                totalItemCountToCalculate=lgaData.features.length;
+                totalItemCountToCalculate = lgaData.features.length;
                 lgaData.features.forEach(gridElement => {
                     setTimeout(() => {
                         CalculateLgaGridFeature(gridElement)
@@ -232,28 +233,34 @@
         function CalculateLgaGridFeature(gridElement) {
 
             if (calculatedItemsCount != totalItemCountToCalculate) {
-                
+
                 if (gridElement.geometry.coordinates.length > 0) {
                     const points = turf.pointsWithinPolygon(platypusRecordsGeojson, gridElement);
                     if (points.features.length > 0) {
-                        gridElement.properties.last_year_of_records = points.features[points.features.length - 1].properties.Year;
+                        var years = points.features.map((r) => {
+                            if (isNaN(r.properties.Year)) {
+                                return 0;
+                            }
+                            return r.properties.Year
+                        }).sort().reverse();
+                        gridElement.properties.last_year_of_records = years[0];
                         gridElement.properties.record_count = points.features.length;
                         foundFeatures.push(gridElement);
                     }
                     calculatedItemsCount++;
                 }
-                else{
+                else {
                     calculatedItemsCount++;
                 }
             }
 
-            console.log((100*calculatedItemsCount)/totalItemCountToCalculate);
-            $(".progress-bar").attr('aria-valuenow', ((100*calculatedItemsCount)/totalItemCountToCalculate));
-            $(".progress-bar").css('width', ((100*calculatedItemsCount)/totalItemCountToCalculate)+'%');
+            //console.log((100*calculatedItemsCount)/totalItemCountToCalculate);
+            $(".progress-bar").attr('aria-valuenow', ((100 * calculatedItemsCount) / totalItemCountToCalculate));
+            $(".progress-bar").css('width', ((100 * calculatedItemsCount) / totalItemCountToCalculate) + '%');
 
             if (calculatedItemsCount == totalItemCountToCalculate) {
                 lgaData.features = foundFeatures;
-                calculatedItemsCount=-1;
+                calculatedItemsCount = -1;
                 $('#btnLgaCalc').prop('disabled', false);
                 $('.btnGenerateGrid').prop('disabled', false);
                 $('.progress').hide();
@@ -269,44 +276,51 @@
             $('#btnLgaCalc').prop('disabled', true);
             $('.btnGenerateGrid').prop('disabled', true);
             $('.progress').show();
-            const cellSize=$(this).attr('size-km');
+            const cellSize = $(this).attr('size-km');
 
             let bounds = [135, -44, 155, -12];
             let squareGrid = turf.squareGrid(bounds, cellSize);
-            totalItemCountToCalculate=squareGrid.features.length;
+            totalItemCountToCalculate = squareGrid.features.length;
             squareGrid.features.forEach(gridElement => {
                 setTimeout(() => {
-                        CalculateGridFeature(gridElement, cellSize)
+                    CalculateGridFeature(gridElement, cellSize)
                 }, 100);
             });
 
         });
 
-        function CalculateGridFeature(gridElement, cellSize){
-            
-            if (calculatedItemsCount != totalItemCountToCalculate) {       
+        function CalculateGridFeature(gridElement, cellSize) {
+
+            if (calculatedItemsCount != totalItemCountToCalculate) {
                 const points = turf.pointsWithinPolygon(platypusRecordsGeojson, gridElement);
                 if (points.features.length > 0) {
-                    gridElement.properties.LastYear=points.features[points.features.length - 1].properties.Year;
-                    gridElement.properties.RecordCount=points.features.length;
+                    var years = points.features.map((r) => {
+                        if (isNaN(r.properties.Year)) {
+                            return 0;
+                        }
+                        return r.properties.Year
+                    }).sort().reverse();
+                    gridElement.properties.last_year_of_records = years[0];
+                    gridElement.properties.record_count = points.features.length;
+
                     foundFeatures.push(gridElement);
                 }
 
                 calculatedItemsCount++;
             }
 
-            console.log((100*calculatedItemsCount)/totalItemCountToCalculate);
-            $(".progress-bar").attr('aria-valuenow', ((100*calculatedItemsCount)/totalItemCountToCalculate));
-            $(".progress-bar").css('width', ((100*calculatedItemsCount)/totalItemCountToCalculate)+'%');
+            //console.log((100*calculatedItemsCount)/totalItemCountToCalculate);
+            $(".progress-bar").attr('aria-valuenow', ((100 * calculatedItemsCount) / totalItemCountToCalculate));
+            $(".progress-bar").css('width', ((100 * calculatedItemsCount) / totalItemCountToCalculate) + '%');
 
             if (calculatedItemsCount == totalItemCountToCalculate) {
                 let generatedGeoJson = L.geoJson().toGeoJSON();
-                generatedGeoJson.features=foundFeatures
-                calculatedItemsCount=-1;
+                generatedGeoJson.features = foundFeatures
+                calculatedItemsCount = -1;
                 $('#btnLgaCalc').prop('disabled', false);
                 $('.btnGenerateGrid').prop('disabled', false);
                 $('.progress').hide();
-                Save("grid-"+cellSize+"km.json", generatedGeoJson);
+                Save("grid-" + cellSize + "km.json", generatedGeoJson);
             }
         }
 
