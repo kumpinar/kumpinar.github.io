@@ -126,7 +126,7 @@
 
             $.ajax({
               contentType: "application/json; charset=utf-8",
-              url: "https://api.mapbox.com/geocoding/v5/mapbox.places/" + encodeURI(query) + ".json?access_token=pk.eyJ1IjoiYWNlbWltdWhlbmRpcyIsImEiOiJjajNvZnZvd3IwMDI0MnJydHhpZjZ5bnRsIn0.mVZMKTNJSZ0rWxy1F7nXhg&autocomplete=true",
+              url: "https://api.mapbox.com/geocoding/v5/mapbox.places/" + encodeURI(query) + ".json?access_token=pk.eyJ1IjoiYWNlbWltdWhlbmRpcyIsImEiOiJjajNvZnZvd3IwMDI0MnJydHhpZjZ5bnRsIn0.mVZMKTNJSZ0rWxy1F7nXhg&autocomplete=true&country=NL,BE",
               type: 'GET',
               dataType: "json",
               error: function () {
@@ -148,13 +148,7 @@
         console.log(value);
         if (value) {
           map.setView([value.split(',')[1], value.split(',')[0]], 15);
-          let markerCount=0;
-          markerLayer.eachLayer(function (l) {
-            if (l instanceof L.Marker && map.getBounds().contains(l.getLatLng())) {
-              markerCount++;
-            }
-          });
-          console.log(markerCount);
+          CheckMarkerCount();
         }
       });
 
@@ -166,6 +160,23 @@
         markerLayer = L.geoJson(data);
         map.addLayer(markerLayer);
       });
+
+      function CheckMarkerCount(){
+        setTimeout(() => {
+            let markerCount = 0;
+            markerLayer.eachLayer(function (l) {
+              if (l instanceof L.Marker && map.getBounds().contains(l.getLatLng())) {
+                markerCount++;
+              }
+            });
+            if(markerCount<1){
+              map.setZoom(map.getZoom()-1);
+              if(map.getZoom()<20 && map.getZoom()>2){
+                CheckMarkerCount();
+              }
+            }
+          }, 300);
+      }
 
     </script>
 
