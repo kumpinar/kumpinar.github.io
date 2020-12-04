@@ -213,6 +213,9 @@
                 $popup.find('.infoLink').attr("href", "https://rsis.ramsar.org/ris/" + feature.properties.ramsarid);
                 layer.bindPopup($popup[0]).openPopup();
               });
+            },
+            style: {
+                fillOpacity: 0.1
             }
           });
           ramsarPolygons.addLayer(geojsonPolygon);
