@@ -160,7 +160,7 @@
               marker.bindPopup($popup[0]).openPopup();
             });
 
-            optionsForPoints.push({ id: latlng.lat+','+latlng.lng, title: geoJsonPoint.properties.officialname });
+            optionsForPoints.push({ id: latlng.lat + ',' + latlng.lng, title: geoJsonPoint.properties.officialname });
 
             return marker;
           }
@@ -203,7 +203,18 @@
 
       function LoadRamsarPolygon(ramsaridsStr) {
         $.get("https://us-central1-upwork-leaflet.cloudfunctions.net/ramsarPolygons?ramsarids=" + ramsaridsStr, function (data) {
-          ramsarPolygons.addLayer(L.geoJson(data));
+          let geojsonPolygon = L.geoJson(data, {
+            onEachFeature: function (feature, layer) {
+              layer.once('click', (e) => {
+                $popup = $("#tmpPointPopup").clone();
+                $popup.find('.name').html(feature.properties.officialname);
+                $popup.find('.country').html(feature.properties.country_en);
+                $popup.find('.infoLink').attr("href", "https://rsis.ramsar.org/ris/" + feature.properties.ramsarid);
+                layer.bindPopup($popup[0]).openPopup();
+              });
+            }
+          });
+          ramsarPolygons.addLayer(geojsonPolygon);
         });
       }
 
