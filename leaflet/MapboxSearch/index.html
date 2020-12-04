@@ -102,7 +102,7 @@
       var $select = $('#txtSearch').selectize({
         preload: false,
         valueField: 'center',
-        labelField: 'place_name_de',
+        labelField: 'place_name_nl',
         maxItems: 1,
         loadThrottle: 600,
         load: function (query, callback) {
@@ -110,7 +110,7 @@
 
             $.ajax({
               contentType: "application/json; charset=utf-8",
-              url: "https://api.mapbox.com/geocoding/v5/mapbox.places/" + encodeURI(query) + ".json?access_token="+accessToken+"&autocomplete=true&language=de&types=place&country=NL,BE",
+              url: "https://api.mapbox.com/geocoding/v5/mapbox.places/" + encodeURI(query) + ".json?access_token="+accessToken+"&autocomplete=true&language=nl&types=place&country=NL,BE",
               type: 'GET',
               dataType: "json",
               error: function () {
