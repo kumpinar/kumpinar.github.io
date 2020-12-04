@@ -151,7 +151,7 @@
         let optionsForPoints = [];
         let pointGoejsonLayer = L.geoJson(data, {
           pointToLayer: function (geoJsonPoint, latlng) {
-            let marker = L.marker(latlng, {opacity:0});
+            let marker = L.marker(latlng, {opacity:1});
             marker.once('click', (e) => {
               console.log(geoJsonPoint);
               $popup = $("#tmpPointPopup").clone();
