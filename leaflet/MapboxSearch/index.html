@@ -114,11 +114,11 @@
       var selectize = $select[0].selectize; */
 
       var markerLayer = L.geoJson();
-
+      var accessToken = 'pk.eyJ1Ijoidm9vcmRldGh1aXN3ZXJrZXJzIiwiYSI6ImNraWEzeWNneDBsejAyem1uMTRpZXA0bngifQ.YJt04s0cLlBwtNG5iR3wJA';
       var $select = $('#txtSearch').selectize({
         preload: false,
         valueField: 'center',
-        labelField: 'place_name',
+        labelField: 'place_name_de',
         maxItems: 1,
         loadThrottle: 600,
         load: function (query, callback) {
@@ -126,7 +126,7 @@
 
             $.ajax({
               contentType: "application/json; charset=utf-8",
-              url: "https://api.mapbox.com/geocoding/v5/mapbox.places/" + encodeURI(query) + ".json?access_token=pk.eyJ1IjoiYWNlbWltdWhlbmRpcyIsImEiOiJjajNvZnZvd3IwMDI0MnJydHhpZjZ5bnRsIn0.mVZMKTNJSZ0rWxy1F7nXhg&autocomplete=true&country=NL,BE",
+              url: "https://api.mapbox.com/geocoding/v5/mapbox.places/" + encodeURI(query) + ".json?access_token="+accessToken+"&autocomplete=true&language=de&types=place&country=NL,BE",
               type: 'GET',
               dataType: "json",
               error: function () {
