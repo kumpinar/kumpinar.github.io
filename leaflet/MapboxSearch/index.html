@@ -96,22 +96,6 @@
       L.control.textbox = function (opts) { return new L.Control.textbox(opts); }
       L.control.textbox({ position: 'topright' }).addTo(map);
 
-      /* var $select = $('#txtSearch').selectize({
-        valueField: 'id',
-        labelField: 'title',
-        searchField: 'title',
-        maxItems: 1,
-        options: [
-          { id: 1, title: 'Amsterdam', url: 'http://en.wikipedia.org/wiki/Spectrometers' },
-          { id: 2, title: 'Madrid', url: 'http://en.wikipedia.org/wiki/Star_chart' },
-          { id: 3, title: 'Frankfurt', url: 'http://en.wikipedia.org/wiki/Electrical_tape' }
-        ],
-        create: false
-      });
-
-
-      // fetch the instance
-      var selectize = $select[0].selectize; */
 
       var markerLayer = L.geoJson();
       var accessToken = 'pk.eyJ1Ijoidm9vcmRldGh1aXN3ZXJrZXJzIiwiYSI6ImNraWEzeWNneDBsejAyem1uMTRpZXA0bngifQ.YJt04s0cLlBwtNG5iR3wJA';
@@ -152,9 +136,6 @@
         }
       });
 
-      /* selectizePlaka.on('item_add', onTipEkleCikar);
-       selectizePlaka.on('item_remove', onTipEkleCikar);
-*/
 
       $.get("geojson.json", function (data) {
         markerLayer = L.geoJson(data);
