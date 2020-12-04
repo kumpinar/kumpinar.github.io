@@ -36,8 +36,9 @@
 <body>
 
   <nav class="navbar navbar-expand-md navbar-light mb-2">
+    <img src="img/logo.png" class="img-fluid" alt="">
     <a class="navbar-brand" href="/">
-      Wetlands Map
+      Global standard for monitoring Ramsar wetlands
     </a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault"
       aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
@@ -69,8 +70,7 @@
               <div class="col-md-12">
                 <div class="form-group">
                   Search by name
-                  <input class='form-control' id='search-name' placeholder='Enter a name'
-                    type='text'>
+                  <input class='form-control' id='search-name' placeholder='Enter a name' type='text'>
                 </div>
               </div>
             </div>
@@ -112,8 +112,8 @@
             <th>Country</th>
             <td class="country"></td>
           </tr>
-          <tr>            
-            <td colspan="2" class="text-right"> 
+          <tr>
+            <td colspan="2" class="text-right">
               <a class="infoLink" href="#" target="_blank" class="btn btn-sm btn-info">View on rsis.ramsar.org</a>
             </td>
           </tr>
@@ -147,20 +147,20 @@
 
       $("#loading").show();
       $.get("https://us-central1-upwork-leaflet.cloudfunctions.net/ramsarPoints", function (data) {
-        let optionsForPoints=[];
+        let optionsForPoints = [];
         let pointGoejsonLayer = L.geoJson(data, {
           pointToLayer: function (geoJsonPoint, latlng) {
             let marker = L.marker(latlng);
             marker.once('click', (e) => {
-              console.log(geoJsonPoint);            
-              $popup=$("#tmpPointPopup").clone();
+              console.log(geoJsonPoint);
+              $popup = $("#tmpPointPopup").clone();
               $popup.find('.name').html(geoJsonPoint.properties.officialname);
               $popup.find('.country').html(geoJsonPoint.properties.country_en);
-              $popup.find('.infoLink').attr("href", "https://rsis.ramsar.org/ris/"+geoJsonPoint.properties.ramsarid);
+              $popup.find('.infoLink').attr("href", "https://rsis.ramsar.org/ris/" + geoJsonPoint.properties.ramsarid);
               marker.bindPopup($popup[0]).openPopup();
             });
 
-            optionsForPoints.push({id: latlng, title: geoJsonPoint.properties.officialname});
+            optionsForPoints.push({ id: latlng.lat+','+latlng.lng, title: geoJsonPoint.properties.officialname });
 
             return marker;
           }
@@ -168,7 +168,7 @@
         markers.addLayer(pointGoejsonLayer);
         map.addLayer(markers);
         $("#loading").hide();
-       
+
         InitSelectize(optionsForPoints);
       });
       var loadedRamsarPolygons = [];
@@ -207,15 +207,25 @@
         });
       }
 
-      function InitSelectize(optionsForPoints){
-        $('#search-name').selectize({
-					maxItems: 1,
-					valueField: 'id',
-					labelField: 'title',
-					searchField: 'title',
-					options:optionsForPoints ,
-					create: false
-				});
+      function InitSelectize(optionsForPoints) {
+        var $select = $('#search-name').selectize({
+          maxItems: 1,
+          valueField: 'id',
+          labelField: 'title',
+          searchField: 'title',
+          options: optionsForPoints,
+          create: false
+        });
+
+
+        var selectize = $select[0].selectize;
+
+        selectize.on('change', function (value) {
+          console.log(value);
+          if (value) {
+            map.setView([value.split(',')[0], value.split(',')[1]], 13);
+          }
+        });
       }
     </script>
 
