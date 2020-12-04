@@ -1,156 +1,225 @@
 <!DOCTYPE html>
 <html lang='en'>
-  <head>
-    <title>Wetlands</title>
 
-    <meta charset='utf-8'>
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<head>
+  <title>Wetlands</title>
 
-    <!-- Styles -->
-    <!-- Bootstrap cssS -->
-    <link rel="stylesheet" href="css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/bootstrap-reboot.min.css">
-    <link rel="stylesheet" href="css/custom.css"/>
-    <link rel="stylesheet" href="lib/marker-cluster/MarkerCluster.css"/>
-    <link rel="stylesheet" href="lib/marker-cluster/MarkerCluster.Default.css"/>
-    <link rel="stylesheet" href="css/leaflet.css"/>
+  <meta charset='utf-8'>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="lib/jquery-3.3.1.min.js"></script>
-    <script src="lib/popper.min.js"></script>
-    <script src="lib/bootstrap.min.js"></script>
-    <script src="https://use.fontawesome.com/52483a0e22.js"></script>
-    <script src="lib/ejs.min.js"></script>
-    <script src="lib/jquery.address.js"></script>
-    <script src="lib/jquery.csv.min.js"></script>
-    <script src="lib/moment.js"></script>
-    <script src="lib/geojson.min.js"></script>
-    <script src="js/csv-to-geojson.js"></script>
+  <!-- Styles -->
+  <!-- Bootstrap cssS -->
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/bootstrap-reboot.min.css">
+  <link rel="stylesheet" href="css/custom.css" />
+  <link rel="stylesheet" href="lib/marker-cluster/MarkerCluster.css" />
+  <link rel="stylesheet" href="lib/marker-cluster/MarkerCluster.Default.css" />
+  <link rel="stylesheet" href="css/leaflet.css" />
+  <link rel="stylesheet" href="lib/selectize/css/selectize.bootstrap4.css" />
 
-  
-    <script src="lib/leaflet/leaflet.js"></script>
-    <script src='lib/turf.min.js'></script>
-    <script src="lib/leaflet-color-markers.js" ></script>
-    <script src="lib/marker-cluster/leaflet.markercluster.js" ></script>
-    
+  <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+  <script src="lib/jquery-3.3.1.min.js"></script>
+  <script src="lib/popper.min.js"></script>
+  <script src="lib/bootstrap.min.js"></script>
+  <script src="https://use.fontawesome.com/52483a0e22.js"></script>
 
-  </head>
-  <body>
 
-    <nav class="navbar navbar-expand-md navbar-light mb-2">
-      <a class="navbar-brand" href="/">
-        Wetlands Map
-      </a>
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
+  <script src="lib/leaflet/leaflet.js"></script>
+  <script src='lib/turf.min.js'></script>
+  <script src="lib/leaflet-color-markers.js"></script>
+  <script src="lib/marker-cluster/leaflet.markercluster.js"></script>
+  <script src="lib/selectize/js/standalone/selectize.js"></script>
 
-      <div class="collapse navbar-collapse mr-auto" id="navbarsExampleDefault">
-        <ul class="navbar-nav ml-auto">
-          <li class='nav-item'>
-            <a class="nav-link active" href="/"><i class="fa fa-map-marker" aria-hidden="true"></i> Map</a>
-          </li>
-        </ul>
-      </div>
-    </nav>
 
-    <main role="main" class="container-fluid">
+</head>
 
-      <div class='row'>
-        <div class="col-md-3">
-          <p>We can add some explanations here. We can add some explanations here. We can add some explanations here. We can add some explanations here. We can add some explanations here. We can add some explanations here.<br /><a href='#'>Read more &raquo;</a></p>
+<body>
 
-          <i id="loading" class="fa fa-3x fa-spinner fa-spin" style="display: none;"></i>
-          <div class="card bg-light" style="display: none;">
-            <div class="card-body">
-              <div class='row'>
-                <div class="col-md-8">
-                  <div class="form-group">
-                      Near an address
-                      <input class='form-control' id='search-address' placeholder='Enter an address' type='text'>
-                  </div>
+  <nav class="navbar navbar-expand-md navbar-light mb-2">
+    <a class="navbar-brand" href="/">
+      Wetlands Map
+    </a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault"
+      aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse mr-auto" id="navbarsExampleDefault">
+      <ul class="navbar-nav ml-auto">
+        <li class='nav-item'>
+          <a class="nav-link active" href="/"><i class="fa fa-map-marker" aria-hidden="true"></i> Map</a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <main role="main" class="container-fluid">
+
+    <div class='row'>
+      <div class="col-md-3">
+        <p>We can add some explanations here. We can add some explanations here. We can add some explanations here. We
+          can add some explanations here. We can add some explanations here. We can add some explanations here.<br /><a
+            href='#'>Read more &raquo;</a></p>
+
+        <i id="loading" class="fa fa-3x fa-spinner fa-spin" style="display: none;"></i>
+        <div class="card bg-light">
+          <div class="card-body">
+
+            <div class='row'>
+              <div class="col-md-12">
+                <div class="form-group">
+                  Search by name
+                  <input class='form-control' id='search-name' placeholder='Enter a name'
+                    type='text'>
                 </div>
-
-                <div class="col-md-4">
-                  <div class='form-group'>
-                      Within
-                      <select id='search-radius' class='form-control'>
-                        <option value='1610'>1 mile</option>
-                        <option value='3220'>2 miles</option>
-                        <option value='8050'>5 miles</option>
-                      </select>
-                  </div>
-                </div>
-              </div>
-
-              <div class='row'>
-                <div class="col-md-12">
-                  <div class="form-group">
-                      Search by name
-                      <input class='form-control' id='search-name' placeholder='Enter a business or organization name' type='text'>
-                  </div>
-                </div>
-              </div>
-
-              <button class='btn btn-primary' id="btnSearch"><i class='fa fa-search'></i> Search</button>
-              <a href="/" class='btn btn-secondary' id="btnReset" title="Reset"><i class="fa fa-repeat" aria-hidden="true"></i> Reset</a>
-              <button class='btn btn-dark' id='btnViewMode' title='Change view'><i class='fa fa-list'></i> List view</button>
-
               </div>
             </div>
           </div>
-
-          <div class='col-md-9'>
-            <div id='mapCanvas' style="display: block; height: 1000px;"></div>
-          </div>
         </div>
+      </div>
 
-        <div class="modal fade" id="modal-pop" tabindex="-1" role="dialog">
-          <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-              <div class="modal-body">
-                <div class="container-fluid bd-example-row">
-                  <div class="row">
-                    <div class="col-md-12">
-                      <button type="button" class="close close-btn" data-dismiss="modal" aria-label="Close"><span aria-hidden="true"><i class="fa fa-times-circle" aria-hidden="true"></i></span></button>
-                      <div id="modal-main"></div>
-                    </div>
-                  </div>
+      <div class='col-md-9'>
+        <div id='mapCanvas' style="display: block; height: 1000px;"></div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="modal-pop" tabindex="-1" role="dialog">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-body">
+            <div class="container-fluid bd-example-row">
+              <div class="row">
+                <div class="col-md-12">
+                  <button type="button" class="close close-btn" data-dismiss="modal" aria-label="Close"><span
+                      aria-hidden="true"><i class="fa fa-times-circle" aria-hidden="true"></i></span></button>
+                  <div id="modal-main"></div>
                 </div>
               </div>
-            </div><!-- /.modal-content -->
-          </div><!-- /.modal-dialog -->
-        </div><!-- /.modal -->
+            </div>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
 
-        <script type="text/javascript">
+    <div style="display: none;">
+      <table id="tmpPointPopup" class="table table-striped">
+        <tbody>
+          <tr>
+            <th>Official Name</th>
+            <td class="name"></td>
+          </tr>
+          <tr>
+            <th>Country</th>
+            <td class="country"></td>
+          </tr>
+          <tr>            
+            <td colspan="2" class="text-right"> 
+              <a class="infoLink" href="#" target="_blank" class="btn btn-sm btn-info">View on rsis.ramsar.org</a>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
-        $(window).resize(function () {
-          var h = $(window).height(),
-            offsetTop = 70; // Calculate the top offset
+    <script type="text/javascript">
 
-          $('#mapCanvas').css('height', (h - offsetTop));
-        }).resize();
+      $(window).resize(function () {
+        var h = $(window).height(),
+          offsetTop = 70; // Calculate the top offset
 
-        var map = L.map('mapCanvas', {
-            renderer: L.canvas()
-        }).setView([38.32559334, 35.26421442], 2);
+        $('#mapCanvas').css('height', (h - offsetTop));
+      }).resize();
+
+      var map = L.map('mapCanvas', {
+        renderer: L.canvas()
+      }).setView([38.32559334, 35.26421442], 2);
+      map.fitWorld();
+
+      var markers = L.markerClusterGroup();
+
+      var ramsarPolygons = L.featureGroup();
+      map.addLayer(ramsarPolygons);
 
 
-        var osmTileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        }).addTo(map);
+      var osmTileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+      }).addTo(map);
 
-        $("#loading").show();
-        $.get("https://us-central1-upwork-leaflet.cloudfunctions.net/ramsarPoints", function (data) {
-            
-            var markers = L.markerClusterGroup();
-            markers.addLayer(L.geoJson(data));
-            map.addLayer(markers);
-            $("#loading").hide();
+      $("#loading").show();
+      $.get("https://us-central1-upwork-leaflet.cloudfunctions.net/ramsarPoints", function (data) {
+        let optionsForPoints=[];
+        let pointGoejsonLayer = L.geoJson(data, {
+          pointToLayer: function (geoJsonPoint, latlng) {
+            let marker = L.marker(latlng);
+            marker.once('click', (e) => {
+              console.log(geoJsonPoint);            
+              $popup=$("#tmpPointPopup").clone();
+              $popup.find('.name').html(geoJsonPoint.properties.officialname);
+              $popup.find('.country').html(geoJsonPoint.properties.country_en);
+              $popup.find('.infoLink').attr("href", "https://rsis.ramsar.org/ris/"+geoJsonPoint.properties.ramsarid);
+              marker.bindPopup($popup[0]).openPopup();
+            });
+
+            optionsForPoints.push({id: latlng, title: geoJsonPoint.properties.officialname});
+
+            return marker;
+          }
         });
-        
-        </script>
+        markers.addLayer(pointGoejsonLayer);
+        map.addLayer(markers);
+        $("#loading").hide();
+       
+        InitSelectize(optionsForPoints);
+      });
+      var loadedRamsarPolygons = [];
+      markers.on('animationend', function (event) {
+        LoadUnExistRamsarPolygons();
+      });
 
-    </main>
-  </body>
+
+      map.on('moveend', function (event) {
+        LoadUnExistRamsarPolygons();
+      });
+
+
+      function LoadUnExistRamsarPolygons() {
+        let ramsarids = [];
+        markers._featureGroup.getLayers().forEach(layer => {
+          if (layer.feature) {
+            if (layer instanceof L.Marker && map.getBounds().contains(layer.getLatLng())) {
+              if (!loadedRamsarPolygons.includes(layer.feature.properties.ramsarid)) {
+                loadedRamsarPolygons.push(layer.feature.properties.ramsarid);
+                ramsarids.push(layer.feature.properties.ramsarid);
+              }
+            }
+          }
+        });
+
+        if (ramsarids.length > 0) {
+          LoadRamsarPolygon(ramsarids.join())
+        }
+      }
+
+
+      function LoadRamsarPolygon(ramsaridsStr) {
+        $.get("https://us-central1-upwork-leaflet.cloudfunctions.net/ramsarPolygons?ramsarids=" + ramsaridsStr, function (data) {
+          ramsarPolygons.addLayer(L.geoJson(data));
+        });
+      }
+
+      function InitSelectize(optionsForPoints){
+        $('#search-name').selectize({
+					maxItems: 1,
+					valueField: 'id',
+					labelField: 'title',
+					searchField: 'title',
+					options:optionsForPoints ,
+					create: false
+				});
+      }
+    </script>
+
+  </main>
+</body>
+
 </html>
