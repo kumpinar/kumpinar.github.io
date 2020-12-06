@@ -1,0 +1,1155 @@
+/*                                          INDEX                                          */
+/* --------------------------------------- COLOURS --------------------------------------- */
+/* -------------------------------------- TYPOGRAPHY ------------------------------------- */
+/* --------------------------------------- ELEMENTS -------------------------------------- */
+/* ---------------------------------------- PAGES ---------------------------------------- */
+/* ---------------------------------------- FORMS ---------------------------------------- */
+/* --------------------------------------- LEAFLET --------------------------------------- */
+/*                                        END:INDEX                                        */
+
+/* --------------------------------------- COLOURS --------------------------------------- //
+Brand green          #3AAFA2     rgb(58, 175, 162)
+Brand light green    #E4F4F2     rgb(228, 244, 242)
+Brand purple         #F7006B     rgb(247, 0, 107)
+Brand purple hover   #F72C85     rgb()
+Title black          #545454     rgb(84, 84, 84)
+Body text grey       #949494     rgb(124, 148, 148)
+Body text white      #E4F4F2     rgb(228, 244, 242)
+Background grey      #F2F6F9     rgb(242, 246, 249)
+Input border grey    #E5E5E5     rgb(229, 229, 229)
+Footer l.black       #1D1F21     rgb()
+Footer d.black       #000000     rgb(255, 255, 255)
+// ------------------------------------- END: COLOURS ------------------------------------ */
+
+/* -------------------------------------- TYPOGRAPHY ------------------------------------- */
+/* H1 Font */
+h1 {
+  margin-bottom: 36px !important;
+}
+@media (max-width: 767.98px) {
+  h1 {
+    margin-bottom: 0px !important;
+  }
+}
+/* H2 Font */
+h2 {
+  margin-bottom: 44px !important;
+}
+@media (max-width: 767.98px) {
+  h2 {
+    margin-bottom: 22px !important;
+  }
+}
+/* H3 Font */
+h3 {
+  margin-bottom: 20px !important;
+}
+@media (max-width: 767.98px) {
+  h3 {
+    font-size: 20px !important;
+  }
+}
+/* H4 Font */
+h4 {
+  margin-bottom: 23px !important;
+}
+/* H5 Font */
+h5 {
+  margin-bottom: 18px !important;
+}
+#search-form label {
+  font-family: Gilroy-Bold;
+  font-weight: 400;
+  text-transform: uppercase;
+  font-size: 13px;
+  line-height: 14.95px;
+  letter-spacing: 2px;
+  color: #3aafa2;
+}
+/* H1, H2, H3, H4 accent color */
+h1 b,
+h2 b,
+h3 b,
+h4 b {
+  color: #3aafa2;
+  font-weight: 400;
+}
+/* Text Font */
+.c-forms-form label,
+.c-forms-form span,
+.c-editor,
+.c-content,
+#sub-footer .menu,
+#booking-form .c-forms-payment-total-amount {
+  font-family: Poppins;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 24px;
+  letter-spacing: 0.1px;
+  color: #949494;
+  text-transform: none;
+}
+/* Text Font - small  */
+#filter-form label,
+.leaflet-tooltip,
+#search-form input,
+#search-form input::placeholder,
+select,
+#map .hotelSlogan,
+#map .hotelFeatures {
+  font-family: Poppins !important;
+  font-weight: normal !important;
+  text-transform: none !important;
+  font-size: 14px !important;
+  line-height: 20px;
+  letter-spacing: 0.1px;
+  color: #949494;
+  text-align: justify;
+  text-justify: inter-word;
+}
+@media (max-width: 767.98px) {
+  select,
+  input,
+  #booking-form input,
+  #search-form input,
+  #search-form input::placeholder {
+    font-size: 16px !important;
+  }
+}
+
+/* Multiple date picker design */
+.ui-datepicker .ui-datepicker-calendar .ui-state-highlight a {
+  background-color: #3aafa2 !important;
+}
+/* ----------------------------------- END: TYPOGRAPHY ----------------------------------- */
+
+/* ---------------------------------------- ELEMENTS --------------------------------------- */
+/* Buttons
+btn {
+    border-radius: 5px;
+    color: #FFFFFF;
+    font-family: Poppins;
+    font-weight: 700;
+    font-size: 12px;
+    line-height: 20px;
+    letter-spacing: 2px;
+    padding: 21px 51px;
+    background-color: #3AAFA2;
+}
+/* Input */
+select {
+  padding: 10px 21px !important;
+  color: #949494 !important;
+}
+select:focus {
+  border-color: #3aafa2 !important;
+}
+/* Date picker */
+.ui-widget {
+  font-family: inherit;
+  font-size: inherit;
+}
+.ui-datepicker-header {
+  background: #3aafa2 !important;
+  color: white !important;
+  border: none !important;
+  border-radius: 5px 5px 0 0 !important;
+}
+.ui-state-hover {
+  background: none !important;
+  border: none !important;
+}
+.ui-state-hover .ui-icon {
+  border: none !important;
+}
+.ui-datepicker-calendar thead {
+  font-family: Gilroy-Bold;
+  font-weight: 400;
+  text-transform: uppercase;
+  font-size: 13px;
+  line-height: 14.95px;
+  letter-spacing: 2px;
+  color: #3aafa2;
+}
+.ui-datepicker-calendar td {text-align: center !important;}
+.ui-state-default {background: #f2f6f9 !important;border: none !important;}
+.ui-state-default:hover {color: #f7006b !important;}
+
+/* Multidate picker */
+.flatpickr-calendar {padding: 10px !important;}
+.flatpickr-rContainer {padding: 0px !important;}
+.flatpickr-current-month {padding-top: 0 !important;}
+.flatpickr-monthDropdown-months {
+  padding: 0 21px 0 21px;
+  background-image: none !important;
+  color: #4c4c4c !important;
+}
+.flatpickr-weekdays {
+	color: #545454 !important;
+}
+.numInput {
+  border: 0 !important;
+  font-size: 14px !important;
+  padding-left: 21px !important;
+  padding-right: 21px !important;
+}
+.numInputWrapper {width: 7ch !important;}
+.arrowUp, .arrowDown {display: none !important;}
+.numInputWrapper:hover {background-color: #fff !important;}
+.submitDates {width: 100%;margin:0 !important;}
+.flatpickr-day.selected {background-color: #545454 !important;border-color: #545454 !important;}
+/* ------------------------------------- END: ELEMENTS ------------------------------------- */
+
+/* ---------------------------------------- PAGES ---------------------------------------- */
+
+/* All pages*/
+body {
+  padding-bottom: 0 !important;
+}
+.elementor-col-100
+  > .elementor-column-wrap
+  > .elementor-widget-wrap
+  > .elementor-widget-heading
+  h2.elementor-heading-title {
+  width: 100% !important;
+}
+
+/* Header */
+.elementor-menu-toggle:focus {
+  outline: none;
+}
+.home #header {
+  background-color: transparent !important;
+}
+#header h3 {
+  margin-bottom: 0 !important;
+}
+/* Sub header */
+#sub-header h2 {
+  margin-bottom: 0 !important;
+}
+.home #sub-header,
+.elementor-page-6466 #sub-header {
+  display: none;
+}
+
+/* Footer */
+#sub-footer li {
+  margin-bottom: 0;
+}
+#sub-footer li > a {
+  color: #f2f6f9 !important;
+}
+#sub-footer li > a:hover {
+  color: #3aafa2 !important;
+}
+#footer .elementor-widget-social-icons .elementor-widget-container {
+  height: 34px !important;
+}
+@media (max-width: 767.98px) {
+  #menu-footer-menu-mobile {
+    text-align: center;
+  }
+}
+#footer .elementor-element-6ec2d56 a {
+  color: #949494;
+}
+#footer .elementor-element-6ec2d56 a:hover {
+  color: #3aafa2;
+}
+#sub-footer h4 {
+  margin: 0 !important;
+}
+#sub-footer button {
+  padding: 10px 21px !important;
+}
+#sub-footer input {
+  padding: 0px 10px !important;
+  font-size: 14px;
+  background-color: #f2f6f9;
+}
+
+/* Home page */
+.home .elementor-element-3aa8981a {
+  margin-top: -64px;
+}
+.home #search-form {
+  max-width: 720px;
+  margin: auto;
+  background-color: #f2f6f9;
+}
+.home .owl-stage-outer {
+  border-radius: 5px;
+}
+.home .owl-dots {
+  margin-top: -25px;
+}
+.elementor-element-53401b9 .elementor-icon-list-items {
+  columns: 3;
+  -webkit-columns: 3;
+  -moz-columns: 3;
+}
+
+/* Map */
+.page-id-5854 .elementor-element-efe464d {
+  margin-bottom: 0px !important;
+}
+.page-id-5854 #sub-header,
+.page-id-5854 #sub-footer {
+  display: none;
+}
+.page-id-5854 #search-form {
+  background-color: white;
+}
+.page-id-5854 #search-form .dynamic {
+  width: 33%;
+  max-width: 33%;
+  flex: 0 0 33%;
+}
+.page-id-5854 #search-form .row > div:last-child {
+  display: none;
+}
+.page-id-5854 .elementor-element-1e5d2c0 {margin-bottom: 0 !important;}
+@media (max-width: 767.98px) {
+  .page-id-5854 #footer {
+    display: none;
+  }
+  .page-id-5854 {
+    margin: 0 !important;
+    height: 100% !important;
+    overflow: hidden !important;
+  }
+}
+.page-id-5854 .elementor-element-14d199d .elementor-column-wrap,
+.page-id-5854 .elementor-element-aed039f .elementor-column-wrap {
+  padding: 0 !important;
+}
+.hotelBook a {
+  margin-top: 10px !important;
+  margin-bottom: 0 !important;
+  padding: 10px !important;
+  width: 100%;
+  background-color: #3aafa2;
+  color: white !important;
+  text-align: center;
+}
+.hotelBook a:hover {
+  background-color: #3aafa2;
+  color: white;
+}
+
+/* Hotel pages */
+.elementor-page-6466 h2 {
+  margin-bottom: 0 !important;
+}
+.elementor-element-2f2340d a:hover {
+  color: inherit;
+  text-decoration: underline;
+}
+.elementor-page-6466 .deb_intro_cont {
+  display: none;
+}
+.elementor-page-6466 .elementor-element-17895d5 {
+  margin-top: 0 !important;
+}
+.elementor-image a {
+  width: 100%;
+}
+h5.elementor-icon-box-title {
+  margin: 0 !important;
+  line-height: 13px;
+}
+.elementor-page-6466 .elementor-counter-number-wrapper {
+  width: 300px !important;
+  margin: auto !important;
+}
+.elementor-page-6466 .elementor-element-f7b8d05 li:before {
+  content: none !important;
+}
+.elementor-page-6466 .elementor-element-f7b8d05 li i {
+  text-align: center;
+}
+#hotelId {
+  display: none;
+}
+.elementor-page-6466 .leaflet-map img {
+  border-radius: 0 !important;
+}
+#hotelName h2 {
+  margin-bottom: 0;
+}
+#booking-button > div > a {
+  width: 100%;
+}
+.elementor-widget-icon-box.elementor-position-left .elementor-icon-box-wrapper {
+  text-align: left;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: row;
+  flex-direction: row;
+}
+.elementor-page-6466
+  .elementor-widget-icon-box.elementor-position-left
+  .elementor-icon-box-wrapper,
+.elementor-page-6466
+  .elementor-widget-icon-box.elementor-position-right
+  .elementor-icon-box-wrapper {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+}
+.elementor-page-6466
+  .elementor-widget-icon-box.elementor-position-left
+  .elementor-icon-box-icon,
+.elementor-page-6466
+  .elementor-widget-icon-box.elementor-position-right
+  .elementor-icon-box-icon {
+  display: -webkit-inline-box;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  -webkit-box-flex: 0;
+  -ms-flex: 0 0 auto;
+  flex: 0 0 auto;
+}
+.elementor-page-6466
+  .elementor-widget-icon-box.elementor-position-left
+  .elementor-icon-box-wrapper {
+  text-align: left;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: row;
+  flex-direction: row;
+}
+.elementor-page-6466
+  .elementor-6466
+  .elementor-position-left
+  .elementor-icon-box-icon {
+  margin-right: 15px !important;
+}
+#mobile-slideshow .elementor-image-carousel-wrapper {
+  height: 300px;
+  border-radius: 5px;
+}
+#mobile-slideshow .swiper-slide-inner {
+  height: 100%;
+}
+#mobile-slideshow img {
+  height: 100%;
+  object-fit: cover;
+}
+.elementor-page-6466 .elementor-field-group-hotelid {
+  display: none !important;
+}
+
+/* Werksuites page and Steden page */
+.elementor-element-bdf757a h5,
+#cities-list h5 {
+  display: none;
+}
+.elementor-element-bdf757a .cat-item-1,
+#cities-list .cat-item-1 {
+  display: none;
+}
+.elementor-element-bdf757a a,
+#cities-list a {
+  color: #949494;
+}
+.elementor-element-bdf757a a:hover,
+#cities-list a:hover {
+  color: #3aafa2;
+}
+.elementor-element-bdf757a ul,
+#cities-list ul {
+  columns: 2;
+  -webkit-columns: 2;
+  -moz-columns: 2;
+  text-align: center;
+}
+@media (min-width: 768px) {
+  .elementor-element-bdf757a ul,
+  #cities-list ul {
+    columns: 4;
+    -webkit-columns: 4;
+    -moz-columns: 4;
+  }
+}
+@media (min-width: 992px) {
+  .elementor-element-bdf757a ul,
+  #cities-list ul {
+    columns: 6;
+    -webkit-columns: 6;
+    -moz-columns: 6;
+  }
+}
+
+/* Nieuws pages */
+.single-post .container {
+  max-width: 800px;
+}
+.single-post blockquote p {
+  font-size: 18px;
+}
+.deb_image_bck {
+  background-position: 50% 50% !important;
+}
+.deb_single_page > img,
+#comments {
+  display: none;
+}
+
+/* Voor Hotels page */
+.page-id-9810 #c-submit-button {
+  background-color: #949494;
+}
+.page-id-9810 input,
+.page-id-9810 select {
+  margin: 0;
+  font-size: 16px;
+  color: #949494;
+}
+.page-id-9810 .c-email {
+  display: none;
+}
+.page-id-9810 .c-action {
+  float: right;
+}
+
+/* Over ons page */
+.elementor-element-1144d1a .owl-stage-outer {
+  margin-left: 26%;
+}
+@media (max-width: 767.98px) {
+  .elementor-element-1144d1a .owl-stage-outer {
+    margin-left: 0 !important;
+  }
+}
+
+/* FAQ */
+.deb_image_bck {background-position: 90% 50% !important;}
+
+/* Contact page */
+#contact-form input {margin: 0;}
+
+/* Feedback page */
+#feedback-form div[data-field="Title"] .c-content {
+  font-family: Gilroy-Bold;
+  font-size: 36px;
+  line-height: 46px;
+  letter-spacing: -1px;
+  color: #3AAFA2;
+}
+#feedback-form .c-choice-option span {color: rgb(254, 201, 48);font-size: 24px;}
+#feedback-form em {font-size: 14px}
+#feedback-form input {margin: 0;}
+#feedback-form .c-action, #feedback-form .c-action .c-button {width: 100%;}
+
+/* Bedankt page */
+.page-id-10223 .deb_intro_cont {display: none;}
+.page-id-10223 #share-buttons {text-align: center;}
+.page-id-10223 .elementor-widget-share-buttons {display: inline-block;margin-right: 8px;}
+.page-id-10223 .elementor-element-580a073 span {font-style: italic;}
+
+/* -------------------------------------- END: PAGES ------------------------------------- */
+
+/* ---------------------------------------- FORMS ---------------------------------------- */
+
+/* All forms */
+form *:focus {
+  outline: none;
+}
+form ::placeholder,
+form select {
+  color: #949494;
+  opacity: 1;
+}
+form .elementor-field,
+form .elementor-button {
+  margin: 0 !important;
+  border-radius: 5px !important;
+  border-width: 1px;
+}
+.c-forms-form .c-number-spinner input.c-number-value {
+  margin: 0;
+}
+.c-forms-form .c-number-spinner button {
+  margin: 0;
+}
+
+/* Newsletter form */
+#newsletter-form .elementor-field,
+#newsletter-form .elementor-button {
+  padding: 10px !important;
+}
+
+/* Exit poll form */
+#exit-poll-form .c-forms-form-main {
+  text-align: center !important;
+}
+#exit-poll-form .c-action {
+  float: none;
+}
+
+/* Search form */
+.elementor-element-53c3324 {
+  padding: 0 !important;
+}
+#search-form select,
+#search-form input {
+  color: #949494 !important;
+}
+@media (max-width: 767.98px) {
+  .page-id-5854 #search-form label,
+  .page-id-5854 #filter-form div:first-child {
+    display: none;
+  }
+  .page-id-5854 #search-form select {
+    margin-top: 2px !important;
+  }
+}
+#search-form .dynamic {
+  padding: 0px 5px !important;
+}
+#search-form {
+  border: solid;
+  border-color: rgb(204, 204, 201) !important;
+  border-radius: 5px;
+  border-width: 1px !important;
+  padding: 3px 5px !important;
+}
+#search-form label {
+  color: #545454;
+}
+#search-form input,
+#search-form select {
+  border: none;
+  background-color: transparent;
+  width: 100%;
+  margin: 0;
+  position: relative;
+  z-index: 100;
+  padding: 0 !important;
+  height: 20px !important;
+}
+#search-form button {
+  width: 100%;
+  position: relative;
+  z-index: 100;
+  margin: 0 !important;
+  padding: 15px 21px;
+  background-color: #f7006b;
+}
+#search-form .row > div:last-child {
+  padding: 0;
+}
+@media only screen and (max-width: 767px) {
+  #search-form button {
+    margin-top: 10px;
+    padding: 10px 21px;
+  }
+}
+
+/* Filter form */
+#filter-form {
+  padding: 5px 0 0 0;
+  margin-bottom: -5px;
+}
+#filter-form h5 {
+  color: #545454 !important;
+  margin: 7px 0 0 0 !important;
+  line-height: 13px !important;
+}
+#filter-form div {
+  margin-right: 20px;
+}
+@media only screen and (max-width: 767px) {
+  .page-id-5854 .elementor-element-ce310a5,
+  .page-id-5854 footer {
+    display: none;
+  }
+  #filter-form div {
+    margin-right: 10px !important;
+  }
+}
+
+/* Feedback form */
+#feedback-form label > span {
+  padding-left: 8px;
+}
+#feedback-form [data-field="CustomerRatingQuestion"] {
+  text-align: center;
+}
+
+/* Booking form  */
+#booking-form {
+  min-height: 400px;
+}
+#booking-form .c-forms .c-form .c-field {
+  padding: 5px 0;
+}
+#booking-form input[type="text"], #booking-form select {
+  padding: 10px 15px !important;
+  margin: 0;
+  height: 46px !important;
+}
+/* first page */
+#booking-form div[data-field="CustomerBookingDate"] {
+  width: calc(50% - 5px) !important;
+  float: left !important;
+  clear: none !important;
+  margin-right: 5px;
+}
+#booking-form div[data-field="CustomerBookingDate"] .c-editor:after, #booking-form div[data-field="CustomerBookingDate"] .c-editor:hover:after {
+	content: "+" !important;
+	color: #3AAFA2;
+	position: relative !important;
+	top: -35px;
+	left: calc(95% - 10px);
+	font-family: Poppins;
+	font-weight: 400;
+	font-size: 16px;
+	line-height: 24px;
+	letter-spacing: 0.1px;
+	text-transform: none;
+	cursor: pointer !important;
+}
+#booking-form div[data-field="CustomerBookingDate"] input:focus {
+  border-color: #3aafa2 !important;
+}
+#booking-form div[data-field="CustomerBookingDate"] input {
+  color: #949494 !important;
+}
+#booking-form div[data-field="CustomerPersons"] {
+  width: calc(50% - 5px) !important;
+  float: right !important;
+  clear: none !important;
+  margin-left: 5px;
+}
+#booking-form div[data-field="CustomerPersons"] select {
+  border-color: #e5e5e5 !important;
+}
+#booking-form div[data-field="CustomerPersons"] select:focus {
+  border-color: #3aafa2 !important;
+}
+#booking-form div[data-field="CustomerPersons"] select::placeholder {
+  color: #545454 !important;
+}
+#booking-form .c-label {
+  padding: 2px 0 !important;
+}
+#booking-form .c-label::after {
+  content: none;
+}
+#booking-form .c-span-8,
+#booking-form .c-span-16 {
+  clear: none !important;
+  display: inline-block !important;
+}
+#booking-form .c-span-8 {
+  width: 20% !important;
+  text-align: right;
+}
+#booking-form .c-span-16 {
+  width: 80% !important;
+}
+#booking-form .c-forms-form .c-editor {
+  padding: 0 !important;
+}
+#booking-form p {
+  margin-top: 0 !important;
+}
+#booking-form .c-calculation-currency {
+  margin-top: -1px !important;
+}
+#booking-form .c-span-16 .c-editor.c-yesno-checkbox {
+  margin-left: -10px;
+}
+#booking-form .c-yesno-checkbox {
+  overflow: visible !important;
+}
+#booking-form .c-visible-container .c-editor.c-html {
+  padding-left: 20px !important;
+}
+#booking-form .c-yesno-checkbox input {
+  font-size: 14px !important;
+}
+#booking-form .c-yesno-checkbox label {
+  padding: 0px 10px 0px 1.6em !important;
+}
+div[data-field="TotalDaysPrice"] {
+  float: right !important;
+}
+div[data-field="TotalLunchPrice"] .c-content,
+div[data-field="TotalBathroomPrice"] .c-content,
+div[data-field="TotalOvernightPrice"] .c-content {
+  margin-left: 3px;
+}
+#booking-form span {
+  padding-left: 10px;
+}
+#booking-form button.c-page-next-page {
+  background-color: #f7006b;
+}
+#booking-form div[data-field="SectionHiddenViaCSS"] {
+  display: none;
+}
+/* second page */
+#booking-form .c-name > div > div.c-editor.c-span-1 {
+  width: calc(50% - 5px) !important;
+}
+#booking-form .c-name > div:nth-child(2) > div:nth-child(1) {
+  margin-right: 5px !important;
+}
+#booking-form .c-name > div:nth-child(2) > div:nth-child(2) {
+  margin-left: 5px !important;
+}
+#booking-form div[data-field="CustomerCoupon"] {
+  width: calc(75% - 5px);
+  float: left;
+  margin-right: 5px;
+}
+#booking-form
+  > div
+  > div
+  > div.elementor-element.elementor-element-da58f2a.elementor-widget.elementor-widget-html
+  > div
+  > div
+  > form
+  > div
+  > div.c-forms-form-body.toggle-on
+  > div
+  > div
+  > div.c-page-page2
+  > div.c-forms-template
+  > div
+  > div.c-field.c-col-13.c-sml-col-1.c-span-12.c-sml-span-12 {
+  width: calc(25% - 5px);
+  float: right !important;
+  margin-left: 5px;
+  clear: none;
+}
+#booking-form
+  > div
+  > div
+  > div.elementor-element.elementor-element-da58f2a.elementor-widget.elementor-widget-html
+  > div
+  > div
+  > form
+  > div
+  > div.c-forms-form-body.toggle-on
+  > div
+  > div
+  > div.c-page-page2
+  > div.c-forms-template
+  > div
+  > div.c-field.c-col-13.c-sml-col-1.c-span-12.c-sml-span-12
+  > div {
+  border-radius: 5px !important;
+  color: #949494;
+  font-family: Poppins;
+  font-weight: 700;
+  font-size: 12px;
+  line-height: 20px;
+  letter-spacing: 2px;
+  padding: 13px 15px !important;
+  background-color: #e5e5e5;
+  cursor: pointer;
+}
+#booking-form #text {
+  color: red !important;
+}
+div[data-field="InvoiceWanted"] {
+  margin-left: 10px;
+}
+div[data-field="InvoiceName"] {
+  width: calc(100% + 10px) !important;
+  margin-left: -10px !important;
+}
+div[data-field="InvoiceAddress"] {
+  width: calc(100% + 10px) !important;
+  margin-left: -10px !important;
+}
+#booking-form .c-payment-section,
+#booking-form .c-payment-section .c-field {
+  padding: 0;
+}
+#booking-form .c-background-highlight {
+  background-color: #f2f6f9;
+  border-radius: 5px;
+  padding: 4px 9px;
+}
+#booking-form .c-order-noaccount {
+  width: 100%;
+}
+#booking-form .c-forms-payment-line-item-label,
+#booking-form .c-forms-payment-lineitem-description {
+  padding: 0;
+}
+#booking-form .c-forms-payment-label {
+  display: none;
+}
+#booking-form .c-action {
+  width: 100%;
+  margin: 0;
+}
+#booking-form .c-page-next-page {
+  width: 100%;
+  margin-left: 5px;
+}
+#booking-form .c-page-previous-page {
+  width: calc(50% - 5px);
+  float: left;
+  margin-right: 5px;
+  background-color: #e5e5e5;
+  color: #949494;
+}
+#booking-form #c-submit-button {
+  width: calc(50% - 5px);
+  float: right;
+  margin-left: 5px;
+  background-color: #f7006b;
+}
+#booking-form .c-forms-payment-total-amount {
+  padding-bottom: 10px;
+  font-weight: 400 !important;
+}
+#booking-form .c-validation {
+  background-color: #3aafa2 !important;
+}
+
+/* Hotel contact form */
+/* #hotel-contact-form input {margin:0 !important;} */
+
+.wrapper-list {
+  display: grid;
+  grid-gap: 10px;
+  grid-template-columns: repeat(2, [col] 125px);
+  grid-template-rows: repeat(1, [row] auto);
+  padding: 20px 0 20px 0;
+  /* background-color: #fff;
+  color: #444; */
+}
+
+.box {
+  /* background-color: #444; */
+  /* color: #fff; */
+  /* border-radius: 5px; */
+
+  /* font-size: 150%; */
+}
+
+.a {
+  grid-column: col / span 2;
+  grid-row: row;
+}
+.b {
+  /* grid-column: col 4 / span 2; */
+  grid-row: row;
+}
+
+.b > h3 {
+  margin: 0 0 0 0 !important;
+}
+
+.wrapper-list > .box.b > .title {
+  font-weight: 500;
+  font-size: 1.2em;
+  margin: 0;
+}
+
+.ss-c-2 {
+  overflow-y: scroll;
+  height: 100vh;
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
+  scrollbar-width: none; /* Firefox */
+}
+
+.ss-c-2::-webkit-scrollbar {
+  display: none; /* Safari and Chrome */
+}
+
+/* -------------------------------------- END: FORMS ------------------------------------- */
+
+/* --------------------------------------- LEAFLET --------------------------------------- */
+
+/* Map */
+#map {
+  width: 100%;
+  min-height: 400px;
+  height: calc(100vh - 62px - 100px - 44px - 54px);
+  z-index: 8;
+}
+@media only screen and (max-width: 767px) {
+  #map {
+    height: calc(100vh - 56px - 125px - 90px) !important;
+  }
+}
+#map img:not(.mySlides) {
+  border-radius: 0 !important;
+}
+
+/* Marker */
+.page-id-5854 .leaflet-marker-icon,
+.page-id-10213 .leaflet-marker-icon {
+  display: none;
+}
+.page-id-5854 .leaflet-tooltip,
+.page-id-10213 .leaflet-tooltip {
+  background-color: rgb(255, 255, 255);
+  color: #545454 !important;
+  border-radius: 28px;
+  padding: 0px 8px;
+  z-index: 1;
+}
+.page-id-5854 .leaflet-tooltip:hover,
+.page-id-5854 .tooltip-clicked,
+.page-id-10213 .tooltip-clicked {
+  background-color: #3aafa2;
+  color: white !important;
+  border-color: #3aafa2;
+  z-index: 100;
+}
+/* Popup */
+.page-id-5854 .leaflet-popup-content {
+  width: 300px !important;
+  margin: 0px !important;
+}
+.page-id-5854 .leaflet-popup-content img {
+  width: 300px;
+  height: 200px;
+  /* border-top-left-radius: 12px; */
+  /* border-top-right-radius: 12px; */
+  border-bottom-left-radius: 0px;
+  border-bottom-right-radius: 0px;
+  object-fit: cover;
+}
+.page-id-5854 .leaflet-popup-content .w3-badge {
+  display: none;
+}
+.page-id-5854 .w3-content {
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none; /* Safari */
+  -khtml-user-select: none; /* Konqueror HTML */
+  -moz-user-select: none; /* Old versions of Firefox */
+  -ms-user-select: none; /* Internet Explorer/Edge */
+  user-select: none;
+}
+
+.page-id-5854 .leaflet-popup-content-wrapper {
+  margin: 0;
+  border-radius: 4px;
+  padding: 0;
+  font-size: 14px;
+}
+.page-id-5854 .leaflet-popup-text,
+.page-id-10213 .leaflet-popup-text {
+  padding: 5px;
+}
+.page-id-5854 .leaflet-popup-text p,
+.page-id-5854 .leaflet-popup-text h3,
+.page-id-10213 .leaflet-popup-text p,
+.page-id-10213 .leaflet-popup-text h3 {
+  margin: 0 0 8px 0;
+}
+.page-id-5854 .leaflet-popup-text .hotelName,
+.page-id-10213 .leaflet-popup-text .hotelName {
+  font-size: 16px;
+  line-height: 16px;
+  color: #3aafa2 !important;
+  font-weight: 600 !important;
+}
+.page-id-5854 .leaflet-popup-text .hotelSlogan,
+.page-id-5854 .leaflet-popup-text .hotelFeatures,
+.page-id-10213 .leaflet-popup-text .hotelSlogan,
+.page-id-10213 .leaflet-popup-text .hotelFeatures {
+  font-size: 14px;
+  line-height: 14px;
+}
+.page-id-5854 .leaflet-popup-close-button,
+.page-id-10213 .leaflet-popup-close-button {
+  display: none;
+  color: white !important;
+  padding: 0 !important;
+  right: 10px !important;
+  top: 10px !important;
+  font-size: 18px !important;
+}
+@media only screen and (max-width: 767px) {
+  .page-id-5854 .leaflet-popup-text .hotelBook,
+  .page-id-5854 .leaflet-popup-close-button,
+  .page-id-10213 .leaflet-popup-text .hotelBook,
+  .page-id-10213 .leaflet-popup-close-button {
+    display: block;
+  }
+}
+
+/* Popup photoslider */
+.mySlides {
+  display: none;
+  height: 200px !important;
+}
+.mySlides:first-of-type {
+  display: inline-block;
+}
+.w3-left,
+.w3-right,
+.w3-badge {
+  cursor: pointer;
+}
+.w3-badge {
+  height: 13px;
+  width: 13px;
+  padding: 0;
+}
+
+/* ------------------------------------- END: LEAFLET ------------------------------------ */
+
+/* w3 */
+.mySlides:first-of-type {
+  display: inline-block;
+}
+.w3-content,
+.w3-auto {
+  margin-left: auto;
+  margin-right: auto;
+}
+.w3-tooltip,
+.w3-display-container {
+  position: relative;
+}
+.w3-display-bottommiddle {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  transform: translate(-50%, 0%);
+  -ms-transform: translate(-50%, 0%);
+}
+.w3-container,
+.w3-panel {
+  padding: 0.01em 16px;
+}
+.w3-large {
+  font-size: 18px !important;
+}
+.w3-center {
+  text-align: center !important;
+}
+.w3-section,
+.w3-code {
+  margin-top: 16px !important;
+  margin-bottom: 16px !important;
+}
+.w3-text-white,
+.w3-hover-text-white:hover {
+  color: #fff !important;
+}
+.w3-right {
+  float: right !important;
+}
+.w3-left {
+  float: left !important;
+}
+.w3-left,
+.w3-right,
+.w3-badge {
+  cursor: pointer;
+}
