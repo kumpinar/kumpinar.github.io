@@ -139,7 +139,9 @@
       var markers = L.markerClusterGroup();
 
       var ramsarPolygons = L.featureGroup();
+      var wdpaPolygons = L.featureGroup();
       map.addLayer(ramsarPolygons);
+      map.addLayer(wdpaPolygons);
 
 
       var osmTileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -185,19 +187,22 @@
 
       function LoadUnExistRamsarPolygons() {
         let ramsarids = [];
+        let ramsarpoints = [];
         markers._featureGroup.getLayers().forEach(layer => {
           if (layer.feature) {
             if (layer instanceof L.Marker && map.getBounds().contains(layer.getLatLng())) {
               if (!loadedRamsarPolygons.includes(layer.feature.properties.ramsarid)) {
                 loadedRamsarPolygons.push(layer.feature.properties.ramsarid);
                 ramsarids.push(layer.feature.properties.ramsarid);
+                ramsarpoints.push(layer.feature.geometry.coordinates.join());
               }
             }
           }
         });
 
         if (ramsarids.length > 0) {
-          LoadRamsarPolygon(ramsarids.join())
+          LoadRamsarPolygon(ramsarids.join());
+          LoadWdpaPolygon(ramsarpoints.join('~'));
         }
       }
 
@@ -219,6 +224,18 @@
             }
           });
           ramsarPolygons.addLayer(geojsonPolygon);
+        });
+      }
+
+      function LoadWdpaPolygon(ramsarpoints) {
+        $.get("https://us-central1-upwork-leaflet.cloudfunctions.net/wdpaPolygons?ramsarpoints=" + ramsarpoints, function (data) {
+          let geojsonPolygon = L.geoJson(data, {
+            style: {
+                fillOpacity: 0.1,
+                fillColor: '#f0f723'
+            }
+          });
+          wdpaPolygons.addLayer(geojsonPolygon);
         });
       }
 
