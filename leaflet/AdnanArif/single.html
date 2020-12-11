@@ -21,7 +21,6 @@
 
   <script src="lib/leaflet/leaflet.js"></script>
   <script src="lib/leaflet/tile.stamen.js"></script>
-  <script src="geojson.js"></script>
 
   <style>
     body {
@@ -45,17 +44,9 @@
     </div>
     <div class="row mt-4">
       <div class="col-md-1"></div>
-      <div class="col-md-10" style="font-family: revert;">
-        <i class="fa fa-lg fa-circle" aria-hidden="true" style="color: #375546;"></i> <span
-          style="color: white; font-size: 16px;">STANDORT</span>
-        <i class="fa fa-lg fa-circle" aria-hidden="true" style="color: #c7c62c;"></i> <span
-          style="color: white; font-size: 16px;">NAHVERSORGUNG</span>
-        <i class="fa fa-lg fa-circle" aria-hidden="true" style="color: #00b2ff;"></i> <span
-          style="color: white; font-size: 16px;">SPORT</span>
-        <i class="fa fa-lg fa-circle" aria-hidden="true" style="color: #d08d93;"></i> <span
-          style="color: white; font-size: 16px;">RESTAURANT/CAFE</span>
-        <i class="fa fa-lg fa-circle" aria-hidden="true" style="color: #74a487;"></i> <span
-          style="color: white; font-size: 16px;">GESUNDHEIT</span>
+          <img src="map-marker.svg" style="width: 20px; height: 20px;" />
+          <span
+          style="color: white; font-size: 16px;">SINGLE MARKER</span>
       </div>
       <div class="col-md-1"></div>
     </div>
@@ -100,19 +91,17 @@
 
 
     var markerIndex = 0;
-    L.geoJson(geojson, {
-      pointToLayer: function (geoJsonPoint, latlng) {
-        let marker = L.circleMarker(latlng, {
-          radius: 16,
-          fillColor: colors[markerIndex % 5],
-          fillOpacity: 1,
-          stroke: false
-        });
-        //console.log(colors[markerIndex % 5]);
-        markerIndex++;
-        return marker;
-      }
-    }).addTo(map);
+    
+
+    var greenIcon = L.icon({
+      iconUrl: 'map-marker.svg',
+
+      iconSize: [95, 95], // size of the icon
+      iconAnchor: [94, 94], // point of the icon which will correspond to marker's location
+    });
+
+
+    L.marker([51.512388, -0.148137], { icon: greenIcon }).addTo(map);
 
       //let marker = L.marker(latlng, {opacity:1});
 
