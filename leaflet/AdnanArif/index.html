@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang='en'>
+
+<head>
+  <title>Adnan Arif</title>
+
+  <meta charset='utf-8'>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <!-- Styles -->
+  <!-- Bootstrap cssS -->
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/bootstrap-reboot.min.css">
+  <link rel="stylesheet" href="css/leaflet.css" />
+
+  <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+  <script src="lib/jquery-3.3.1.min.js"></script>
+  <script src="lib/bootstrap.min.js"></script>
+  <script src="https://use.fontawesome.com/52483a0e22.js"></script>
+
+
+  <script src="lib/leaflet/leaflet.js"></script>
+  <script src="lib/leaflet/tile.stamen.js"></script>
+  <script src="geojson.js"></script>
+
+  <style>
+    body {
+      background: #507668;
+    }
+  </style>
+
+</head>
+
+<body>
+  <main role="main" class="container-fluid">
+    <div class="row">
+      <div class="col-md-12" style="height: 50px;"></div>
+    </div>
+    <div class="row">
+      <div class="col-md-1"></div>
+      <div class="col-md-10">
+        <div id='map' style="display: block; height: 1000px;"></div>
+      </div>
+      <div class="col-md-1"></div>
+    </div>
+    <div class="row mt-4">
+      <div class="col-md-1"></div>
+      <div class="col-md-10" style="font-family: revert;">
+        <i class="fa fa-lg fa-circle" aria-hidden="true" style="color: #375546;"></i> <span
+          style="color: white; font-size: 16px;">STANDORT</span>
+        <i class="fa fa-lg fa-circle" aria-hidden="true" style="color: #c7c62c;"></i> <span
+          style="color: white; font-size: 16px;">NAHVERSORGUNG</span>
+        <i class="fa fa-lg fa-circle" aria-hidden="true" style="color: #00b2ff;"></i> <span
+          style="color: white; font-size: 16px;">SPORT</span>
+        <i class="fa fa-lg fa-circle" aria-hidden="true" style="color: #d08d93;"></i> <span
+          style="color: white; font-size: 16px;">RESTAURANT/CAFE</span>
+        <i class="fa fa-lg fa-circle" aria-hidden="true" style="color: #74a487;"></i> <span
+          style="color: white; font-size: 16px;">GESUNDHEIT</span>
+          <img src="map-marker.svg" style="width: 20px; height: 20px;" />
+          <span
+          style="color: white; font-size: 16px;">SINGLE MARKER</span>
+      </div>
+      <div class="col-md-1"></div>
+    </div>
+  </main>
+
+  <script type="text/javascript">
+
+    var colors = ['#375546', '#c7c62c', '#00b2ff', '#d08d93', '#74a487'];
+
+    $(window).resize(function () {
+      var h = $(window).height(),
+        offsetTop = 200; // Calculate the top offset
+
+      $('#map').css('height', (h - offsetTop));
+    }).resize();
+
+    // replace "toner" here with "terrain" or "watercolor"
+    var layer = new L.StamenTileLayer("toner");
+    var map = new L.Map("map", {
+      center: new L.LatLng(51.512388, -0.148137),
+      zoom: 17
+    });
+    map.addLayer(layer);
+
+    var markerIndex = 0;
+    L.geoJson(geojson, {
+      pointToLayer: function (geoJsonPoint, latlng) {
+        let marker = L.circleMarker(latlng, {
+          radius: 16,
+          fillColor: colors[markerIndex % 5],
+          fillOpacity: 1,
+          stroke: false
+        });
+        console.log(colors[markerIndex % 5]);
+        markerIndex++;
+        return marker;
+      }
+    }).addTo(map);
+
+    var greenIcon = L.icon({
+      iconUrl: 'map-marker.svg',
+
+      iconSize: [38, 95], // size of the icon
+      iconAnchor: [22, 94], // point of the icon which will correspond to marker's location
+    });
+
+
+    L.marker([51.513486629691045, -0.1448124647140503], { icon: greenIcon }).addTo(map);
+
+      //let marker = L.marker(latlng, {opacity:1});
+
+  </script>
+
+
+</body>
+
+</html>
