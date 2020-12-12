@@ -91,7 +91,7 @@
                   <label for="radio-rsis">
                     <span>
                     </span>
-                    ramsar.org
+                    ramsar.org <i id="loadingRsis" class="fa fa-spinner fa-spin" style="display: none;"></i>
                   </label>
                 </div>
 
@@ -100,7 +100,7 @@
                   <label for="radio-wdpa">
                     <span>
                     </span>
-                    WDPA
+                    WDPA <i id="loadingWdpa" class="fa fa-spinner fa-spin" style="display: none;"></i>
                   </label>
                 </div>
 
@@ -162,6 +162,25 @@
         $('#mapCanvas').css('height', (h - offsetTop));
       }).resize();
 
+      var orangeStyle = {
+        fillOpacity: 0.1,
+        fillColor: 'orange',
+        color: 'orange',
+        weight: 3,
+        opacity:1
+      };
+      var blueStyle = {
+        fillOpacity: 0.1,
+        fillColor: 'blue',
+        color: 'blue',
+        weight: 3,
+        opacity:1
+      };
+      var hiddenStyle = {
+        fillOpacity: 0,
+        opacity: 0
+      };
+
       var map = L.map('mapCanvas', {
         renderer: L.canvas()
       }).setView([38.32559334, 35.26421442], 2);
@@ -169,9 +188,9 @@
 
       var markers = L.markerClusterGroup();
 
-      var ramsarPolygons = L.featureGroup();
-      var wdpaPolygons = L.featureGroup();
-      map.addLayer(ramsarPolygons);      
+      var ramsarPolygons = L.geoJson();
+      var wdpaPolygons = L.geoJson();
+      map.addLayer(ramsarPolygons);
 
       var osmTileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -184,7 +203,6 @@
           pointToLayer: function (geoJsonPoint, latlng) {
             let marker = L.marker(latlng, { opacity: 1 });
             marker.once('click', (e) => {
-              console.log(geoJsonPoint);
               $popup = $("#tmpPointPopup").clone();
               $popup.find('.name').html(geoJsonPoint.properties.officialname);
               $popup.find('.country').html(geoJsonPoint.properties.country_en);
@@ -223,7 +241,7 @@
               if (!loadedRamsarPolygons.includes(layer.feature.properties.ramsarid)) {
                 loadedRamsarPolygons.push(layer.feature.properties.ramsarid);
                 ramsarids.push(layer.feature.properties.ramsarid);
-                ramsarpoints.push(layer.feature.geometry.coordinates.join());
+                ramsarpoints.push(layer.feature.geometry.coordinates.join()+','+layer.feature.properties.ramsarid);
               }
             }
           }
@@ -232,11 +250,15 @@
         if (ramsarids.length > 0) {
           LoadRamsarPolygon(ramsarids.join());
           LoadWdpaPolygon(ramsarpoints.join('~'));
+        }else{
+          ChangeWdpaVisibility();
+          ChangeRamsarVisibility();
         }
       }
 
 
       function LoadRamsarPolygon(ramsaridsStr) {
+        $("#loadingRsis").show();
         $.get("https://us-central1-upwork-leaflet.cloudfunctions.net/ramsarPolygons?ramsarids=" + ramsaridsStr, function (data) {
           let geojsonPolygon = L.geoJson(data, {
             onEachFeature: function (feature, layer) {
@@ -247,27 +269,29 @@
                 $popup.find('.infoLink').attr("href", "https://rsis.ramsar.org/ris/" + feature.properties.ramsarid);
                 layer.bindPopup($popup[0]).openPopup();
               });
-            },
-            style: {
-              fillOpacity: 0.1,
-              fillColor: 'blue',
-              color: 'blue'
+              layer.options.ramsarid = feature.properties.ramsarid;
+              layer.setStyle(hiddenStyle);
+              ramsarPolygons.addLayer(layer);
             }
           });
-          ramsarPolygons.addLayer(geojsonPolygon);
+          ChangeRamsarVisibility();
+          $("#loadingRsis").hide();
         });
       }
 
       function LoadWdpaPolygon(ramsarpoints) {
+        $("#loadingWdpa").show();
         $.get("https://us-central1-upwork-leaflet.cloudfunctions.net/wdpaPolygons?ramsarpoints=" + ramsarpoints, function (data) {
           let geojsonPolygon = L.geoJson(data, {
-            style: {
-              fillOpacity: 0.1,
-              fillColor: 'orange',
-              color: 'orange'
+            onEachFeature: function (feature, layer) {
+              layer.options.ramsarid = feature.properties.ramsarid;
+              layer.setStyle(hiddenStyle);
+              wdpaPolygons.addLayer(layer);
             }
           });
-          wdpaPolygons.addLayer(geojsonPolygon);
+          
+          ChangeWdpaVisibility();
+          $("#loadingWdpa").hide();
         });
       }
 
@@ -285,7 +309,6 @@
         var selectize = $select[0].selectize;
 
         selectize.on('change', function (value) {
-          console.log(value);
           if (value) {
             map.setView([value.split(',')[0], value.split(',')[1]], 13);
           }
@@ -294,14 +317,54 @@
 
 
       $('input[name=ramsar-polygon-switch]').on('change', function () {
-            if ($('input[name=ramsar-polygon-switch]:checked').val() == 'rsis') {
-                map.addLayer(ramsarPolygons);
-                map.removeLayer(wdpaPolygons);                
-            } else if ($('input[name=ramsar-polygon-switch]:checked').val() == 'wdpa') {
-                map.addLayer(wdpaPolygons);
-                map.removeLayer(ramsarPolygons);
+        if ($('input[name=ramsar-polygon-switch]:checked').val() == 'rsis') {
+          map.addLayer(ramsarPolygons);
+          map.removeLayer(wdpaPolygons);
+        } else if ($('input[name=ramsar-polygon-switch]:checked').val() == 'wdpa') {
+          map.addLayer(wdpaPolygons);
+          map.removeLayer(ramsarPolygons);
+        }
+      });
+
+      function ChangeRamsarVisibility() {
+        let visibleids = [];
+        markers._featureGroup.getLayers().forEach(layer => {
+          if (layer.feature) {
+            if (layer instanceof L.Marker && map.getBounds().contains(layer.getLatLng())) {
+              visibleids.push(layer.feature.properties.ramsarid);
             }
+          }
         });
+
+        ramsarPolygons.eachLayer(function (polygonLayer) {
+          if(visibleids.includes(polygonLayer.options.ramsarid)){
+            polygonLayer.setStyle(blueStyle);
+          }
+          else{
+            polygonLayer.setStyle(hiddenStyle);
+          }
+        });
+      }
+      
+      function ChangeWdpaVisibility() {
+        let visibleids = [];
+        markers._featureGroup.getLayers().forEach(layer => {
+          if (layer.feature) {
+            if (layer instanceof L.Marker && map.getBounds().contains(layer.getLatLng())) {
+              visibleids.push(layer.feature.properties.ramsarid);
+            }
+          }
+        });
+
+        wdpaPolygons.eachLayer(function (polygonLayer) {
+          if(visibleids.includes(polygonLayer.options.ramsarid)){
+            polygonLayer.setStyle(orangeStyle);
+          }
+          else{
+            polygonLayer.setStyle(hiddenStyle);
+          }
+        });
+      }
     </script>
 
   </main>
