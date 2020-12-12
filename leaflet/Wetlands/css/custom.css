@@ -56,3 +56,53 @@ a, a:hover { color: #1450A8;}
 .filter-red { background-color: #CC2537; }
 .filter-orange { background-color: #CD8518; }
 .filter-grey { background-color: #7B7B7B; }
+
+
+
+.custom-radio-button div {
+  display: inline-block;
+}
+.custom-radio-button div label{
+  cursor: pointer;
+}
+.custom-radio-button input[type="radio"] {
+  display: none;
+}
+.custom-radio-button input[type="radio"] + label {
+  color: #333;
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+}
+.custom-radio-button input[type="radio"] + label span {
+  display: inline-block;
+  width: 40px;
+  height: 40px;
+  margin: -1px 4px 0 0;
+  vertical-align: middle;
+  cursor: pointer;
+  border-radius: 50%;
+  border: 2px solid #ffffff;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.33);
+  background-repeat: no-repeat;
+  background-position: center;
+  text-align: center;
+  line-height: 44px;
+}
+.custom-radio-button input[type="radio"] + label span img {
+  opacity: 0;
+  transition: all 0.3s ease;
+}
+.custom-radio-button input[type="radio"]#radio-rsis + label span {
+  background-color: blue;
+}
+.custom-radio-button input[type="radio"]#radio-wdpa + label span {
+  background-color: orange;
+}
+.custom-radio-button input[type="radio"]:checked + label span {
+  opacity: 1;
+  background: url("images/tick-icon.png")
+    center center no-repeat;
+  width: 40px;
+  height: 40px;
+  display: inline-block;
+}

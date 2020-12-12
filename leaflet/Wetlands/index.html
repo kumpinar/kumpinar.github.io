@@ -77,6 +77,37 @@
             </div>
           </div>
         </div>
+
+        <div class="card bg-light mt-2">
+          <div class="card-body">
+            <h5>Ramsar Polygons</h5>
+
+            <div class="row">
+
+
+              <div class="custom-radio-button ml-2">
+                <div>
+                  <input type="radio" id="radio-rsis" name="ramsar-polygon-switch" value="rsis" checked>
+                  <label for="radio-rsis">
+                    <span>
+                    </span>
+                    ramsar.org
+                  </label>
+                </div>
+
+                <div>
+                  <input type="radio" id="radio-wdpa" name="ramsar-polygon-switch" value="wdpa">
+                  <label for="radio-wdpa">
+                    <span>
+                    </span>
+                    WDPA
+                  </label>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div class='col-md-9'>
@@ -140,9 +171,7 @@
 
       var ramsarPolygons = L.featureGroup();
       var wdpaPolygons = L.featureGroup();
-      map.addLayer(ramsarPolygons);
-      map.addLayer(wdpaPolygons);
-
+      map.addLayer(ramsarPolygons);      
 
       var osmTileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -153,7 +182,7 @@
         let optionsForPoints = [];
         let pointGoejsonLayer = L.geoJson(data, {
           pointToLayer: function (geoJsonPoint, latlng) {
-            let marker = L.marker(latlng, {opacity:1});
+            let marker = L.marker(latlng, { opacity: 1 });
             marker.once('click', (e) => {
               console.log(geoJsonPoint);
               $popup = $("#tmpPointPopup").clone();
@@ -220,7 +249,9 @@
               });
             },
             style: {
-                fillOpacity: 0.1
+              fillOpacity: 0.1,
+              fillColor: 'blue',
+              color: 'blue'
             }
           });
           ramsarPolygons.addLayer(geojsonPolygon);
@@ -231,9 +262,9 @@
         $.get("https://us-central1-upwork-leaflet.cloudfunctions.net/wdpaPolygons?ramsarpoints=" + ramsarpoints, function (data) {
           let geojsonPolygon = L.geoJson(data, {
             style: {
-                fillOpacity: 0.1,
-                fillColor: '#f0f723',
-                color: '#f72105'
+              fillOpacity: 0.1,
+              fillColor: 'orange',
+              color: 'orange'
             }
           });
           wdpaPolygons.addLayer(geojsonPolygon);
@@ -260,6 +291,17 @@
           }
         });
       }
+
+
+      $('input[name=ramsar-polygon-switch]').on('change', function () {
+            if ($('input[name=ramsar-polygon-switch]:checked').val() == 'rsis') {
+                map.addLayer(ramsarPolygons);
+                map.removeLayer(wdpaPolygons);                
+            } else if ($('input[name=ramsar-polygon-switch]:checked').val() == 'wdpa') {
+                map.addLayer(wdpaPolygons);
+                map.removeLayer(ramsarPolygons);
+            }
+        });
     </script>
 
   </main>
