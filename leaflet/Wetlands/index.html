@@ -197,7 +197,8 @@
       }).addTo(map);
 
       $("#loading").show();
-      $.get("https://us-central1-upwork-leaflet.cloudfunctions.net/ramsarPoints", function (data) {
+      //$.get("https://us-central1-upwork-leaflet.cloudfunctions.net/ramsarPoints", function (data) {
+      $.get("https://ramsar-wetlands.storage.googleapis.com/ramsarPoints.json", function (data) {
         let optionsForPoints = [];
         let pointGoejsonLayer = L.geoJson(data, {
           pointToLayer: function (geoJsonPoint, latlng) {
