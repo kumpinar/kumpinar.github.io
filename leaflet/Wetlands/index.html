@@ -218,7 +218,7 @@
               $popup.find('.name').html(geoJsonPoint.properties.officialname);
               $popup.find('.country').html(geoJsonPoint.properties.country_en);
               $popup.find('.infoLink').attr("href", "https://rsis.ramsar.org/ris/" + geoJsonPoint.properties.ramsarid);
-              marker.bindPopup($popup[0]).openPopup();
+              marker.bindPopup($popup[0],{maxWidth : 500}).openPopup();
             });
 
             optionsForPoints.push({ id: latlng.lat + ',' + latlng.lng, title: geoJsonPoint.properties.officialname });
