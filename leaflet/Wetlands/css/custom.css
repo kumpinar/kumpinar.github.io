@@ -69,9 +69,15 @@ a, a:hover { color: #1450A8;}
   display: none;
 }
 .custom-radio-button input[type="radio"] + label {
-  color: #333;
+  color: white;
   font-family: Arial, sans-serif;
   font-size: 14px;
+}
+.custom-radio-button input[type="radio"] + label a {
+  color: white;
+}
+.custom-radio-button input[type="radio"] + label a:hover {
+  color: rgb(236, 202, 202);
 }
 .custom-radio-button input[type="radio"] + label span {
   display: inline-block;
@@ -105,4 +111,8 @@ a, a:hover { color: #1450A8;}
   width: 40px;
   height: 40px;
   display: inline-block;
+}
+
+.leaflet-popup-content-wrapper{
+  background-color: #2b0796;
 }
