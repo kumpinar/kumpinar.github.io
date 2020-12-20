@@ -10,12 +10,12 @@
 
   <!-- Styles -->
   <!-- Bootstrap cssS -->
-  <link rel="stylesheet" href="css/bootstrapSuperHero.css">
+  <link rel="stylesheet" href="css/bootstrapSuperHero.css?v3">
   <link rel="stylesheet" href="lib/marker-cluster/MarkerCluster.css" />
   <link rel="stylesheet" href="lib/marker-cluster/MarkerCluster.Default.css" />
   <link rel="stylesheet" href="css/leaflet.css" />
   <link rel="stylesheet" href="lib/selectize/css/selectize.bootstrap4.css" />
-  <link rel="stylesheet" href="css/custom.css?v2" />
+  <link rel="stylesheet" href="css/custom.css?v3" />
 
   <!-- jQuery first, then Popper.js, then Bootstrap JS -->
   <script src="lib/jquery-3.3.1.min.js"></script>
@@ -36,19 +36,20 @@
 <body>
 
   <nav class="navbar navbar-expand-md navbar-light mb-2">
-    <img src="img/logo.png" class="img-fluid" alt=""> 
-    <img src="img/logo2.png" class="img-fluid" alt=""> 
+    <img src="img/logo.png" class="img-fluid" alt="">
+    <img src="img/logo2.png" class="img-fluid" alt="">
     <span style="font-size: 26px;">
       &nbsp; Global standard for monitoring Ramsar wetlands
     </span>
-    
+
   </nav>
 
   <main role="main" class="container-fluid">
 
     <div class='row'>
       <div class="col-md-3">
-        <p>Ramsar GSfM is an interactive mapping tool to access and summarise spatial data from global and regional sources for monitoring and reporting on the condition of Ramsar wetlands of international importance.</p>
+        <p>Ramsar GSfM is an interactive mapping tool to access and summarise spatial data from global and regional
+          sources for monitoring and reporting on the condition of Ramsar wetlands of international importance.</p>
 
         <i id="loading" class="fa fa-3x fa-spinner fa-spin" style="display: none;"></i>
         <div class="card">
@@ -78,16 +79,21 @@
                   <label for="radio-rsis">
                     <span>
                     </span>
-                    Ramsar Sites Information Service <a target="_blank" href="https://rsis.ramsar.org/"><i class="fa fa-info-circle"></i></a> <i id="loadingRsis" class="fa fa-spinner fa-spin" style="display: none;"></i>
+                    Ramsar Sites Information Service <a target="_blank" href="https://rsis.ramsar.org/"><i
+                        class="fa fa-info-circle"></i></a> <i id="loadingRsis" class="fa fa-spinner fa-spin"
+                      style="display: none;"></i>
                   </label>
                 </div>
-                <br/>
+                <br />
                 <div>
                   <input type="radio" id="radio-wdpa" name="ramsar-polygon-switch" value="wdpa">
                   <label for="radio-wdpa">
                     <span>
                     </span>
-                    World Database on Protected Areas <a target="_blank" href="https://www.iucn.org/theme/protected-areas/our-work/world-database-protected-areas"><i class="fa fa-info-circle"></i></a> <i id="loadingWdpa" class="fa fa-spinner fa-spin" style="display: none;"></i>
+                    World Database on Protected Areas <a target="_blank"
+                      href="https://www.iucn.org/theme/protected-areas/our-work/world-database-protected-areas"><i
+                        class="fa fa-info-circle"></i></a> <i id="loadingWdpa" class="fa fa-spinner fa-spin"
+                      style="display: none;"></i>
                   </label>
                 </div>
 
@@ -95,6 +101,18 @@
             </div>
           </div>
         </div>
+
+        <div class="card mt-2">
+          <div class="card-body">
+            <h6>Other Layers</h6>
+            <div class="modern-Checkbox">
+              <input type="checkbox" id="chkWaterOccurence">
+              <label for="chkWaterOccurence">Water Occurrence (1984-2019)</label>
+            </div>
+          </div>
+        </div>
+
+
       </div>
 
       <div class='col-md-9 pr-0'>
@@ -133,7 +151,8 @@
           </tr>
           <tr>
             <td colspan="2" class="text-right">
-              <a class="infoLink" href="#" target="_blank" class="btn btn-sm btn-info">More information on  Ramsar Sites Information Service</a>
+              <a class="infoLink" href="#" target="_blank" class="btn btn-sm btn-info">More information on Ramsar Sites
+                Information Service</a>
             </td>
           </tr>
         </tbody>
@@ -162,27 +181,35 @@
         fillColor: 'orange',
         color: 'orange',
         weight: 3,
-        opacity:1
+        opacity: 1
       };
       var blueStyle = {
         fillOpacity: 0.1,
         fillColor: 'blue',
         color: 'blue',
         weight: 3,
-        opacity:1
+        opacity: 1
       };
       var hiddenStyle = {
         fillOpacity: 0,
         opacity: 0
       };
-      
+
       var osmTileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
       });
-      
+
       var satelliteLayer = L.tileLayer('https://mt' + Math.floor(Math.random() * 3) + '.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', {
         attribution: '<a href="https://www.google.com/intl/tr/earth/">Google Aerial</a>'
       });
+
+      var waterOccurrence = new L.tileLayer("https://storage.googleapis.com/global-surface-water/tiles2019/occurrence/{z}/{x}/{y}.png",
+        {
+          format: "image/png",
+          maxZoom: 13,
+          errorTileUrl: "https://storage.googleapis.com/global-surface-water/downloads_ancillary/blank.png",
+          attribution: "2016 EC JRC/Google"
+        });
 
       var map = L.map('mapCanvas', {
         renderer: L.canvas(),
@@ -194,9 +221,9 @@
         "Satellite": satelliteLayer,
       };
 
-    var overlays = {};
+      var overlays = { waterOccurrence };
 
-    L.control.layers(baseLayers, overlays).addTo(map);
+      L.control.layers(baseLayers, overlays).addTo(map);
 
       var markers = L.markerClusterGroup();
 
@@ -204,7 +231,7 @@
       var wdpaPolygons = L.geoJson();
       map.addLayer(ramsarPolygons);
 
-      
+
 
       $("#loading").show();
       //$.get("https://us-central1-upwork-leaflet.cloudfunctions.net/ramsarPoints", function (data) {
@@ -218,7 +245,7 @@
               $popup.find('.name').html(geoJsonPoint.properties.officialname);
               $popup.find('.country').html(geoJsonPoint.properties.country_en);
               $popup.find('.infoLink').attr("href", "https://rsis.ramsar.org/ris/" + geoJsonPoint.properties.ramsarid);
-              marker.bindPopup($popup[0],{maxWidth : 500}).openPopup();
+              marker.bindPopup($popup[0], { maxWidth: 500 }).openPopup();
             });
 
             optionsForPoints.push({ id: latlng.lat + ',' + latlng.lng, title: geoJsonPoint.properties.officialname });
@@ -252,7 +279,7 @@
               if (!loadedRamsarPolygons.includes(layer.feature.properties.ramsarid)) {
                 loadedRamsarPolygons.push(layer.feature.properties.ramsarid);
                 ramsarids.push(layer.feature.properties.ramsarid);
-                ramsarpoints.push(layer.feature.geometry.coordinates.join()+','+layer.feature.properties.ramsarid);
+                ramsarpoints.push(layer.feature.geometry.coordinates.join() + ',' + layer.feature.properties.ramsarid);
               }
             }
           }
@@ -261,7 +288,7 @@
         if (ramsarids.length > 0) {
           LoadRamsarPolygon(ramsarids.join());
           LoadWdpaPolygon(ramsarpoints.join('~'));
-        }else{
+        } else {
           ChangeWdpaVisibility();
           ChangeRamsarVisibility();
         }
@@ -278,7 +305,7 @@
                 $popup.find('.name').html(feature.properties.officialname);
                 $popup.find('.country').html(feature.properties.country_en);
                 $popup.find('.infoLink').attr("href", "https://rsis.ramsar.org/ris/" + feature.properties.ramsarid);
-                layer.bindPopup($popup[0],{maxWidth : 500}).openPopup();
+                layer.bindPopup($popup[0], { maxWidth: 500 }).openPopup();
               });
               layer.options.ramsarid = feature.properties.ramsarid;
               layer.setStyle(hiddenStyle);
@@ -298,14 +325,14 @@
               layer.once('click', (e) => {
                 $popup = $("#tmpWdpaPopup").clone();
                 $popup.find('.name').html(feature.properties.NAME);
-                layer.bindPopup($popup[0],{maxWidth : 500}).openPopup();
+                layer.bindPopup($popup[0], { maxWidth: 500 }).openPopup();
               });
               layer.options.ramsarid = feature.properties.ramsarid;
               layer.setStyle(hiddenStyle);
               wdpaPolygons.addLayer(layer);
             }
           });
-          
+
           ChangeWdpaVisibility();
           $("#loadingWdpa").hide();
         });
@@ -353,15 +380,15 @@
         });
 
         ramsarPolygons.eachLayer(function (polygonLayer) {
-          if(visibleids.includes(polygonLayer.options.ramsarid)){
+          if (visibleids.includes(polygonLayer.options.ramsarid)) {
             polygonLayer.setStyle(blueStyle);
           }
-          else{
+          else {
             polygonLayer.setStyle(hiddenStyle);
           }
         });
       }
-      
+
       function ChangeWdpaVisibility() {
         let visibleids = [];
         markers._featureGroup.getLayers().forEach(layer => {
@@ -373,14 +400,36 @@
         });
 
         wdpaPolygons.eachLayer(function (polygonLayer) {
-          if(visibleids.includes(polygonLayer.options.ramsarid)){
+          if (visibleids.includes(polygonLayer.options.ramsarid)) {
             polygonLayer.setStyle(orangeStyle);
           }
-          else{
+          else {
             polygonLayer.setStyle(hiddenStyle);
           }
         });
       }
+
+      $("#chkWaterOccurence").change(function () {
+
+      });
+
+      $('#chkWaterOccurence').click(function () {        
+        if ($(this).prop("checked") == true) {
+          map.addLayer(waterOccurrence);
+        }
+        else if ($(this).prop("checked") == false) {
+          map.removeLayer(waterOccurrence);
+        }
+      });
+
+      waterOccurrence.on('add', function (ev) {
+        $('#chkWaterOccurence').prop("checked", true);
+      });
+      
+      waterOccurrence.on('remove', function (ev) {
+        $('#chkWaterOccurence').prop("checked", false);
+      });
+
     </script>
 
   </main>
