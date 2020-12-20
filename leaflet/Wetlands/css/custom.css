@@ -168,3 +168,8 @@ a, a:hover { color: #1450A8;}
   transition: transform 200ms ease-in-out;
   content: "+";  
 }
+
+.leaflet-container {
+  background: #071f56;
+  outline: 0;
+}
