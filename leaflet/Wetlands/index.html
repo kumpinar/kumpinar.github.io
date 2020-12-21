@@ -15,7 +15,7 @@
   <link rel="stylesheet" href="lib/marker-cluster/MarkerCluster.Default.css" />
   <link rel="stylesheet" href="css/leaflet.css" />
   <link rel="stylesheet" href="lib/selectize/css/selectize.bootstrap4.css" />
-  <link rel="stylesheet" href="css/custom.css?v3" />
+  <link rel="stylesheet" href="css/custom.css?v6" />
 
   <!-- jQuery first, then Popper.js, then Bootstrap JS -->
   <script src="lib/jquery-3.3.1.min.js"></script>
@@ -307,6 +307,9 @@
                 $popup.find('.infoLink').attr("href", "https://rsis.ramsar.org/ris/" + feature.properties.ramsarid);
                 layer.bindPopup($popup[0], { maxWidth: 500 }).openPopup();
               });
+              layer.on('click', (e) => {
+                console.log(e.target.feature);
+              });
               layer.options.ramsarid = feature.properties.ramsarid;
               layer.setStyle(hiddenStyle);
               ramsarPolygons.addLayer(layer);
@@ -326,6 +329,9 @@
                 $popup = $("#tmpWdpaPopup").clone();
                 $popup.find('.name').html(feature.properties.NAME);
                 layer.bindPopup($popup[0], { maxWidth: 500 }).openPopup();
+              });
+              layer.on('click', (e) => {
+                console.log(e.target.feature);
               });
               layer.options.ramsarid = feature.properties.ramsarid;
               layer.setStyle(hiddenStyle);
@@ -413,7 +419,7 @@
 
       });
 
-      $('#chkWaterOccurence').click(function () {        
+      $('#chkWaterOccurence').click(function () {
         if ($(this).prop("checked") == true) {
           map.addLayer(waterOccurrence);
         }
@@ -424,11 +430,31 @@
 
       waterOccurrence.on('add', function (ev) {
         $('#chkWaterOccurence').prop("checked", true);
+        legend.addTo(map);
+        $(function () {
+          $('[data-toggle="popover"]').popover()
+        })
       });
-      
+
       waterOccurrence.on('remove', function (ev) {
         $('#chkWaterOccurence').prop("checked", false);
+        legend.remove();
       });
+
+      var legend = L.control({ position: 'bottomright' });
+
+      legend.onAdd = function (map) {
+
+        var div = L.DomUtil.create('div', 'info legend');
+
+        div.innerHTML += '<h5>Water Occurrence (1984-2019) <i class="fa fa-info-circle" style="cursor:pointer;"  data-toggle="popover"  data-placement="top"  data-trigger="focus" title="Dismissible popover" data-content="And herevery engaging. Right?"></i> </h5>';
+        div.innerHTML += '<div><div style="color: #656565; font-size: 12px; float: left">&gt;0%</div><div style="color: #656565; font-size: 12px; float: right;">100%</div><div class="waterLegendGradient" style="clear: both;"></div><div style="color: #656565; font-size: 12px; float: left">Sometimes Water</div><div style="color: #656565; font-size: 12px; float: right">Always Water</div></div>'
+
+        return div;
+      };
+
+
+
 
     </script>
 

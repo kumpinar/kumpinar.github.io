@@ -173,3 +173,33 @@ a, a:hover { color: #1450A8;}
   background: #071f56;
   outline: 0;
 }
+
+
+.info {
+  padding: 6px 8px;
+  font: 14px/16px Arial, Helvetica, sans-serif;
+  background: white;
+  background: rgba(255, 255, 255, 0.8);
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+  border-radius: 5px;
+}
+
+.info h5 {
+  margin: 0 0 5px;
+  color: #000;
+}
+
+.legend {
+  line-height: 40px;
+  color: #555;
+}
+
+
+.waterLegendGradient {
+  height: 10px;
+  background-image: -webkit-linear-gradient(right, blue, #bf7fbf 50%, #ffffff 100%);
+  background-image: -o-linear-gradient(right, blue, #bf7fbf 50%, #ffffff 100%);
+  background-image: -moz-linear-gradient(right, blue, #bf7fbf 50%, #ffffff 100%);
+  background-image: -ms-linear-gradient(right, blue, #bf7fbf 50%, #ffffff 100%);
+  background-image: linear-gradient(right, blue, #bf7fbf 50%, #ffffff 100%);
+}
