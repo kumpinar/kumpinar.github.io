@@ -10,12 +10,12 @@
 
   <!-- Styles -->
   <!-- Bootstrap cssS -->
-  <link rel="stylesheet" href="css/bootstrapSuperHero.css?v3">
+  <link rel="stylesheet" href="css/bootstrapSuperHero.css?v4">
   <link rel="stylesheet" href="lib/marker-cluster/MarkerCluster.css" />
   <link rel="stylesheet" href="lib/marker-cluster/MarkerCluster.Default.css" />
   <link rel="stylesheet" href="css/leaflet.css" />
   <link rel="stylesheet" href="lib/selectize/css/selectize.bootstrap4.css" />
-  <link rel="stylesheet" href="css/custom.css?v6" />
+  <link rel="stylesheet" href="css/custom.css?v7" />
 
   <!-- jQuery first, then Popper.js, then Bootstrap JS -->
   <script src="lib/jquery-3.3.1.min.js"></script>
@@ -432,7 +432,13 @@
         $('#chkWaterOccurence').prop("checked", true);
         legend.addTo(map);
         $(function () {
-          $('[data-toggle="popover"]').popover()
+          $('[data-toggle="popover"]').popover({
+            html: true,
+            placement: 'top',
+            trigger:'focus',
+            content:'The Water Occurrence dataset shows where surface water occurred between 1984 and 2019 and provides information concerning overall water dynamics. This product captures both the intra and inter-annual variability and changes. The occurrence is a measurement of the water presence frequency (expressed as a percentage of the available observations over time actually identified as water). The provided occurrence accommodates for variations in data acquisition over time (i.e. temporal deepness and frequency density of the satellite observations) in order to provide a consistent characterization of the water dynamic over time. For more information see: <a href="https://global-surface-water.appspot.com" target="_blank">global-surface-water.appspot.com </a>',
+            
+          })
         })
       });
 
@@ -447,7 +453,7 @@
 
         var div = L.DomUtil.create('div', 'info legend');
 
-        div.innerHTML += '<h5>Water Occurrence (1984-2019) <i class="fa fa-info-circle" style="cursor:pointer;"  data-toggle="popover"  data-placement="top"  data-trigger="focus" title="Dismissible popover" data-content="And herevery engaging. Right?"></i> </h5>';
+        div.innerHTML += '<h5>Water Occurrence (1984-2019) <a tabindex="0" href="javascript:void(0)" data-toggle="popover"><i class="fa fa-info-circle"></i></a> </h5>';
         div.innerHTML += '<div><div style="color: #656565; font-size: 12px; float: left">&gt;0%</div><div style="color: #656565; font-size: 12px; float: right;">100%</div><div class="waterLegendGradient" style="clear: both;"></div><div style="color: #656565; font-size: 12px; float: left">Sometimes Water</div><div style="color: #656565; font-size: 12px; float: right">Always Water</div></div>'
 
         return div;
