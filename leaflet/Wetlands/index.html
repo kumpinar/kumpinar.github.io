@@ -199,8 +199,11 @@
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
       });
 
-      var satelliteLayer = L.tileLayer('https://mt' + Math.floor(Math.random() * 3) + '.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', {
+      var satelliteLayer = L.tileLayer('https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', {
         attribution: '<a href="https://www.google.com/intl/tr/earth/">Google Aerial</a>'
+      });
+      var Esri_WorldImagery = L.tileLayer('https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {                                           
+        attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
       });
 
       var waterOccurrence = new L.tileLayer("https://storage.googleapis.com/global-surface-water/tiles2019/occurrence/{z}/{x}/{y}.png",
@@ -216,14 +219,32 @@
         layers: [osmTileLayer]
       }).fitWorld();
 
+      
+      map.createPane('labels');
+      map.getPane('labels').style.zIndex = 450;
+      map.getPane('labels').style.pointerEvents = 'none';
+      var Esri_WorldImagery_Labels = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}',{
+        pane: 'labels'
+      });
+
       var baseLayers = {
         "Open Street Map": osmTileLayer,
         "Satellite": satelliteLayer,
+        "Esri WorldImagery": Esri_WorldImagery,
       };
 
-      var overlays = { waterOccurrence };
+      var overlays = { 
+        "Water Occurrence (1984-2019)": waterOccurrence
+      };
 
       L.control.layers(baseLayers, overlays).addTo(map);
+
+      Esri_WorldImagery.on('add', function (ev) {
+          map.addLayer(Esri_WorldImagery_Labels);
+      });
+      Esri_WorldImagery.on('remove', function (ev) {
+        map.removeLayer(Esri_WorldImagery_Labels);
+      });
 
       var markers = L.markerClusterGroup();
 
@@ -414,10 +435,6 @@
           }
         });
       }
-
-      $("#chkWaterOccurence").change(function () {
-
-      });
 
       $('#chkWaterOccurence').click(function () {
         if ($(this).prop("checked") == true) {
