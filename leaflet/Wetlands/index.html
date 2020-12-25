@@ -29,6 +29,7 @@
   <script src="lib/leaflet-color-markers.js"></script>
   <script src="lib/marker-cluster/leaflet.markercluster.js"></script>
   <script src="lib/selectize/js/standalone/selectize.js"></script>
+  <script src="lib/Chart.min.js"></script>
 
 
 </head>
@@ -137,6 +138,10 @@
                 Information Service</a>
             </td>
           </tr>
+          <tr>
+            <td colspan="2" class="text-center"><a href="javascript:void(0)" class="yearlyHistoryLink">Show Yearly
+                Water History</a></td>
+          </tr>
         </tbody>
       </table>
       <table id="tmpWdpaPopup" class="table">
@@ -165,7 +170,8 @@
             </button>
           </div>
           <div class="modal-body">
-
+            <h6 id="yearlyHistoryModalLoading">Loading...</h6>
+            <canvas id="yearlyHistoryChart"></canvas>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn  btn-sm btn-secondary" data-dismiss="modal">Close</button>
@@ -333,10 +339,26 @@
                 $popup.find('.name').html(feature.properties.officialname);
                 $popup.find('.country').html(feature.properties.country_en);
                 $popup.find('.infoLink').attr("href", "https://rsis.ramsar.org/ris/" + feature.properties.ramsarid);
+
+                $yearlyHistoryLink = $popup.find('.yearlyHistoryLink');
+                $yearlyHistoryLink.on('click', () => {
+                  $("#yearlyHistoryModal").modal('show');
+                  $.ajax({
+                    url: "https://us-central1-upwork-leaflet.cloudfunctions.net/monthlyWaterHistory",
+                    method: "POST",
+                    timeout: 0,
+                    headers: {
+                      "Content-Type": "application/json"
+                    },
+                    data: JSON.stringify(feature),
+                    success: (res) => {
+                      $("#yearlyHistoryModalLoading").hide();
+                      GenerateYearlyHistoryChart(res);
+                    }
+                  });
+                });
+
                 layer.bindPopup($popup[0], { maxWidth: 500 }).openPopup();
-              });
-              layer.on('click', (e) => {
-                console.log(e.target.feature);
               });
               layer.options.ramsarid = feature.properties.ramsarid;
               layer.setStyle(hiddenStyle);
@@ -369,7 +391,8 @@
                     },
                     data: JSON.stringify(feature),
                     success: (res) => {
-                      console.log(res);
+                      $("#yearlyHistoryModalLoading").hide();
+                      GenerateYearlyHistoryChart(res);
                     }
                   });
                 });
@@ -502,6 +525,74 @@
         return div;
       };
 
+
+      function GenerateYearlyHistoryChart(monthlyFeatures) {
+        let labels = [...new Set(monthlyFeatures.map(f => f.properties.Year))];
+        let maximumExtends = labels.map(year => {
+          return monthlyFeatures.filter(f => f.properties.Year === year && f.properties.Water)
+            .map(f => f.properties.Water)
+            .reduce((acc, val) => val > acc ? val : acc, 0);
+        });
+        console.log(maximumExtends);
+        let averageExtends = labels.map(year => {
+          let monthCount = monthlyFeatures.filter(f => f.properties.Year === year && f.properties.Water).length;
+          let waterAreaSumForYear = monthlyFeatures.filter(f => f.properties.Year === year && f.properties.Water)
+            .map(f => f.properties.Water)
+            .reduce((acc, val) => acc + val, 0);
+          return waterAreaSumForYear / monthCount;
+        });
+        console.log(averageExtends);
+        var ctx = document.getElementById('yearlyHistoryChart').getContext('2d');
+        var yearlyHistoryChart = new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: labels,
+            datasets: [{
+              label: 'Maximum Extends',
+              data: maximumExtends,
+              backgroundColor:
+                'rgba(255, 99, 132, 0.2)'
+              ,
+              borderColor:
+                'rgba(255, 99, 132, 1)'
+              ,
+              borderWidth: 1
+            },
+            {
+              label: 'Average Extends',
+              data: averageExtends,
+              backgroundColor:
+                'rgba(54, 162, 235, 0.2)',
+              borderColor:
+                'rgba(54, 162, 235, 1)',
+              borderWidth: 1
+            }
+            ]
+          },
+          options: {
+            scales: {
+              yAxes: [{
+                ticks: {
+                  beginAtZero: true
+                }
+              }]
+            }
+          }
+        });
+      }
+
+      $('#yearlyHistoryModal').on('hidden.bs.modal', function (e) {
+        var canvas = document.getElementById("yearlyHistoryChart");
+        var context = canvas.getContext('2d');
+        context.clearRect(0, 0, canvas.width, canvas.height); //clear html5 canvas
+      });
+
+      $('#yearlyHistoryModal').on('hidden.bs.modal', function (e) {
+        var canvas = document.getElementById("yearlyHistoryChart");
+        var context = canvas.getContext('2d');
+        context.clearRect(0, 0, canvas.width, canvas.height); //clear html5 canvas
+        $("#yearlyHistoryModalLoading").show();
+      });
 
 
 
