@@ -525,6 +525,8 @@
         return div;
       };
 
+      var ctx = document.getElementById('yearlyHistoryChart').getContext('2d');
+      var yearlyHistoryChart = new Chart(ctx);
 
       function GenerateYearlyHistoryChart(monthlyFeatures) {
         let labels = [...new Set(monthlyFeatures.map(f => f.properties.Year))];
@@ -542,29 +544,28 @@
           return waterAreaSumForYear / monthCount;
         });
         console.log(averageExtends);
-        var ctx = document.getElementById('yearlyHistoryChart').getContext('2d');
-        var yearlyHistoryChart = new Chart(ctx, {
+        yearlyHistoryChart = new Chart(ctx, {
           type: 'bar',
           data: {
             labels: labels,
             datasets: [{
-              label: 'Maximum Extends',
+              label: 'Maximum Water Area(km2)',
               data: maximumExtends,
               backgroundColor:
-                'rgba(255, 99, 132, 0.2)'
+                'rgba(252, 186, 3, 1)'
               ,
               borderColor:
-                'rgba(255, 99, 132, 1)'
+                'rgba(228, 230, 225, 1)'
               ,
               borderWidth: 1
             },
             {
-              label: 'Average Extends',
+              label: 'Average Water Area(km2)',
               data: averageExtends,
               backgroundColor:
-                'rgba(54, 162, 235, 0.2)',
+                'rgba(222, 240, 177, 1)',
               borderColor:
-                'rgba(54, 162, 235, 1)',
+                'rgba(228, 230, 225, 1)',
               borderWidth: 1
             }
             ]
@@ -573,24 +574,40 @@
             scales: {
               yAxes: [{
                 ticks: {
-                  beginAtZero: true
+                  beginAtZero: true,
+                  fontColor: "rgb(255, 255, 255)"
+                },
+                scaleLabel: {
+                  display: true,
+                  labelString: 'Square Kilometer',
+                  fontColor: "rgb(255, 255, 255)"
+                },
+                gridLines: {
+                  color: "rgb(255, 255, 255, 0.2)"
+                }
+              }],
+              xAxes: [{
+                ticks: {
+                  fontColor: "rgb(255, 255, 255)"
+                },
+                gridLines: {
+                  color: "rgb(255, 255, 255, 0.2)"
                 }
               }]
+            },
+            legend: {
+              display: true,
+              labels: {
+                fontColor: 'rgb(255, 255, 255)'
+              }
             }
           }
         });
       }
 
-      $('#yearlyHistoryModal').on('hidden.bs.modal', function (e) {
-        var canvas = document.getElementById("yearlyHistoryChart");
-        var context = canvas.getContext('2d');
-        context.clearRect(0, 0, canvas.width, canvas.height); //clear html5 canvas
-      });
-
-      $('#yearlyHistoryModal').on('hidden.bs.modal', function (e) {
-        var canvas = document.getElementById("yearlyHistoryChart");
-        var context = canvas.getContext('2d');
-        context.clearRect(0, 0, canvas.width, canvas.height); //clear html5 canvas
+      $('#yearlyHistoryModal').on('show.bs.modal', function (e) {
+        //yearlyHistoryChart.clear();        
+        yearlyHistoryChart.destroy();
         $("#yearlyHistoryModalLoading").show();
       });
 
