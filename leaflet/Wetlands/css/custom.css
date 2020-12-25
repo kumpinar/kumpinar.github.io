@@ -206,3 +206,28 @@ a, a:hover { color: #1450A8;}
 
 
 .popover-body a, .popover-body a:hover { color: #fff; font-weight: bold;}
+
+
+
+ 
+.custom-modal .modal-header {    
+  padding: 10px !important;
+  border-radius: 0;
+  background-color: #5ba2e6;
+color: #fff;
+}
+
+.custom-modal .modal-content {    
+  background-color: #f7f7f7;
+}
+
+.custom-modal .modal-footer {    
+  padding: 10px !important;
+  border-radius: 0;
+  background-color: #f3f3f3;
+}
+
+.custom-modal .close {
+  color: #fff;
+  text-shadow: 0;
+}

@@ -120,25 +120,7 @@
       </div>
     </div>
 
-    <div class="modal fade" id="modal-pop" tabindex="-1" role="dialog">
-      <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-          <div class="modal-body">
-            <div class="container-fluid bd-example-row">
-              <div class="row">
-                <div class="col-md-12">
-                  <button type="button" class="close close-btn" data-dismiss="modal" aria-label="Close"><span
-                      aria-hidden="true"><i class="fa fa-times-circle" aria-hidden="true"></i></span></button>
-                  <div id="modal-main"></div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div><!-- /.modal-content -->
-      </div><!-- /.modal-dialog -->
-    </div><!-- /.modal -->
-
-    <div style="display: none;">
+    <div id="templates" style="display: none;">
       <table id="tmpPointPopup" class="table table-striped">
         <tbody>
           <tr>
@@ -163,8 +145,33 @@
             <th>Name</th>
             <td class="name"></td>
           </tr>
+          <tr>
+            <td colspan="2" class="text-center"><a href="javascript:void(0)" class="yearlyHistoryLink">Show Yearly
+                Water History</a></td>
+          </tr>
         </tbody>
       </table>
+    </div>
+
+
+    <!-- history modal -->
+    <div class="modal fade" id="yearlyHistoryModal" tabindex="-1" role="dialog" aria-hidden="true">
+      <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Yearly Water History for Selected Ramsar Polygon</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">×</span>
+            </button>
+          </div>
+          <div class="modal-body">
+
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn  btn-sm btn-secondary" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
     </div>
 
     <script type="text/javascript">
@@ -202,7 +209,7 @@
       var satelliteLayer = L.tileLayer('https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', {
         attribution: '<a href="https://www.google.com/intl/tr/earth/">Google Aerial</a>'
       });
-      var Esri_WorldImagery = L.tileLayer('https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {                                           
+      var Esri_WorldImagery = L.tileLayer('https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
         attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
       });
 
@@ -219,11 +226,11 @@
         layers: [osmTileLayer]
       }).fitWorld();
 
-      
+
       map.createPane('labels');
       map.getPane('labels').style.zIndex = 450;
       map.getPane('labels').style.pointerEvents = 'none';
-      var Esri_WorldImagery_Labels = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}',{
+      var Esri_WorldImagery_Labels = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}', {
         pane: 'labels'
       });
 
@@ -233,14 +240,14 @@
         "Esri WorldImagery": Esri_WorldImagery,
       };
 
-      var overlays = { 
+      var overlays = {
         "Water Occurrence (1984-2019)": waterOccurrence
       };
 
       L.control.layers(baseLayers, overlays).addTo(map);
 
       Esri_WorldImagery.on('add', function (ev) {
-          map.addLayer(Esri_WorldImagery_Labels);
+        map.addLayer(Esri_WorldImagery_Labels);
       });
       Esri_WorldImagery.on('remove', function (ev) {
         map.removeLayer(Esri_WorldImagery_Labels);
@@ -349,7 +356,26 @@
               layer.once('click', (e) => {
                 $popup = $("#tmpWdpaPopup").clone();
                 $popup.find('.name').html(feature.properties.NAME);
+
+                $yearlyHistoryLink = $popup.find('.yearlyHistoryLink');
+                $yearlyHistoryLink.on('click', () => {
+                  $("#yearlyHistoryModal").modal('show');
+                  $.ajax({
+                    url: "https://us-central1-upwork-leaflet.cloudfunctions.net/monthlyWaterHistory",
+                    method: "POST",
+                    timeout: 0,
+                    headers: {
+                      "Content-Type": "application/json"
+                    },
+                    data: JSON.stringify(feature),
+                    success: (res) => {
+                      console.log(res);
+                    }
+                  });
+                });
+
                 layer.bindPopup($popup[0], { maxWidth: 500 }).openPopup();
+
               });
               layer.on('click', (e) => {
                 console.log(e.target.feature);
@@ -452,9 +478,9 @@
           $('[data-toggle="popover"]').popover({
             html: true,
             placement: 'top',
-            trigger:'focus',
-            content:'The Water Occurrence dataset shows where surface water occurred between 1984 and 2019 and provides information concerning overall water dynamics. This product captures both the intra and inter-annual variability and changes. The occurrence is a measurement of the water presence frequency (expressed as a percentage of the available observations over time actually identified as water). The provided occurrence accommodates for variations in data acquisition over time (i.e. temporal deepness and frequency density of the satellite observations) in order to provide a consistent characterization of the water dynamic over time. For more information see: <a href="https://global-surface-water.appspot.com" target="_blank">global-surface-water.appspot.com </a>',
-            
+            trigger: 'focus',
+            content: 'The Water Occurrence dataset shows where surface water occurred between 1984 and 2019 and provides information concerning overall water dynamics. This product captures both the intra and inter-annual variability and changes. The occurrence is a measurement of the water presence frequency (expressed as a percentage of the available observations over time actually identified as water). The provided occurrence accommodates for variations in data acquisition over time (i.e. temporal deepness and frequency density of the satellite observations) in order to provide a consistent characterization of the water dynamic over time. For more information see: <a href="https://global-surface-water.appspot.com" target="_blank">global-surface-water.appspot.com </a>',
+
           })
         })
       });
