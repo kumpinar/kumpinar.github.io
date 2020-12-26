@@ -279,6 +279,7 @@
               $popup.find('.name').html(geoJsonPoint.properties.officialname);
               $popup.find('.country').html(geoJsonPoint.properties.country_en);
               $popup.find('.infoLink').attr("href", "https://rsis.ramsar.org/ris/" + geoJsonPoint.properties.ramsarid);
+              $popup.find('.yearlyHistoryLink').hide();
               marker.bindPopup($popup[0], { maxWidth: 500 }).openPopup();
             });
 
@@ -341,21 +342,14 @@
                 $popup.find('.infoLink').attr("href", "https://rsis.ramsar.org/ris/" + feature.properties.ramsarid);
 
                 $yearlyHistoryLink = $popup.find('.yearlyHistoryLink');
-                $yearlyHistoryLink.on('click', () => {
-                  $("#yearlyHistoryModal").modal('show');
-                  $.ajax({
-                    url: "https://us-central1-upwork-leaflet.cloudfunctions.net/monthlyWaterHistory",
-                    method: "POST",
-                    timeout: 0,
-                    headers: {
-                      "Content-Type": "application/json"
-                    },
-                    data: JSON.stringify(feature),
-                    success: (res) => {
-                      $("#yearlyHistoryModalLoading").hide();
-                      GenerateYearlyHistoryChart(res);
-                    }
-                  });
+                $yearlyHistoryLink.on('click', () => {                  
+                  let unionFeatures = ramsarPolygons.getLayers()
+                    .filter(f=>f.feature.properties.ramsarid==feature.properties.ramsarid)
+                    .map(f=>f.feature)
+                    .reduce((acc, val)=>{
+                      return turf.union(acc, val);
+                    });
+                  LoadMonthlyHistory(unionFeatures);
                 });
 
                 layer.bindPopup($popup[0], { maxWidth: 500 }).openPopup();
@@ -381,20 +375,7 @@
 
                 $yearlyHistoryLink = $popup.find('.yearlyHistoryLink');
                 $yearlyHistoryLink.on('click', () => {
-                  $("#yearlyHistoryModal").modal('show');
-                  $.ajax({
-                    url: "https://us-central1-upwork-leaflet.cloudfunctions.net/monthlyWaterHistory",
-                    method: "POST",
-                    timeout: 0,
-                    headers: {
-                      "Content-Type": "application/json"
-                    },
-                    data: JSON.stringify(feature),
-                    success: (res) => {
-                      $("#yearlyHistoryModalLoading").hide();
-                      GenerateYearlyHistoryChart(res);
-                    }
-                  });
+                  LoadMonthlyHistory(feature);
                 });
 
                 layer.bindPopup($popup[0], { maxWidth: 500 }).openPopup();
@@ -525,6 +506,26 @@
         return div;
       };
 
+      function LoadMonthlyHistory(feature) {
+        $("#yearlyHistoryModal").modal('show');
+        $.ajax({
+          url: "https://us-central1-upwork-leaflet.cloudfunctions.net/monthlyWaterHistory",
+          method: "POST",
+          timeout: 0,
+          headers: {
+            "Content-Type": "application/json"
+          },
+          data: JSON.stringify(feature),
+          success: (res) => {
+            $("#yearlyHistoryModalLoading").hide();
+            GenerateYearlyHistoryChart(res);
+          },
+          error: () => {
+            $("#yearlyHistoryModalLoading").show().html('<span class="text-danger">Somethings went wrong. Please try again later.</span>');
+          }
+        });
+      }
+
       var ctx = document.getElementById('yearlyHistoryChart').getContext('2d');
       var yearlyHistoryChart = new Chart(ctx);
 
@@ -606,9 +607,8 @@
       }
 
       $('#yearlyHistoryModal').on('show.bs.modal', function (e) {
-        //yearlyHistoryChart.clear();        
         yearlyHistoryChart.destroy();
-        $("#yearlyHistoryModalLoading").show();
+        $("#yearlyHistoryModalLoading").show().html('Loading...');
       });
 
 
