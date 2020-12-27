@@ -231,3 +231,15 @@ color: #fff;
   color: #fff;
   text-shadow: 0;
 }
+
+#dataSourceTooltip {
+  background-color: #000;
+  color: #fff;
+  position: absolute;
+  padding: 5px;
+  border-radius: 5px;
+  z-index: 1060;
+}
+#dataSourceTooltip a{
+  color:white;
+}

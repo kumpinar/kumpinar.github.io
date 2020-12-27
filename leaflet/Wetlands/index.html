@@ -15,7 +15,7 @@
   <link rel="stylesheet" href="lib/marker-cluster/MarkerCluster.Default.css" />
   <link rel="stylesheet" href="css/leaflet.css" />
   <link rel="stylesheet" href="lib/selectize/css/selectize.bootstrap4.css" />
-  <link rel="stylesheet" href="css/custom.css?v7" />
+  <link rel="stylesheet" href="css/custom.css?v11" />
 
   <!-- jQuery first, then Popper.js, then Bootstrap JS -->
   <script src="lib/jquery-3.3.1.min.js"></script>
@@ -36,6 +36,10 @@
 </head>
 
 <body>
+  <div id="dataSourceTooltip" style="display: none;">
+    <a href="https://developers.google.com/earth-engine/datasets/catalog/JRC_GSW1_2_MonthlyHistory"
+      target="_blank">JRC Monthly Water History, v1.2</a>
+  </div>
 
   <nav class="navbar navbar-expand-md navbar-light mb-2">
     <img src="img/logo.png" class="img-fluid" alt="">
@@ -165,7 +169,8 @@
       <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title">Yearly Water History - </h5> <h5  class="modal-title" id="yearlyHistoryModalName"></h5>
+            <h5 class="modal-title">Yearly Water History - </h5>
+            <h5 class="modal-title" id="yearlyHistoryModalName"></h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">×</span>
             </button>
@@ -182,7 +187,8 @@
         </div>
       </div>
     </div>
-
+    
+    
     <script type="text/javascript">
 
       $(window).resize(function () {
@@ -550,16 +556,18 @@
             .reduce((acc, val) => acc + val, 0);
           return waterAreaSumForYear / monthCount;
         });
-
+        let hovering = false,
+        tooltip = document.getElementById("dataSourceTooltip");
+        $("#yearlyHistoryChart").css('background-color','white');
         yearlyHistoryChart = new Chart(ctx, {
           type: 'bar',
           data: {
             labels: chartLabels,
             datasets: [{
-              label: 'Maximum Water Area(km2)',
+              label: 'Annual maximum 🛈',
               data: maximumExtends,
               backgroundColor:
-                'rgba(252, 186, 3, 1)'
+                '#173CF5'
               ,
               borderColor:
                 'rgba(228, 230, 225, 1)'
@@ -567,10 +575,10 @@
               borderWidth: 1
             },
             {
-              label: 'Average Water Area(km2)',
+              label: 'Annual monthly average 🛈',
               data: averageExtends,
               backgroundColor:
-                'rgba(222, 240, 177, 1)',
+                '#9F71C5',
               borderColor:
                 'rgba(228, 230, 225, 1)',
               borderWidth: 1
@@ -582,30 +590,43 @@
               yAxes: [{
                 ticks: {
                   beginAtZero: true,
-                  fontColor: "rgb(255, 255, 255)"
+                  fontSize: 16
                 },
                 scaleLabel: {
                   display: true,
-                  labelString: 'Square Kilometer',
-                  fontColor: "rgb(255, 255, 255)"
+                  labelString: 'Area of surface water [km2]',
+                  fontSize: 16
                 },
                 gridLines: {
-                  color: "rgb(255, 255, 255, 0.2)"
+                  color: "rgb(0, 0, 0, 0.2)"
                 }
               }],
               xAxes: [{
                 ticks: {
-                  fontColor: "rgb(255, 255, 255)"
+                  fontSize: 16
                 },
                 gridLines: {
-                  color: "rgb(255, 255, 255, 0.2)"
+                  color: "rgb(0, 0, 0, 0.2)"
                 }
               }]
             },
             legend: {
               display: true,
               labels: {
-                fontColor: 'rgb(255, 255, 255)'
+                fontSize: 16
+              },
+              onHover: function (event, legendItem) {
+                if (hovering) {
+                  return;
+                }
+                hovering = true;
+                tooltip.style.left = event.x + "px";
+                tooltip.style.top = event.y + "px";
+                tooltip.style.display = "unset";
+              },
+              onLeave: function () {
+                hovering = false;
+                tooltip.style.display = "none";
               }
             }
           }
@@ -616,11 +637,11 @@
         yearlyHistoryChart.destroy();
         $("#yearlyHistoryModalLoading").show().html('Loading...');
         $(".download-csv").prop('disabled', true);
-        $("#yearlyHistoryModalName").html(' '+polygonName);
+        $("#yearlyHistoryModalName").html(' ' + polygonName);
+        $("#yearlyHistoryChart").css('background-color','');
         chartLabels = [];
         maximumExtends = [];
         averageExtends = [];
-        polygonName = '';
       });
 
       $('.download-csv').click(() => {
@@ -643,7 +664,7 @@
 
         console.log(csv);
 
-        let filename = polygonName+'_yearly_water_history.csv';
+        let filename = 'GSfM_dataexport _' + polygonName + '.csv';
         var blob = new Blob([csv], { type: 'text/csv' });
         if (window.navigator.msSaveOrOpenBlob) {
           window.navigator.msSaveBlob(blob, filename);
