@@ -38,7 +38,7 @@
 <body>
   <div id="dataSourceTooltip" style="display: none;">
     <a href="https://developers.google.com/earth-engine/datasets/catalog/JRC_GSW1_2_MonthlyHistory"
-      target="_blank">JRC Monthly Water History, v1.2</a>
+      target="_blank">Global Surface Water (1984-present)</a>
   </div>
 
   <nav class="navbar navbar-expand-md navbar-light mb-2">
@@ -169,7 +169,7 @@
       <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title">Yearly Water History - </h5>
+            <h5 class="modal-title"></h5>
             <h5 class="modal-title" id="yearlyHistoryModalName"></h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">×</span>
@@ -543,6 +543,8 @@
 
       function GenerateYearlyHistoryChart(monthlyFeatures) {
         chartLabels = [...new Set(monthlyFeatures.map(f => f.properties.Year))];
+        $("#dataSourceTooltip").find('a').html("Global Surface Water ("+chartLabels[0]+"-"+chartLabels[chartLabels.length-1]+")");
+        $("#yearlyHistoryModalName").find(".maxYear").html(chartLabels[chartLabels.length-1]);
         maximumExtends = chartLabels.map(year => {
           return monthlyFeatures.filter(f => f.properties.Year === year && f.properties.Water)
             .map(f => f.properties.Water)
@@ -637,7 +639,7 @@
         yearlyHistoryChart.destroy();
         $("#yearlyHistoryModalLoading").show().html('Loading...');
         $(".download-csv").prop('disabled', true);
-        $("#yearlyHistoryModalName").html(' ' + polygonName);
+        $("#yearlyHistoryModalName").html('Annual Surface Water (1984 – <span class="maxYear"></span>): ' + polygonName);
         $("#yearlyHistoryChart").css('background-color','');
         chartLabels = [];
         maximumExtends = [];
