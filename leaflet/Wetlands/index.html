@@ -144,8 +144,7 @@
             </td>
           </tr>
           <tr>
-            <td colspan="2" class="text-center"><a href="javascript:void(0)" class="yearlyHistoryLink">Show Yearly
-                Water History</a></td>
+            <td colspan="2" class="text-center"><a href="javascript:void(0)" class="yearlyHistoryLink">Show annual surface water (1984-2019)</a></td>
           </tr>
         </tbody>
       </table>
@@ -156,8 +155,7 @@
             <td class="name"></td>
           </tr>
           <tr>
-            <td colspan="2" class="text-center"><a href="javascript:void(0)" class="yearlyHistoryLink">Show Yearly
-                Water History</a></td>
+            <td colspan="2" class="text-center"><a href="javascript:void(0)" class="yearlyHistoryLink">Show annual surface water (1984-2019)</a></td>
           </tr>
         </tbody>
       </table>
@@ -616,6 +614,9 @@
               display: true,
               labels: {
                 fontSize: 16
+              },
+              onClick: function(e, legendItem){
+                window.open("https://developers.google.com/earth-engine/datasets/catalog/JRC_GSW1_2_MonthlyHistory");
               },
               onHover: function (event, legendItem) {
                 if (hovering) {
