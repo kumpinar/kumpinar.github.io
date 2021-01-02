@@ -110,7 +110,7 @@
 
         <div class="card mt-2">
           <div class="card-body">
-            <h6>Other Layers</h6>
+            <h6>Surface Water</h6>
             <div class="modern-Checkbox">
               <input type="checkbox" id="chkWaterOccurence">
               <label for="chkWaterOccurence">Water Occurrence (1984-2019)</label>
@@ -144,7 +144,8 @@
             </td>
           </tr>
           <tr>
-            <td colspan="2" class="text-center"><a href="javascript:void(0)" class="yearlyHistoryLink">Show annual surface water (1984-2019)</a></td>
+            <td colspan="2" class="text-center"><a href="javascript:void(0)" class="yearlyHistoryLink">Show annual
+                surface water (1984-2019)</a></td>
           </tr>
         </tbody>
       </table>
@@ -155,7 +156,8 @@
             <td class="name"></td>
           </tr>
           <tr>
-            <td colspan="2" class="text-center"><a href="javascript:void(0)" class="yearlyHistoryLink">Show annual surface water (1984-2019)</a></td>
+            <td colspan="2" class="text-center"><a href="javascript:void(0)" class="yearlyHistoryLink">Show annual
+                surface water (1984-2019)</a></td>
           </tr>
         </tbody>
       </table>
@@ -164,7 +166,7 @@
 
     <!-- history modal -->
     <div class="modal fade" id="yearlyHistoryModal" tabindex="-1" role="dialog" aria-hidden="true">
-      <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-dialog modal-lg  modal-dialog-centered" role="document">
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title"></h5>
@@ -185,8 +187,8 @@
         </div>
       </div>
     </div>
-    
-    
+
+
     <script type="text/javascript">
 
       $(window).resize(function () {
@@ -302,13 +304,16 @@
         InitSelectize(optionsForPoints);
       });
       var loadedRamsarPolygons = [];
-      markers.on('animationend', function (event) {
+      /* markers.on('animationend', function (event) {
         LoadUnExistRamsarPolygons();
-      });
+      }); */
 
 
       map.on('moveend', function (event) {
-        LoadUnExistRamsarPolygons();
+        setTimeout(() => {
+          LoadUnExistRamsarPolygons();
+        }, 400);
+        
       });
 
 
@@ -318,22 +323,46 @@
         markers._featureGroup.getLayers().forEach(layer => {
           if (layer.feature) {
             if (layer instanceof L.Marker && map.getBounds().contains(layer.getLatLng())) {
-              if (!loadedRamsarPolygons.includes(layer.feature.properties.ramsarid)) {
+              /* if (!loadedRamsarPolygons.includes(layer.feature.properties.ramsarid)) {
                 loadedRamsarPolygons.push(layer.feature.properties.ramsarid);
                 ramsarids.push(layer.feature.properties.ramsarid);
                 ramsarpoints.push(layer.feature.geometry.coordinates.join() + ',' + layer.feature.properties.ramsarid);
+              } */
+
+              if (ramsarPolygons.getLayers().filter(lyr => lyr.options.ramsarid == layer.feature.properties.ramsarid).length == 0) {
+                ramsarids.push(layer.feature.properties.ramsarid);
               }
+
+              if (wdpaPolygons.getLayers().filter(lyr => lyr.options.ramsarid == layer.feature.properties.ramsarid).length == 0) {
+                ramsarpoints.push(layer.feature.geometry.coordinates.join() + ',' + layer.feature.properties.ramsarid);
+              }
+
             }
           }
         });
 
-        if (ramsarids.length > 0) {
+        /* if (ramsarids.length > 0) {
           LoadRamsarPolygon(ramsarids.join());
           LoadWdpaPolygon(ramsarpoints.join('~'));
         } else {
           ChangeWdpaVisibility();
           ChangeRamsarVisibility();
+        } */
+
+        if (ramsarids.length > 0) {
+          LoadRamsarPolygon(ramsarids.join());
         }
+        else {
+          ChangeRamsarVisibility();
+        }
+
+        if (ramsarpoints.length > 0) {
+          LoadWdpaPolygon(ramsarpoints.join('~'));
+        }
+        else {
+          ChangeWdpaVisibility();
+        }
+
       }
 
 
@@ -341,6 +370,9 @@
         $("#loadingRsis").show();
         $.get("https://us-central1-upwork-leaflet.cloudfunctions.net/ramsarPolygons?ramsarids=" + ramsaridsStr, function (data) {
           let geojsonPolygon = L.geoJson(data, {
+            filter: function (geoJsonFeature) {
+              return ramsarPolygons.getLayers().filter(lyr => lyr.options.ramsarid == geoJsonFeature.properties.ramsarid).length == 0;
+            },
             onEachFeature: function (feature, layer) {
               layer.once('click', (e) => {
                 $popup = $("#tmpPointPopup").clone();
@@ -375,6 +407,12 @@
         $("#loadingWdpa").show();
         $.get("https://us-central1-upwork-leaflet.cloudfunctions.net/wdpaPolygons?ramsarpoints=" + ramsarpoints, function (data) {
           let geojsonPolygon = L.geoJson(data, {
+            filter: function (geoJsonFeature) {
+              return wdpaPolygons.getLayers()
+              .filter(lyr => lyr.options.wdpaid == geoJsonFeature.properties.WDPAID 
+                          & lyr.options.ramsarid == geoJsonFeature.properties.ramsarid
+                      ).length == 0;
+            },
             onEachFeature: function (feature, layer) {
               layer.once('click', (e) => {
                 $popup = $("#tmpWdpaPopup").clone();
@@ -392,6 +430,7 @@
                 console.log(e.target.feature);
               });
               layer.options.ramsarid = feature.properties.ramsarid;
+              layer.options.wdpaid = feature.properties.WDPAID;
               layer.setStyle(hiddenStyle);
               wdpaPolygons.addLayer(layer);
             }
@@ -541,8 +580,8 @@
 
       function GenerateYearlyHistoryChart(monthlyFeatures) {
         chartLabels = [...new Set(monthlyFeatures.map(f => f.properties.Year))];
-        $("#dataSourceTooltip").find('a').html("Global Surface Water ("+chartLabels[0]+"-"+chartLabels[chartLabels.length-1]+")");
-        $("#yearlyHistoryModalName").find(".maxYear").html(chartLabels[chartLabels.length-1]);
+        $("#dataSourceTooltip").find('a').html("Global Surface Water (" + chartLabels[0] + "-" + chartLabels[chartLabels.length - 1] + ")");
+        $("#yearlyHistoryModalName").find(".maxYear").html(chartLabels[chartLabels.length - 1]);
         maximumExtends = chartLabels.map(year => {
           return monthlyFeatures.filter(f => f.properties.Year === year && f.properties.Water)
             .map(f => f.properties.Water)
@@ -557,8 +596,8 @@
           return waterAreaSumForYear / monthCount;
         });
         let hovering = false,
-        tooltip = document.getElementById("dataSourceTooltip");
-        $("#yearlyHistoryChart").css('background-color','white');
+          tooltip = document.getElementById("dataSourceTooltip");
+        $("#yearlyHistoryChart").css('background-color', 'white');
         yearlyHistoryChart = new Chart(ctx, {
           type: 'bar',
           data: {
@@ -615,7 +654,7 @@
               labels: {
                 fontSize: 16
               },
-              onClick: function(e, legendItem){
+              onClick: function (e, legendItem) {
                 window.open("https://developers.google.com/earth-engine/datasets/catalog/JRC_GSW1_2_MonthlyHistory");
               },
               onHover: function (event, legendItem) {
@@ -641,7 +680,7 @@
         $("#yearlyHistoryModalLoading").show().html('Loading...');
         $(".download-csv").prop('disabled', true);
         $("#yearlyHistoryModalName").html('Annual Surface Water (1984 – <span class="maxYear"></span>): ' + polygonName);
-        $("#yearlyHistoryChart").css('background-color','');
+        $("#yearlyHistoryChart").css('background-color', '');
         chartLabels = [];
         maximumExtends = [];
         averageExtends = [];
