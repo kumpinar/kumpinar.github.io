@@ -62,7 +62,7 @@
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
     <link href="assets/bootstrap.min.css" rel="stylesheet" />
     <link href="assets/toastr.min.css" rel="stylesheet" />
-    <link href="assets/geosearch.css" rel="stylesheet" />
+    <link href="assets/selectize.bootstrap4.css" rel="stylesheet" />
 
     <script src="assets/jquery-3.5.1.min.js"></script>
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
@@ -73,7 +73,7 @@
     <script src="assets/bootstrap.min.js"></script>
     <script src="assets/toastr.min.js"></script>
     <script src="assets/turf.min.js"></script>
-    <script src="assets/geosearch.umd.js"></script>
+    <script src="assets/selectize.js"></script>
 
 </head>
 
@@ -111,6 +111,9 @@
                     <label><input type="radio" name="layeradio" value="local_government_areas"> Local
                         Government
                         Areas</label>
+                </div>
+                <div class="search">
+                    <select id="geoseach" placeholder="Search location..."></select>
                 </div>
                 <div style="bottom: 20px; position: absolute; width: 75%;" class="text-center">
                     <img src="assets/images/PCI_CES.jpg" class="img-fluid" alt="">
@@ -157,16 +160,10 @@
 
         var overlays = {};
 
-        L.control.layers(baseLayers, overlays).addTo(map);
+        L.control.layers(baseLayers, overlays, {
+            collapsed: false
+        }).addTo(map);
 
-        var search = new GeoSearch.GeoSearchControl({
-            provider: new GeoSearch.OpenStreetMapProvider({
-                params: {
-                    countrycodes: 'AU'
-                },
-            })
-        });
-        map.addControl(search);
 
         var platypusGruop = L.layerGroup();
 
@@ -456,6 +453,89 @@
                 if (map.getZoom() > 8) {
                     map.addLayer(platypusGruop);
                 }
+            }
+        });
+
+        /* var $selectForm = $('#geoseach').selectize({
+            preload: false,
+            valueField: 'latlng',
+            labelField: 'name',
+            maxItems: '1',
+            sortField: { field: 'name' },
+            loadThrottle: 200,
+            load: function (query, callback) {
+                if (query.length > 0) {
+                    $.ajax({
+                        contentType: "application/json; charset=utf-8",
+                        url: "https://nominatim.openstreetmap.org/search?countrycodes=AU&q=" + encodeURI(query) + "&format=json&namedetails=1",
+                        type: 'GET',
+                        dataType: "json",
+                        error: function (data) {
+                            callback();
+                        },
+                        success: function (data) {
+                            callback(data.map(d=>{
+                                return {
+                                name:d.display_name,
+                                latlng: d.lat +', '+d.lon
+                                }
+                            }));
+                        }
+                    });
+                }
+
+            }
+        });
+        var selectizeForm = $selectForm[0].selectize;
+
+        selectizeForm.on('change', function (value) {  
+            if (value) {
+                console.log(value)
+            }
+        }); */
+
+
+        var $selectForm = $('#geoseach').selectize({
+            valueField: 'latlng',
+            labelField: 'name',
+            searchField: 'name',
+            options: [],
+            maxItems: 1,
+            load: function (query, callback) {
+                if (!query.length) return callback();
+                $.ajax({
+                    url: "https://nominatim.openstreetmap.org/search?countrycodes=AU&q=" + encodeURI(query) + "&format=json&namedetails=1",
+                    type: 'GET',
+                    dataType: 'json',
+                    error: function () {
+                        callback();
+                    },
+                    success: function (res) {
+                        selectizeForm.clearOptions();
+                        callback(res.map(d => {
+                            return { name: d.display_name, latlng: d.lat + ', ' + d.lon }
+                        }));
+                    }
+                });
+            }
+        });
+
+        var selectizeForm = $selectForm[0].selectize;
+        selectizeForm.on('focus', function () {
+            selectizeForm.clear(true);
+        });
+        var marker;
+        selectizeForm.on('change', function (value) {
+            if (value) {
+                //add marker on map and fit
+                var latlng = [value.split(',')[0], value.split(',')[1]];
+                if (marker) {
+                    marker.setLatLng(latlng);
+                }
+                else {
+                    marker = L.marker(latlng).addTo(map);
+                }
+                map.setView(latlng, 12);
             }
         });
 
