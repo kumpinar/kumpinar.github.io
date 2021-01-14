@@ -23,14 +23,17 @@
         function init() {
             var myOptions = {
                 zoom: 14,
-                center: { lat: 33.628, lng: -92.937 },
+                center: {
+                    lat: 33.549039,
+                    lng: -92.846521
+                },
                 mapTypeId: google.maps.MapTypeId.ROADMAP,
                 streetViewControl: true //my favorite feature in V3!
             };
             var map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
             var url = 'https://services.orbismaps.io/arcgis/rest/services/Marketing/RLMSV4DemoMap/MapServer';
-            var agsType = new  gmaps.ags.MapType(url,{name:'ArcGIS'});
-    map.overlayMapTypes.insertAt(0, agsType);
+            var agsType = new gmaps.ags.MapType(url, { name: 'ArcGIS' });
+            map.overlayMapTypes.insertAt(0, agsType);
         }
 
         window.onload = init;
