@@ -1,0 +1,126 @@
+<html>
+
+<head>
+    <style>
+        /* Always set the map height explicitly to define the size of the div
+ * element that contains the map. */
+        #map {
+            height: 100%;
+        }
+
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="map"></div>
+    <!-- Replace the value of the key parameter with your own API key. -->
+    <script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDuMSXpTD1aDeIY3_fGH-nv7tycmob3xoU&callback=initMap">
+        </script>
+    <script>
+        var map;
+        var Overlays = []
+        //var Overlay;
+
+        function get_overlay_image(_ne, _sw) {
+
+
+
+
+            var imageBounds = {
+                north: _ne.lat(),
+                south: _sw.lat(),
+                east: _ne.lng(),
+                west: _sw.lng()
+            };
+
+
+
+            var export_bbox = _sw.lng() + ',' + _sw.lat() + ',' + _ne.lng() + ',' + _ne.lat();
+
+
+            var url_param = '&format=png&transparent=true&f=image&bboxSR=4326&imageSR=4326';
+
+
+            var _width = map.getDiv().offsetWidth;
+            var _height = map.getDiv().offsetHeight;
+
+            var _size = '&size=' + _width + ',' + _height
+
+            var _layers = '&layers=show:1'
+
+
+            var root_url = 'https://services.orbismaps.io/arcgis/rest/services/Marketing/RLMSV4DemoMap/MapServer/export?bbox=';
+
+
+            var image_url = root_url + export_bbox + url_param + _size + _layers;
+
+
+
+
+
+            // delete remove all overlay in overlays array.
+            while (Overlays[0]) {
+
+                Overlays.pop().setMap(null);
+            }
+
+
+            var Overlay = new google.maps.GroundOverlay(
+                image_url,
+                imageBounds);
+
+            //Overlay.setOpacity(0.5)
+
+            Overlay.setMap(map);
+
+
+            // push new overlay into overlays array
+            Overlays.push(Overlay);
+
+        }
+
+
+
+
+
+        function initMap() {
+
+
+
+            map = new google.maps.Map(document.getElementById('map'), {
+                zoom: 12,
+                mapTypeId: google.maps.MapTypeId.HYBRID,
+                // center: {lat: 38.907292, lng: -77.036420} //washington
+                center: { lat: 33.628, lng: -92.937 }
+
+            });
+
+
+
+            google.maps.event.addListener(map, 'idle', function () {
+                var bounds = map.getBounds();
+                var ne = bounds.getNorthEast();
+                var sw = bounds.getSouthWest();
+                console.log(ne.lat());
+                console.log(ne.lng());
+                console.log(sw.lat());
+                console.log(sw.lng());
+
+
+
+
+                get_overlay_image(ne, sw);
+            });
+
+        }
+    </script>
+</body>
+
+</html>
