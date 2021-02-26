@@ -14,6 +14,7 @@
     <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
     <link href="https://api.mapbox.com/mapbox-gl-js/v2.1.1/mapbox-gl.css" rel="stylesheet">
     <script src="https://api.mapbox.com/mapbox-gl-js/v2.1.1/mapbox-gl.js"></script>
+    <script src="jquery-3.5.1.min.js"></script>
     <style>
         body {
             margin: 0;
@@ -26,20 +27,51 @@
             bottom: 0;
             width: 100%;
         }
+
+        #buttons {
+            width: 90%;
+            margin: 0 auto;
+        }
+
+        .button {
+            display: inline-block;
+            position: relative;
+            cursor: pointer;
+            width: 20%;
+            padding: 8px;
+            border-radius: 3px;
+            margin-top: 10px;
+            font-size: 12px;
+            text-align: center;
+            color: #fff;
+            background: #1b3667;
+            font-family: sans-serif;
+            font-weight: bold;
+        }
+
+        .button.active {
+            background: #166d3d;
+        }
     </style>
 </head>
 
 <body>
     <div id="map">
     </div>
+    <ul id="buttons">
+        <li id="btn-24-hours" class="button active" json-path="sales24hours.json">24 Hours</li>
+        <li id="btn-7-days" class="button" json-path="sales7days.json">7 Days</li>
+        <li id="btn-30-days" class="button" json-path="sales30days.json">30 Days</li>
+        <li id="btn-365-days" class="button" json-path="sales365days.json">365 Days</li>
+    </ul>
     <script>
         const formatter = new Intl.NumberFormat('en-US', {
             style: 'currency',
             currency: 'USD',
             minimumFractionDigits: 2
         });
-        const colors=['#277da1','#577590','#4d908e','#43aa8b','#90be6d','#f9c74f','#f9844a','#f9a339','#f3722c','#9e0507'];
-        
+        const colors = ['#277da1', '#577590', '#4d908e', '#43aa8b', '#90be6d', '#f9c74f', '#f9844a', '#f9a339', '#f3722c', '#9e0507'];
+
 
         mapboxgl.accessToken = 'pk.eyJ1IjoiYWNlbWltdWhlbmRpcyIsImEiOiJjajNvZnZvd3IwMDI0MnJydHhpZjZ5bnRsIn0.mVZMKTNJSZ0rWxy1F7nXhg';
         var map = new mapboxgl.Map({
@@ -51,9 +83,53 @@
         map.addControl(new mapboxgl.NavigationControl());
 
         map.on('load', function () {
-            // Define a source before using it to create a new layer
 
-            fetch("sales24hours.json")
+
+            map.addSource('country-points-source', {
+                type: 'geojson',
+                data: null
+            });
+
+            map.addLayer({
+                id: 'country-points',
+                type: 'circle',
+                source: 'country-points-source',
+                paint: {
+                    'circle-color': '#000000',
+                    'circle-stroke-color': '#000000',
+                    'circle-stroke-width': 1,
+                    'circle-radius': 1
+
+                }
+            });
+
+            map.addLayer({
+                id: 'country-names',
+                type: 'symbol',
+                source: 'country-points-source',
+                layout: {
+                    'text-field': '{country} \n {amout_of_sales_in_usd_string}',
+                    'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Bold'],
+                    'text-size': 12
+                }
+            });
+
+            CreateCircles();
+        });
+
+        map.on('zoomend', function () {
+            console.log(map.getZoom());
+        });
+
+        $('.button').click(function () {
+            $('#buttons li').removeClass('active');
+            $(this).addClass('active');
+            CreateCircles();
+        });
+
+        function CreateCircles() {
+            let jsonPath = $('.button.active').attr('json-path');
+            fetch(jsonPath)
                 .then(response => response.json())
                 .then(sales => {
                     fetch("capitals.json")
@@ -73,96 +149,43 @@
                                 .filter(f => !isNaN(f.properties.amout_of_sales_in_usd) && f.properties.amout_of_sales_in_usd > 0)
                                 .sort((a, b) => b.properties.amout_of_sales_in_usd - a.properties.amout_of_sales_in_usd);
 
-                            var maxSales=capitals.features[0].properties.amout_of_sales_in_usd;
-                            var minSales=capitals.features[capitals.features.length-1].properties.amout_of_sales_in_usd;
-                            var step=Math.round((maxSales-minSales)/9);
+                            var maxSales = capitals.features[0].properties.amout_of_sales_in_usd;
+                            var minSales = capitals.features[capitals.features.length - 1].properties.amout_of_sales_in_usd;
+                            var step = Math.round((maxSales - minSales) / 9);
 
                             console.log(minSales);
                             console.log(maxSales);
 
-                            var circleColors=['step',['get', 'amout_of_sales_in_usd']];
+                            var circleColors = ['step', ['get', 'amout_of_sales_in_usd']];
+                            var circleRadiusZoomLevels = [0, 3, 7];
+                            var circleRadiusStops = [];
                             circleColors.push(colors[0]);
-                            for(var i=1; i<10; i++){
-                                console.log(minSales+(step*i));
-                                circleColors.push(minSales+(step*i));
+                            for (var i = 1; i < 10; i++) {
+                                console.log(minSales + (step * i));
+                                circleColors.push(minSales + (step * i)-10);
                                 circleColors.push(colors[i]);
                             }
 
-
-
-                            map.addSource('country-points-source', {
-                                type: 'geojson',
-                                data: capitals
-                            });
-                            
-                            map.addLayer({
-                                id: 'country-points',
-                                type: 'circle',
-                                source: 'country-points-source',
-                                paint: {
-                                    'circle-color': circleColors,
-                                    'circle-stroke-color': '#000000',
-                                    'circle-stroke-width': 1,
-                                    'circle-radius': {
-                                        property: 'amout_of_sales_in_usd',
-                                        stops: [
-                                            [{ zoom: 0, value: 10 }, 1],
-                                            [{ zoom: 0, value: 50 }, 2],
-                                            [{ zoom: 0, value: 100 }, 3],
-                                            [{ zoom: 0, value: 1000 }, 4],
-                                            [{ zoom: 0, value: 3000 }, 5],
-                                            [{ zoom: 0, value: 6000 }, 6],
-                                            [{ zoom: 0, value: 10000 }, 7],
-                                            [{ zoom: 0, value: 20000 }, 8],
-                                            [{ zoom: 0, value: 40000 }, 9],
-
-
-                                            [{ zoom: 3, value: 10 }, 10],
-                                            [{ zoom: 3, value: 50 }, 14],
-                                            [{ zoom: 3, value: 100 }, 18],
-                                            [{ zoom: 3, value: 1000 }, 22],
-                                            [{ zoom: 3, value: 3000 }, 26],
-                                            [{ zoom: 3, value: 6000 }, 30],
-                                            [{ zoom: 3, value: 10000 }, 34],
-                                            [{ zoom: 3, value: 20000 }, 38],
-                                            [{ zoom: 3, value: 40000 }, 42],
-
-
-                                            [{ zoom: 7, value: 10 }, 45],
-                                            [{ zoom: 7, value: 50 }, 55],
-                                            [{ zoom: 7, value: 100 }, 70],
-                                            [{ zoom: 7, value: 1000 }, 85],
-                                            [{ zoom: 7, value: 3000 }, 110],
-                                            [{ zoom: 7, value: 6000 }, 125],
-                                            [{ zoom: 7, value: 10000 }, 140],
-                                            [{ zoom: 7, value: 20000 }, 160],
-                                            [{ zoom: 7, value: 40000 }, 190],
-                                        ]
-                                    }
-
+                            circleRadiusZoomLevels.forEach(zoomLevel => {
+                                for (var i = 0; i < 10; i++) {
+                                    console.log(minSales + (step * i));
+                                    let radius = (zoomLevel * zoomLevel) + (i * zoomLevel * 2) + i;
+                                    circleRadiusStops.push([{ zoom: zoomLevel, value: minSales + (step * i) }, radius]);
                                 }
                             });
 
-                            map.addLayer({
-                                id: 'country-names',
-                                type: 'symbol',
-                                source: 'country-points-source',
-                                layout: {
-                                    'text-field': '{country} \n {amout_of_sales_in_usd_string}',
-                                    'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Bold'],
-                                    'text-size': 12
-                                }
-                            });
 
+                            map.getSource('country-points-source').setData(capitals);
+
+                            map.setPaintProperty('country-points', 'circle-color', circleColors);
+                            map.setPaintProperty('country-points', 'circle-radius', {
+                                property: 'amout_of_sales_in_usd',
+                                stops: circleRadiusStops
+                            });
                         });
                 });
 
-
-        });
-
-        map.on('zoomend', function () {
-            console.log(map.getZoom());
-        });
+        }
 
     </script>
 
