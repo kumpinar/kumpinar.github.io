@@ -11,35 +11,20 @@
         gtag('config', 'UA-5383517-7');
     </script>
 
-    <meta name="viewport" content="width=device-width" />
-    <script src='https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.js'></script>
-    <link href='https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.css' rel='stylesheet' />
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.1.1/mapbox-gl.css" rel="stylesheet">
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.1.1/mapbox-gl.js"></script>
     <style>
         body {
-            padding: 0px;
-            margin: 0px;
+            margin: 0;
+            padding: 0;
         }
 
         #map {
-            width: 100vw;
-            height: 100vh;
-        }
-
-        .mapboxgl-popup-content {
-            position: relative;
-            background: #31105d;
-            border-radius: 3px;
-            box-shadow: 0 1px 2px rgba(0, 0, 0, .1);
-            padding: 10px 10px 15px;
-            pointer-events: auto;
-            color: white;
-        }
-
-        .mapboxgl-popup-tip {
-            -webkit-align-self: center;
-            align-self: center;
-            border-top: none;
-            border-bottom-color: #31105d;
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 100%;
         }
     </style>
 </head>
@@ -48,10 +33,18 @@
     <div id="map">
     </div>
     <script>
+        const formatter = new Intl.NumberFormat('en-US', {
+            style: 'currency',
+            currency: 'USD',
+            minimumFractionDigits: 2
+        });
+        const colors=['#277da1','#577590','#4d908e','#43aa8b','#90be6d','#f9c74f','#f9844a','#f9a339','#f3722c','#9e0507'];
+        
+
         mapboxgl.accessToken = 'pk.eyJ1IjoiYWNlbWltdWhlbmRpcyIsImEiOiJjajNvZnZvd3IwMDI0MnJydHhpZjZ5bnRsIn0.mVZMKTNJSZ0rWxy1F7nXhg';
         var map = new mapboxgl.Map({
             container: 'map',
-            style: 'mapbox://styles/mapbox/streets-v11', // stylesheet location
+            style: 'mapbox://styles/mapbox/dark-v10', // stylesheet location
             bounds: new mapboxgl.LngLatBounds([-138.592994, 67.875541], [185.977896, -43.580391]),
             //zoom: -4 // starting zoom
         });
@@ -60,7 +53,7 @@
         map.on('load', function () {
             // Define a source before using it to create a new layer
 
-            fetch("sales365days.json")
+            fetch("sales24hours.json")
                 .then(response => response.json())
                 .then(sales => {
                     fetch("capitals.json")
@@ -71,62 +64,81 @@
                                 let foundSales = sales.filter(s => s.country_code == f.properties.iso2);
                                 if (foundSales.length > 0) {
                                     f.properties.amout_of_sales_in_usd = Math.round(foundSales[0].amout_of_sales_in_usd);
+                                    f.properties.amout_of_sales_in_usd_string = formatter.format(f.properties.amout_of_sales_in_usd)
                                 }
                             });
 
 
                             capitals.features = capitals.features
-                            .filter(f =>  !isNaN(f.properties.amout_of_sales_in_usd) );
-                            
-                        
+                                .filter(f => !isNaN(f.properties.amout_of_sales_in_usd) && f.properties.amout_of_sales_in_usd > 0)
+                                .sort((a, b) => b.properties.amout_of_sales_in_usd - a.properties.amout_of_sales_in_usd);
+
+                            var maxSales=capitals.features[0].properties.amout_of_sales_in_usd;
+                            var minSales=capitals.features[capitals.features.length-1].properties.amout_of_sales_in_usd;
+                            var step=Math.round((maxSales-minSales)/9);
+
+                            console.log(minSales);
+                            console.log(maxSales);
+
+                            var circleColors=['step',['get', 'amout_of_sales_in_usd']];
+                            circleColors.push(colors[0]);
+                            for(var i=1; i<10; i++){
+                                console.log(minSales+(step*i));
+                                circleColors.push(minSales+(step*i));
+                                circleColors.push(colors[i]);
+                            }
+
+
 
                             map.addSource('country-points-source', {
                                 type: 'geojson',
                                 data: capitals
                             });
-
+                            
                             map.addLayer({
                                 id: 'country-points',
                                 type: 'circle',
                                 source: 'country-points-source',
                                 paint: {
-                                    'circle-color': '#51bbd6',
+                                    'circle-color': circleColors,
+                                    'circle-stroke-color': '#000000',
+                                    'circle-stroke-width': 1,
                                     'circle-radius': {
-                                    property: 'amout_of_sales_in_usd',
-                                    stops: [
-                                        [{zoom: 0, value: 10}, 1],
-                                        [{zoom: 0, value: 50}, 2],
-                                        [{zoom: 0, value: 100}, 3],
-                                        [{zoom: 0, value: 1000}, 4],
-                                        [{zoom: 0, value: 10000}, 5],
+                                        property: 'amout_of_sales_in_usd',
+                                        stops: [
+                                            [{ zoom: 0, value: 10 }, 1],
+                                            [{ zoom: 0, value: 50 }, 2],
+                                            [{ zoom: 0, value: 100 }, 3],
+                                            [{ zoom: 0, value: 1000 }, 4],
+                                            [{ zoom: 0, value: 3000 }, 5],
+                                            [{ zoom: 0, value: 6000 }, 6],
+                                            [{ zoom: 0, value: 10000 }, 7],
+                                            [{ zoom: 0, value: 20000 }, 8],
+                                            [{ zoom: 0, value: 40000 }, 9],
 
-                                        
-                                        [{zoom: 3, value: 10}, 10],
-                                        [{zoom: 3, value: 50}, 13],
-                                        [{zoom: 3, value: 100}, 16],
-                                        [{zoom: 3, value: 1000}, 20],
-                                        [{zoom: 3, value: 10000}, 25],
 
-                                        [{zoom: 7, value: 10}, 30],
-                                        [{zoom: 7, value: 50}, 60],
-                                        [{zoom: 7, value: 100}, 90],
-                                        [{zoom: 7, value: 1000}, 120],
-                                        [{zoom: 7, value: 10000}, 150],
+                                            [{ zoom: 3, value: 10 }, 10],
+                                            [{ zoom: 3, value: 50 }, 14],
+                                            [{ zoom: 3, value: 100 }, 18],
+                                            [{ zoom: 3, value: 1000 }, 22],
+                                            [{ zoom: 3, value: 3000 }, 26],
+                                            [{ zoom: 3, value: 6000 }, 30],
+                                            [{ zoom: 3, value: 10000 }, 34],
+                                            [{ zoom: 3, value: 20000 }, 38],
+                                            [{ zoom: 3, value: 40000 }, 42],
+
+
+                                            [{ zoom: 7, value: 10 }, 45],
+                                            [{ zoom: 7, value: 50 }, 55],
+                                            [{ zoom: 7, value: 100 }, 70],
+                                            [{ zoom: 7, value: 1000 }, 85],
+                                            [{ zoom: 7, value: 3000 }, 110],
+                                            [{ zoom: 7, value: 6000 }, 125],
+                                            [{ zoom: 7, value: 10000 }, 140],
+                                            [{ zoom: 7, value: 20000 }, 160],
+                                            [{ zoom: 7, value: 40000 }, 190],
                                         ]
                                     }
-                                    /* 'circle-radius': [
-                                        'step',
-                                         ['get', 'amout_of_sales_in_usd'],
-                                        3,
-                                        10,
-                                        30,
-                                        100,
-                                        40,
-                                        1000,
-                                        50,
-                                        10000,
-                                        80
-                                    ] */
 
                                 }
                             });
@@ -136,7 +148,7 @@
                                 type: 'symbol',
                                 source: 'country-points-source',
                                 layout: {
-                                    'text-field': '{country}',
+                                    'text-field': '{country} \n {amout_of_sales_in_usd_string}',
                                     'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Bold'],
                                     'text-size': 12
                                 }
@@ -148,8 +160,8 @@
 
         });
 
-        map.on('zoomend', function() {
-           console.log( map.getZoom() );
+        map.on('zoomend', function () {
+            console.log(map.getZoom());
         });
 
     </script>
