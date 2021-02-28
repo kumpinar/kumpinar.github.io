@@ -52,6 +52,37 @@
         .button.active {
             background: #166d3d;
         }
+
+
+        .legend {
+            background-color: #fff;
+            border-radius: 3px;
+            bottom: 30px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
+            padding: 10px;
+            position: absolute;
+            right: 10px;
+            z-index: 1;
+        }
+
+        .legend h3 {
+            margin: 0 0 10px;
+            text-align: center;
+        }
+
+        .topsales div {
+            font-weight: bold;
+            text-align: right;
+        }
+
+        .topsales div span {
+            display: inline-block;
+            margin-left: 5px;
+            width: 60px;
+            text-align: left;
+            font-weight: normal;
+        }
     </style>
 </head>
 
@@ -64,6 +95,11 @@
         <li id="btn-30-days" class="button" json-path="sales30days.json">30 Days</li>
         <li id="btn-365-days" class="button" json-path="sales365days.json">365 Days</li>
     </ul>
+    <div id="state-legend" class="legend">
+        <h3>Top 10</h3>
+        <div class="topsales">
+        </div>
+    </div>
     <script>
         const formatter = new Intl.NumberFormat('en-US', {
             style: 'currency',
@@ -76,7 +112,7 @@
         mapboxgl.accessToken = 'pk.eyJ1IjoiYWNlbWltdWhlbmRpcyIsImEiOiJjajNvZnZvd3IwMDI0MnJydHhpZjZ5bnRsIn0.mVZMKTNJSZ0rWxy1F7nXhg';
         var map = new mapboxgl.Map({
             container: 'map',
-            style: 'mapbox://styles/mapbox/dark-v10', // stylesheet location
+            style: 'mapbox://styles/mapbox/light-v10', // stylesheet location
             bounds: new mapboxgl.LngLatBounds([-138.592994, 67.875541], [185.977896, -43.580391]),
             //zoom: -4 // starting zoom
         });
@@ -95,9 +131,7 @@
                 type: 'circle',
                 source: 'country-points-source',
                 paint: {
-                    'circle-color': '#000000',
-                    'circle-stroke-color': '#000000',
-                    'circle-stroke-width': 1,
+                    'circle-color': '#B8B8B8',
                     'circle-radius': 1
 
                 }
@@ -108,13 +142,13 @@
                 type: 'symbol',
                 source: 'country-points-source',
                 layout: {
-                    'text-field': '{country} \n {amout_of_sales_in_usd_string}',
+                    'text-field': '{name} \n {amout_of_sales_in_usd_string}',
                     'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Bold'],
                     'text-size': 12
                 }
             });
 
-            CreateCircles();
+            FetchCountriesAndSalesData()
         });
 
         map.on('zoomend', function () {
@@ -124,68 +158,96 @@
         $('.button').click(function () {
             $('#buttons li').removeClass('active');
             $(this).addClass('active');
-            CreateCircles();
+            FetchCountriesAndSalesData()
         });
 
-        function CreateCircles() {
+        function FetchCountriesAndSalesData() {
             let jsonPath = $('.button.active').attr('json-path');
             fetch(jsonPath)
                 .then(response => response.json())
                 .then(sales => {
-                    fetch("capitals.json")
+                    fetch("country_centroids_simple.json")
                         .then(response => response.json())
-                        .then(capitals => {
-
-                            capitals.features.map(f => {
-                                let foundSales = sales.filter(s => s.country_code == f.properties.iso2);
-                                if (foundSales.length > 0) {
-                                    f.properties.amout_of_sales_in_usd = Math.round(foundSales[0].amout_of_sales_in_usd);
-                                    f.properties.amout_of_sales_in_usd_string = formatter.format(f.properties.amout_of_sales_in_usd)
-                                }
-                            });
-
-
-                            capitals.features = capitals.features
-                                .filter(f => !isNaN(f.properties.amout_of_sales_in_usd) && f.properties.amout_of_sales_in_usd > 0)
-                                .sort((a, b) => b.properties.amout_of_sales_in_usd - a.properties.amout_of_sales_in_usd);
-
-                            var maxSales = capitals.features[0].properties.amout_of_sales_in_usd;
-                            var minSales = capitals.features[capitals.features.length - 1].properties.amout_of_sales_in_usd;
-                            var step = Math.round((maxSales - minSales) / 9);
-
-                            console.log(minSales);
-                            console.log(maxSales);
-
-                            var circleColors = ['step', ['get', 'amout_of_sales_in_usd']];
-                            var circleRadiusZoomLevels = [0, 3, 7];
-                            var circleRadiusStops = [];
-                            circleColors.push(colors[0]);
-                            for (var i = 1; i < 10; i++) {
-                                console.log(minSales + (step * i));
-                                circleColors.push(minSales + (step * i)-10);
-                                circleColors.push(colors[i]);
-                            }
-
-                            circleRadiusZoomLevels.forEach(zoomLevel => {
-                                for (var i = 0; i < 10; i++) {
-                                    console.log(minSales + (step * i));
-                                    let radius = (zoomLevel * zoomLevel) + (i * zoomLevel * 2) + i;
-                                    circleRadiusStops.push([{ zoom: zoomLevel, value: minSales + (step * i) }, radius]);
-                                }
-                            });
-
-
-                            map.getSource('country-points-source').setData(capitals);
-
-                            map.setPaintProperty('country-points', 'circle-color', circleColors);
-                            map.setPaintProperty('country-points', 'circle-radius', {
-                                property: 'amout_of_sales_in_usd',
-                                stops: circleRadiusStops
-                            });
+                        .then(countries => {
+                            CreateCircles(sales, countries);
                         });
                 });
 
         }
+
+        function CreateCircles(sales, countries) {
+
+            //add amout_of_sales_in_usd property to country data
+            countries.features.map(countryFeature => {
+                let foundSales = sales.filter(s => s.country_code == countryFeature.properties.iso_a2);
+                if (foundSales.length > 0) {
+                    countryFeature.properties.amout_of_sales_in_usd = Math.round(foundSales[0].amout_of_sales_in_usd);
+                    countryFeature.properties.amout_of_sales_in_usd_string = formatter.format(countryFeature.properties.amout_of_sales_in_usd)
+                }
+            });
+
+            //eliminate 0(zero) sales
+            countries.features = countries.features
+                .filter(f => !isNaN(f.properties.amout_of_sales_in_usd) && f.properties.amout_of_sales_in_usd > 0)
+                .sort((a, b) => b.properties.amout_of_sales_in_usd - a.properties.amout_of_sales_in_usd);
+
+            //get top 10 for legend
+            $(".topsales").empty();
+            countries.features.slice(0, 10).map(i => {
+                $(".topsales").append('<div>' + i.properties.name + '<span>' + i.properties.amout_of_sales_in_usd_string + '</span></div>');
+            });
+
+            //calculate circle radius by zoom level and amount_of_sales
+            var maxSales = countries.features[0].properties.amout_of_sales_in_usd;
+            var minSales = countries.features[countries.features.length - 1].properties.amout_of_sales_in_usd;
+            var step = Math.round((maxSales - minSales) / 9);
+            var circleRadiusZoomLevels = [0, 3, 7];
+            var circleRadiusStops = [];
+            circleRadiusZoomLevels.forEach(zoomLevel => {
+                for (var i = 0; i < 10; i++) {
+                    let radius = (zoomLevel * zoomLevel) + (i * zoomLevel * 2) + i;
+                    circleRadiusStops.push([{ zoom: zoomLevel, value: minSales + (step * i) }, radius]);
+                }
+            });
+
+            map.getSource('country-points-source').setData(countries);
+            map.setPaintProperty('country-points', 'circle-radius', {
+                property: 'amout_of_sales_in_usd',
+                stops: circleRadiusStops
+            });
+
+            popup.remove();
+
+        }
+
+        var popup = new mapboxgl.Popup();
+        map.on('click', function (e) {
+            var features = map.queryRenderedFeatures(e.point, {
+                layers: ['country-points']
+            });
+
+            if (!features.length) {
+                return;
+            }
+
+            var feature = features[0];
+
+            var html='<h3>Amount of Sales - Last ' + $('.button.active').html()+'</h3>' ;
+            //html+='<h3>Last ' + $('.button.active').html()+'</h3>' ;
+            html+='<h2>'+ feature.properties.name +' : '+ feature.properties.amout_of_sales_in_usd_string + '</h2>';
+
+            popup = new mapboxgl.Popup({ offset: [0, -15], maxWidth:'270px' })
+                .setLngLat(feature.geometry.coordinates)
+                .setHTML(html)
+                .addTo(map);
+        });
+
+        map.on('mouseenter', 'country-points', function () {
+            map.getCanvas().style.cursor = 'pointer';
+        });
+        map.on('mouseleave', 'country-points', function () {
+            map.getCanvas().style.cursor = '';
+        });
 
     </script>
 
