@@ -223,7 +223,7 @@
         var popup = new mapboxgl.Popup();
         map.on('click', function (e) {
             var features = map.queryRenderedFeatures(e.point, {
-                layers: ['country-points']
+                layers: ['country-points','country-names']
             });
 
             if (!features.length) {
@@ -246,6 +246,13 @@
             map.getCanvas().style.cursor = 'pointer';
         });
         map.on('mouseleave', 'country-points', function () {
+            map.getCanvas().style.cursor = '';
+        });
+
+        map.on('mouseenter', 'country-names', function () {
+            map.getCanvas().style.cursor = 'pointer';
+        });
+        map.on('mouseleave', 'country-names', function () {
             map.getCanvas().style.cursor = '';
         });
 
