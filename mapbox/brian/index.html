@@ -29,9 +29,13 @@
         }
 
         #buttons {
-            width: 90%;
+            width: 50%;
             margin: 0 auto;
+            bottom: 30px;
+            position: absolute;
+            left: 25%;
         }
+
 
         .button {
             display: inline-block;
@@ -82,6 +86,29 @@
             width: 60px;
             text-align: left;
             font-weight: normal;
+        }
+
+
+        @media (min-width: 651px) and (max-width: 900px) {
+
+            .legend {
+                display: none;
+            }
+            #buttons {
+                width: 60%;
+                left: 10%;
+            }
+        }
+
+        @media (min-width: 0px) and (max-width: 650px) {
+
+            .legend {
+                display: none;
+            }
+            #buttons {
+                width: 90%;
+                left: 5%;
+            }
         }
     </style>
 </head>
@@ -223,7 +250,7 @@
         var popup = new mapboxgl.Popup();
         map.on('click', function (e) {
             var features = map.queryRenderedFeatures(e.point, {
-                layers: ['country-points','country-names']
+                layers: ['country-points', 'country-names']
             });
 
             if (!features.length) {
@@ -232,11 +259,11 @@
 
             var feature = features[0];
 
-            var html='<h3>Amount of Sales - Last ' + $('.button.active').html()+'</h3>' ;
+            var html = '<h3>Amount of Sales - Last ' + $('.button.active').html() + '</h3>';
             //html+='<h3>Last ' + $('.button.active').html()+'</h3>' ;
-            html+='<h2>'+ feature.properties.name +' : '+ feature.properties.amout_of_sales_in_usd_string + '</h2>';
+            html += '<h2>' + feature.properties.name + ' : ' + feature.properties.amout_of_sales_in_usd_string + '</h2>';
 
-            popup = new mapboxgl.Popup({ offset: [0, -15], maxWidth:'270px' })
+            popup = new mapboxgl.Popup({ offset: [0, -15], maxWidth: '270px' })
                 .setLngLat(feature.geometry.coordinates)
                 .setHTML(html)
                 .addTo(map);
