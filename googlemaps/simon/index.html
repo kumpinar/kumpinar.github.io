@@ -91,7 +91,7 @@ include("functions.php");
                 <div
                     class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                     <h1 class="h2">Route</h1>
-                    
+
                 </div>
                 <div id="map"></div>
 
@@ -113,11 +113,12 @@ include("functions.php");
         async></script>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="moment.js"></script>
     <script>
         var routeMarkers = [], routePath;
-        var map, infoWindow;
+        var map, infoWindowStartPoint, infoWindowLastPoint;
         var polygonFeatures = [];
-
+        var svgMarkerCircle;
 
 
         function initMap() {
@@ -128,15 +129,21 @@ include("functions.php");
                 },
                 zoom: 4,
             });
-            infoWindow = new google.maps.InfoWindow();
+            infoWindowStartPoint = new google.maps.InfoWindow();
+            infoWindowLastPoint = new google.maps.InfoWindow();
+            infoWindowOtherPoints = new google.maps.InfoWindow();
 
-
+            svgMarkerCircle = {
+                //anchor: new google.maps.Point(20, 20),
+                size: new google.maps.Size(30, 30),
+                url: 'Red_Circle(small).svg'
+            };
 
             loadRoute();
         }
 
         function loadRoute() {
-            url = "https://www.followmee.com/api/tracks.aspx?key=6a4b18edbcfb18d91a4d8abc7fc18496&username=simonpflwmeH57cA&output=json&function=historyfordevice&history=48&deviceid=12494168";
+            url = "https://www.followmee.com/api/tracks.aspx?key=6a4b18edbcfb18d91a4d8abc7fc18496&username=simonpflwmeH57cA&output=json&function=historyfordevice&history=168&deviceid=12494168";
 
             $.ajax({
                 type: "GET",
@@ -163,7 +170,18 @@ include("functions.php");
             });
             routeMarkers = [];
 
+            routePoints = routePoints.sort((a, b) => moment(a.Date).format('YYYYMMDDHHmmss') - moment(b.Date).format('YYYYMMDDHHmmss'));
+
             routePoints.forEach(rp => {
+                //find last route
+                if (routeMarkers.length > 0) {
+                    let a = moment(routeMarkers[routeMarkers.length - 1].routePointProperties.Date);
+                    let b = moment(rp.Date);
+                    if (b.diff(a, 'minutes') > 60) {
+                        routeMarkers = [];
+                    }
+                }
+
                 routeMarkers.push({
                     routePointProperties: rp,
                     marker: new google.maps.Marker({
@@ -171,52 +189,83 @@ include("functions.php");
                             lat: rp.Latitude,
                             lng: rp.Longitude
                         },
-                        title: rp.Date
+                        title: `
+                        Time:<b> ${moment(rp.Date).format('h:mm:ss a')}</b> <br>
+                        Speed:<b> ${rp['Speed(mph)']}mph(${rp['Speed(km/h)']}km/h)</b> <br>
+                        Altitude:<b> ${rp['Altitude(ft)']}ft(${rp['Altitude(m)']}m)</b>
+                        `,
                     })
                 });
             });
+
+
 
             //  Create a new viewpoint bound
             var bounds = new google.maps.LatLngBounds();
 
             routeMarkers.forEach(rm => {
-                /* rm.marker.setMap(map);
-                rm.marker.addListener("click", () => {
-                    infoWindow.close();
-                    infoWindow.setContent(rm.marker.getTitle());
-                    infoWindow.open(rm.marker.getMap(), rm.marker);
-                }); */
-
-                //  And increase the bounds to take this point
                 bounds.extend(rm.marker.getPosition());
             });
 
-            if(routeMarkers.length>0){
+            if (routeMarkers.length > 0) {
                 routeMarkers[0].marker.setMap(map);
-            }
-            
-            if(routeMarkers.length>1){
-                routeMarkers.reverse()[0].marker.setMap(map);
-                routeMarkers.reverse()[0].marker.setIcon("bigM.png");
+                routeMarkers[0].marker.addListener("click", () => {
+                    infoWindowStartPoint.close();
+                    infoWindowStartPoint.setContent(routeMarkers[0].marker.getTitle());
+                    infoWindowStartPoint.open(routeMarkers[0].marker.getMap(), routeMarkers[0].marker);
+                });
             }
 
+            if (routeMarkers.length > 1) {
+                routeMarkers[routeMarkers.length - 1].marker.setIcon("bigM.png?v2");
+                routeMarkers[routeMarkers.length - 1].marker.setMap(map);
+                routeMarkers[routeMarkers.length - 1].marker.addListener("click", () => {
+                    infoWindowLastPoint.close();
+                    infoWindowLastPoint.setContent(routeMarkers[routeMarkers.length - 1].marker.getTitle());
+                    infoWindowLastPoint.open(routeMarkers[routeMarkers.length - 1].marker.getMap(), routeMarkers[routeMarkers.length - 1].marker);
+                });
+                //new google.maps.event.trigger( routeMarkers[routeMarkers.length-1].marker, 'click' );
+            }
+
+            if (routeMarkers.length > 2) {
+                for (i = 1; i < routeMarkers.length - 2; i++) {
+                    routeMarkers[i].marker.setIcon({
+                        url: "16px-Bluedot.svg.webp",
+                        anchor: new google.maps.Point(8, 8)
+                    });
+                    routeMarkers[i].marker.setMap(map);
+                    let rm = routeMarkers[i];
+                    rm.marker.addListener("click", () => {
+                        console.log("clicked");
+                        infoWindowOtherPoints.close();
+                        infoWindowOtherPoints.setContent(rm.marker.getTitle());
+                        infoWindowOtherPoints.open(rm.marker.getMap(), rm.marker);
+                    });
+                }
+            }
+
+            
 
             //  Fit these bounds to the map
             map.fitBounds(bounds);
 
-            if(routePath){
+            if (routePath) {
                 routePath.setMap(null);
-                routePath=null;
+                routePath = null;
             }
 
             routePath = new google.maps.Polyline({
-                path: routeMarkers.map(rm=>rm.marker.getPosition()),
+                path: routeMarkers.map(rm => rm.marker.getPosition()),
                 geodesic: true,
                 strokeColor: "#FF0000",
                 strokeOpacity: 1.0,
                 strokeWeight: 3,
             });
             routePath.setMap(map);
+
+            setTimeout(() => {
+                loadRoute();
+            }, 1000 * 60);
 
 
         }
