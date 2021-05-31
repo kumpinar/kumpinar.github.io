@@ -1,125 +1,28 @@
-<?php
-include("settings.php");
-include("functions.php");
-?>
 <!doctype html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Google Maps Project</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
-
-
-    <style>
-        .bd-placeholder-img {
-            font-size: 1.125rem;
-            text-anchor: middle;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            user-select: none;
-        }
-
-        #map {
-            width: 100%;
-            height: calc(100vh - 220px);
-        }
-
-        @media (min-width: 768px) {
-            .bd-placeholder-img-lg {
-                font-size: 3.5rem;
-            }
-
-
-            #map {
-                height: calc(100vh - 150px);
-            }
-        }
-
-        .dealers-container {
-
-            height: 100%;
-            overflow: auto;
-
-        }
-
-        .dealers-container .search-input {
-            margin-right: 8px;
-        }
-    </style>
-
-
-    <!-- Custom styles for this template -->
-    <link href="dashboard.css" rel="stylesheet">
 </head>
 
 <body>
 
-    <header class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
-        <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3" href="#">Google Maps JSON integration</a>
-        <button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-bs-toggle="collapse"
-            data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false"
-            aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-
-        <ul class="navbar-nav px-3">
-            <li class="nav-item text-nowrap">
-                <a class="nav-link" href="#">Sign out</a>
-            </li>
-        </ul>
-    </header>
-
-    <div class="container-fluid">
-        <div class="row">
-            <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
-                <div class="position-sticky pt-3 dealers-container">
-
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>MENU</th>
-                            </tr>
-                        </thead>
-                    </table>
-                </div>
-            </nav>
-
-            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-                <div
-                    class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                    <h1 class="h2">Route</h1>
-
-                </div>
-                <div id="map"></div>
-
-            </main>
-        </div>
-    </div>
-
-
-
-
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4"
-        crossorigin="anonymous"></script>
-
+    <div style="width: 100%; height:95vh;" id="map"></div>
 
     <script
-        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB12LNfTAO-ja14azdubq3gv55IHkYixwY&callback=initMap&libraries=drawing&v=weekly"
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAELHB8xMh6IKT7vmFbneLdCjqkdK88L4o&callback=initMap&libraries=drawing,geometry&v=weekly"
         async></script>
-
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script src="moment.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"
+        integrity="sha512-qTXRIMyZIFb8iQcfjXWCO8+M5Tbc38Qi5WzdPOYZHIlZpzBHG3L3by84BBBOiRGiEb7KKtAOAs5qYdUiZiQNNQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script>
+        var apiKey = 'AIzaSyAELHB8xMh6IKT7vmFbneLdCjqkdK88L4o';
         var routeMarkers = [], routePath;
         var map, infoWindowStartPoint, infoWindowLastPoint;
         var polygonFeatures = [];
-        var svgMarkerCircle;
-
+        var isfirstLoad = true;
 
         function initMap() {
             map = new google.maps.Map(document.getElementById("map"), {
@@ -129,15 +32,8 @@ include("functions.php");
                 },
                 zoom: 4,
             });
-            infoWindowStartPoint = new google.maps.InfoWindow();
             infoWindowLastPoint = new google.maps.InfoWindow();
             infoWindowOtherPoints = new google.maps.InfoWindow();
-
-            svgMarkerCircle = {
-                //anchor: new google.maps.Point(20, 20),
-                size: new google.maps.Size(30, 30),
-                url: 'Red_Circle(small).svg'
-            };
 
             loadRoute();
         }
@@ -169,9 +65,7 @@ include("functions.php");
                 rm.marker.setMap(null);
             });
             routeMarkers = [];
-
             routePoints = routePoints.sort((a, b) => moment(a.Date).format('YYYYMMDDHHmmss') - moment(b.Date).format('YYYYMMDDHHmmss'));
-
             routePoints.forEach(rp => {
                 //find last route
                 if (routeMarkers.length > 0) {
@@ -189,65 +83,53 @@ include("functions.php");
                             lat: rp.Latitude,
                             lng: rp.Longitude
                         },
-                        title: `
+                    }),
+                    popupContent: `
                         Time:<b> ${moment(rp.Date).format('h:mm:ss a')}</b> <br>
                         Speed:<b> ${rp['Speed(mph)']}mph(${rp['Speed(km/h)']}km/h)</b> <br>
                         Altitude:<b> ${rp['Altitude(ft)']}ft(${rp['Altitude(m)']}m)</b>
-                        `,
-                    })
+                        `
                 });
             });
 
-
-
-            //  Create a new viewpoint bound
-            var bounds = new google.maps.LatLngBounds();
-
-            routeMarkers.forEach(rm => {
-                bounds.extend(rm.marker.getPosition());
-            });
-
-            if (routeMarkers.length > 0) {
-                routeMarkers[0].marker.setMap(map);
-                routeMarkers[0].marker.addListener("click", () => {
-                    infoWindowStartPoint.close();
-                    infoWindowStartPoint.setContent(routeMarkers[0].marker.getTitle());
-                    infoWindowStartPoint.open(routeMarkers[0].marker.getMap(), routeMarkers[0].marker);
+            if (isfirstLoad) {
+                //  Create a new viewpoint bound
+                var bounds = new google.maps.LatLngBounds();
+                routeMarkers.forEach(rm => {
+                    bounds.extend(rm.marker.getPosition());
                 });
+
+                //  Fit these bounds to the map
+                map.fitBounds(bounds);
+                isfirstLoad = false;
             }
 
+            //show markers
             if (routeMarkers.length > 1) {
                 routeMarkers[routeMarkers.length - 1].marker.setIcon("bigM.png?v2");
                 routeMarkers[routeMarkers.length - 1].marker.setMap(map);
                 routeMarkers[routeMarkers.length - 1].marker.addListener("click", () => {
                     infoWindowLastPoint.close();
-                    infoWindowLastPoint.setContent(routeMarkers[routeMarkers.length - 1].marker.getTitle());
+                    infoWindowLastPoint.setContent(routeMarkers[routeMarkers.length - 1].popupContent);
                     infoWindowLastPoint.open(routeMarkers[routeMarkers.length - 1].marker.getMap(), routeMarkers[routeMarkers.length - 1].marker);
                 });
-                //new google.maps.event.trigger( routeMarkers[routeMarkers.length-1].marker, 'click' );
             }
-
-            if (routeMarkers.length > 2) {
-                for (i = 1; i < routeMarkers.length - 2; i++) {
+            if (routeMarkers.length > 1) {
+                for (i = 0; i < routeMarkers.length - 1; i++) {
                     routeMarkers[i].marker.setIcon({
-                        url: "16px-Bluedot.svg.webp",
-                        anchor: new google.maps.Point(8, 8)
+                        url: "8px-gray-dot.svg.png",
+                        anchor: new google.maps.Point(4, 4)
                     });
                     routeMarkers[i].marker.setMap(map);
                     let rm = routeMarkers[i];
                     rm.marker.addListener("click", () => {
                         console.log("clicked");
                         infoWindowOtherPoints.close();
-                        infoWindowOtherPoints.setContent(rm.marker.getTitle());
+                        infoWindowOtherPoints.setContent(rm.popupContent);
                         infoWindowOtherPoints.open(rm.marker.getMap(), rm.marker);
                     });
                 }
             }
-
-            
-
-            //  Fit these bounds to the map
-            map.fitBounds(bounds);
 
             if (routePath) {
                 routePath.setMap(null);
@@ -263,11 +145,75 @@ include("functions.php");
             });
             routePath.setMap(map);
 
+            runSnapToRoad(routePath.getPath());
+
             setTimeout(() => {
                 loadRoute();
             }, 1000 * 60);
 
 
+        }
+
+        // Snap a user-created polyline to roads and draw the snapped path
+        function runSnapToRoad(path) {
+            var pathValues = [];
+            var pathLngLat = [];
+            for (var i = 0; i < path.getLength(); i++) {
+                pathValues.push(path.getAt(i).toUrlValue().split(',').reverse().join());
+            }
+
+            console.log(pathValues.join(';'));
+
+            $.get('https://api.mapbox.com/matching/v5/mapbox/walking/' + pathValues.join(';'), {
+                //interpolate: true,
+                access_token: 'pk.eyJ1IjoiYWNlbWltdWhlbmRpcyIsImEiOiJjajNvZnZvd3IwMDI0MnJydHhpZjZ5bnRsIn0.mVZMKTNJSZ0rWxy1F7nXhg',
+                geometries: 'geojson'
+            }, function (data) {
+                //processSnapToRoadResponse(data);
+                //drawSnappedPolyline();
+
+                //console.log(data);
+
+                if (data.code == 'Ok') {
+                    console.log(data.matchings[0].geometry);
+                    snappedCoordinates = [];
+                    for (var i = 0; i < data.matchings[0].geometry.coordinates.length; i++) {
+                        var latlng = new google.maps.LatLng(
+                            data.matchings[0].geometry.coordinates[i][1],
+                            data.matchings[0].geometry.coordinates[i][0]);
+                        snappedCoordinates.push(latlng);
+                    }
+                    drawSnappedPolyline();
+                }
+
+            });
+
+
+
+
+        }
+        // Store snapped polyline returned by the snap-to-road service.
+        function processSnapToRoadResponse(data) {
+            snappedCoordinates = [];
+            for (var i = 0; i < data.snappedPoints.length; i++) {
+                var latlng = new google.maps.LatLng(
+                    data.snappedPoints[i].location.latitude,
+                    data.snappedPoints[i].location.longitude);
+                snappedCoordinates.push(latlng);
+            }
+        }
+
+        // Draws the snapped polyline (after processing snap-to-road response).
+        function drawSnappedPolyline() {
+            var snappedPolyline = new google.maps.Polyline({
+                path: snappedCoordinates,
+                strokeColor: '#3b8ced',
+                strokeWeight: 5,
+                strokeOpacity: 0.9,
+            });
+
+            snappedPolyline.setMap(map);
+            //polylines.push(snappedPolyline);
         }
     </script>
 
