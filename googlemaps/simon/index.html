@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en"> 
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
@@ -8,7 +8,7 @@
 
 <body>
 
-    <div style="width: 100%; height:95vh;" id="map"></div>
+    <div style="width: 800px; height:600px;" id="map"></div>
 
     <script
         src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAELHB8xMh6IKT7vmFbneLdCjqkdK88L4o&callback=initMap&libraries=drawing,geometry&v=weekly"
@@ -39,13 +39,23 @@
         }
 
         function loadRoute() {
-            url = "https://www.followmee.com/api/tracks.aspx?key=6a4b18edbcfb18d91a4d8abc7fc18496&username=simonpflwmeH57cA&output=json&function=historyfordevice&history=168&deviceid=12494168";
 
             $.ajax({
                 type: "GET",
                 contentType: "application/json; charset=utf-8",
-                url: url,
+                url: 'https://www.followmee.com/api/tracks.aspx',
                 dataType: "jsonp",
+                data: {
+                    key: '6a4b18edbcfb18d91a4d8abc7fc18496',
+                    username: 'simonpflwmeH57cA',
+                    output: 'json',
+                    deviceid: 12494168,
+                    function: 'historyfordevice',
+                    history:168
+                    //function: 'daterangefordevice',
+                    //from: '2021-06-01',
+                    //to: '2021-06-01'
+                },
                 success: function (data) {
                     console.log(data);
                     var cont = true;
@@ -163,6 +173,7 @@
             }
 
             console.log(pathValues.join(';'));
+            snappedCoordinates = [];
 
             $.get('https://api.mapbox.com/matching/v5/mapbox/walking/' + pathValues.join(';'), {
                 //interpolate: true,
@@ -176,13 +187,33 @@
 
                 if (data.code == 'Ok') {
                     console.log(data.matchings[0].geometry);
-                    snappedCoordinates = [];
-                    for (var i = 0; i < data.matchings[0].geometry.coordinates.length; i++) {
-                        var latlng = new google.maps.LatLng(
-                            data.matchings[0].geometry.coordinates[i][1],
-                            data.matchings[0].geometry.coordinates[i][0]);
-                        snappedCoordinates.push(latlng);
-                    }
+                    /* for (j = 0; j < data.matchings.length; j++) {
+                        let findUnmatchedPoints = true;
+                        for (var i = 0; i < data.matchings[j].geometry.coordinates.length; i++) {
+                            var latlng = new google.maps.LatLng(
+                                data.matchings[j].geometry.coordinates[i][1],
+                                data.matchings[j].geometry.coordinates[i][0]);
+                            snappedCoordinates.push(latlng);
+                        }
+                    } */
+
+                    let lastAddedMatchingIndex = -1;
+                    data.tracepoints.forEach((tracepoint, index) => {
+                        if (tracepoint) {
+                            if (lastAddedMatchingIndex != tracepoint.matchings_index) {
+                                lastAddedMatchingIndex = tracepoint.matchings_index;
+                                for (var i = 0; i < data.matchings[lastAddedMatchingIndex].geometry.coordinates.length; i++) {
+                                    var latlng = new google.maps.LatLng(
+                                        data.matchings[lastAddedMatchingIndex].geometry.coordinates[i][1],
+                                        data.matchings[lastAddedMatchingIndex].geometry.coordinates[i][0]);
+                                    snappedCoordinates.push(latlng);
+                                }
+                            }
+                        } else {                            
+                            snappedCoordinates.push(path.getAt(index));
+                        }
+                    });
+
                     drawSnappedPolyline();
                 }
 
