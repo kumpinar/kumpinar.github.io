@@ -169,6 +169,9 @@
             var pathValues = [];
             var pathLngLat = [];
             for (var i = 0; i < path.getLength(); i++) {
+                if(i>99){
+                    break;
+                }
                 pathValues.push(path.getAt(i).toUrlValue().split(',').reverse().join());
             }
 
