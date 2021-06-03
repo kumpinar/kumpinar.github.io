@@ -20,9 +20,10 @@
     <script>
         var apiKey = 'AIzaSyAELHB8xMh6IKT7vmFbneLdCjqkdK88L4o';
         var routeMarkers = [], routePath;
-        var map, infoWindowStartPoint, infoWindowLastPoint;
+        var map, infoWindowStartPoint, infoWindowLastPoint, snappedPolyline, snappedPolylineGmaps;
         var polygonFeatures = [];
         var isfirstLoad = true;
+
 
         function initMap() {
             map = new google.maps.Map(document.getElementById("map"), {
@@ -35,11 +36,28 @@
             infoWindowLastPoint = new google.maps.InfoWindow();
             infoWindowOtherPoints = new google.maps.InfoWindow();
 
+            snappedPolyline = new google.maps.Polyline({
+                strokeColor: '#3b8ced',
+                strokeWeight: 5,
+                strokeOpacity: 0.9,
+                map: map,
+            });
+
+            snappedPolylineGmaps = new google.maps.Polyline({
+                strokeColor: '#fcba03',
+                strokeWeight: 5,
+                strokeOpacity: 0.9,
+                map: map,
+            });
+
             loadRoute();
+
+            const centerControlDiv = document.createElement("div");
+            CenterControl(centerControlDiv, map);
+            map.controls[google.maps.ControlPosition.TOP_CENTER].push(centerControlDiv);
         }
 
         function loadRoute() {
-
             $.ajax({
                 type: "GET",
                 contentType: "application/json; charset=utf-8",
@@ -50,14 +68,13 @@
                     username: 'simonpflwmeH57cA',
                     output: 'json',
                     deviceid: 12494168,
-                    function: 'historyfordevice',
-                    history:168
-                    //function: 'daterangefordevice',
-                    //from: '2021-06-01',
-                    //to: '2021-06-01'
+                    //function: 'historyfordevice',
+                    //history: 168
+                    function: 'daterangefordevice',
+                    from: '2021-05-30',
+                    to: '2021-06-3'
                 },
                 success: function (data) {
-                    console.log(data);
                     var cont = true;
                     if (data.Error != null) {
                         console.error(data.Error);
@@ -155,7 +172,8 @@
             });
             routePath.setMap(map);
 
-            runSnapToRoad(routePath.getPath());
+            runSnapToRoadMapbox(routePath.getPath());
+            runSnapToRoadGmaps(routePath.getPath());
 
             setTimeout(() => {
                 loadRoute();
@@ -165,90 +183,157 @@
         }
 
         // Snap a user-created polyline to roads and draw the snapped path
-        function runSnapToRoad(path) {
-            var pathValues = [];
-            var pathLngLat = [];
+        function runSnapToRoadMapbox(path) {
+            snappedPolyline.getPath().clear();
+            var pathValuesContainer = [];
             for (var i = 0; i < path.getLength(); i++) {
-                if(i>99){
-                    break;
+                let mod = Math.floor(i / 100);
+                if (pathValuesContainer[mod]) {
+                    pathValuesContainer[mod].push(path.getAt(i).toUrlValue().split(',').reverse().join());
                 }
-                pathValues.push(path.getAt(i).toUrlValue().split(',').reverse().join());
+                else {
+                    pathValuesContainer[mod] = [];
+                    pathValuesContainer[mod].push(path.getAt(i).toUrlValue().split(',').reverse().join());
+                }
             }
 
-            console.log(pathValues.join(';'));
-            snappedCoordinates = [];
+            console.log(pathValuesContainer);
+            pathValuesContainer.forEach((pathValues, pathValuesContainerIndex) => {
+                $.get('https://api.mapbox.com/matching/v5/mapbox/walking/' + pathValues.join(';'), {
+                    access_token: 'pk.eyJ1IjoiYWNlbWltdWhlbmRpcyIsImEiOiJjajNvZnZvd3IwMDI0MnJydHhpZjZ5bnRsIn0.mVZMKTNJSZ0rWxy1F7nXhg',
+                    geometries: 'geojson'
+                }, function (data) {
 
-            $.get('https://api.mapbox.com/matching/v5/mapbox/walking/' + pathValues.join(';'), {
-                //interpolate: true,
-                access_token: 'pk.eyJ1IjoiYWNlbWltdWhlbmRpcyIsImEiOiJjajNvZnZvd3IwMDI0MnJydHhpZjZ5bnRsIn0.mVZMKTNJSZ0rWxy1F7nXhg',
-                geometries: 'geojson'
-            }, function (data) {
-                //processSnapToRoadResponse(data);
-                //drawSnappedPolyline();
-
-                //console.log(data);
-
-                if (data.code == 'Ok') {
-                    console.log(data.matchings[0].geometry);
-                    /* for (j = 0; j < data.matchings.length; j++) {
-                        let findUnmatchedPoints = true;
-                        for (var i = 0; i < data.matchings[j].geometry.coordinates.length; i++) {
-                            var latlng = new google.maps.LatLng(
-                                data.matchings[j].geometry.coordinates[i][1],
-                                data.matchings[j].geometry.coordinates[i][0]);
-                            snappedCoordinates.push(latlng);
-                        }
-                    } */
-
-                    let lastAddedMatchingIndex = -1;
-                    data.tracepoints.forEach((tracepoint, index) => {
-                        if (tracepoint) {
-                            if (lastAddedMatchingIndex != tracepoint.matchings_index) {
-                                lastAddedMatchingIndex = tracepoint.matchings_index;
-                                for (var i = 0; i < data.matchings[lastAddedMatchingIndex].geometry.coordinates.length; i++) {
-                                    var latlng = new google.maps.LatLng(
-                                        data.matchings[lastAddedMatchingIndex].geometry.coordinates[i][1],
-                                        data.matchings[lastAddedMatchingIndex].geometry.coordinates[i][0]);
-                                    snappedCoordinates.push(latlng);
+                    if (data.code == 'Ok') {
+                        let lastAddedMatchingIndex = -1;
+                        data.tracepoints.forEach((tracepoint, index) => {
+                            if (tracepoint) {
+                                if (lastAddedMatchingIndex != tracepoint.matchings_index) {
+                                    lastAddedMatchingIndex = tracepoint.matchings_index;
+                                    for (var i = 0; i < data.matchings[lastAddedMatchingIndex].geometry.coordinates.length; i++) {
+                                        var latlng = new google.maps.LatLng(
+                                            data.matchings[lastAddedMatchingIndex].geometry.coordinates[i][1],
+                                            data.matchings[lastAddedMatchingIndex].geometry.coordinates[i][0]);
+                                        snappedPolyline.getPath().push(latlng);
+                                    }
                                 }
+                            } else {
+                                //snappedPolyline.getPath().push(path.getAt(index+(pathValuesContainerIndex*100)));
                             }
-                        } else {                            
-                            snappedCoordinates.push(path.getAt(index));
-                        }
-                    });
+                        });
+                    }
 
-                    drawSnappedPolyline();
-                }
+                });
 
             });
 
 
-
-
         }
-        // Store snapped polyline returned by the snap-to-road service.
-        function processSnapToRoadResponse(data) {
-            snappedCoordinates = [];
-            for (var i = 0; i < data.snappedPoints.length; i++) {
-                var latlng = new google.maps.LatLng(
-                    data.snappedPoints[i].location.latitude,
-                    data.snappedPoints[i].location.longitude);
-                snappedCoordinates.push(latlng);
+
+        // Snap a user-created polyline to roads and draw the snapped path
+        function runSnapToRoadGmaps(path) {
+            snappedPolylineGmaps.getPath().clear();
+            var pathValues = [];
+            for (var i = 0; i < path.getLength(); i++) {
+                pathValues.push(path.getAt(i).toUrlValue());
             }
-        }
 
-        // Draws the snapped polyline (after processing snap-to-road response).
-        function drawSnappedPolyline() {
-            var snappedPolyline = new google.maps.Polyline({
-                path: snappedCoordinates,
-                strokeColor: '#3b8ced',
-                strokeWeight: 5,
-                strokeOpacity: 0.9,
+            var pathValuesContainer = [];
+            for (var i = 0; i < path.getLength(); i++) {
+                let mod = Math.floor(i / 100);
+                if (pathValuesContainer[mod]) {
+                    pathValuesContainer[mod].push(path.getAt(i).toUrlValue());
+                }
+                else {
+                    pathValuesContainer[mod] = [];
+                    pathValuesContainer[mod].push(path.getAt(i).toUrlValue());
+                }
+            }
+
+            pathValuesContainer.forEach((pathValues, pathValuesContainerIndex) => {
+                $.get('https://roads.googleapis.com/v1/snapToRoads', {
+                    interpolate: true,
+                    key: apiKey,
+                    path: pathValues.join('|')
+                }, function (data) {
+                    for (var i = 0; i < data.snappedPoints.length; i++) {
+                        var latlng = new google.maps.LatLng(
+                            data.snappedPoints[i].location.latitude,
+                            data.snappedPoints[i].location.longitude);
+                        snappedPolylineGmaps.getPath().push(latlng);
+                    }
+                });
             });
 
-            snappedPolyline.setMap(map);
-            //polylines.push(snappedPolyline);
+
         }
+
+        const chicago = { lat: 41.85, lng: -87.65 };
+        function CenterControl(controlDiv, map) {
+            // Set CSS for the control border.
+            const controlUI = document.createElement("div");
+            controlUI.style.backgroundColor = "#fff";
+            controlUI.style.border = "2px solid #fff";
+            controlUI.style.borderRadius = "3px";
+            controlUI.style.boxShadow = "0 2px 6px rgba(0,0,0,.3)";
+            controlUI.style.marginTop = "8px";
+            controlUI.style.marginBottom = "22px";
+            controlUI.style.textAlign = "center";
+            controlUI.title = "Click to recenter the map";
+            controlDiv.appendChild(controlUI);
+            // Set CSS for the control interior.
+            const chkOriginal = document.createElement("INPUT");
+            chkOriginal.setAttribute("type", "checkbox");
+            chkOriginal.checked = true;
+            chkOriginal.id = "original";
+            const lblOriginal = document.createElement("Label");
+            lblOriginal.setAttribute("for",  "original");
+            lblOriginal.innerHTML = "Original Data";
+
+            controlUI.appendChild(chkOriginal);
+            controlUI.appendChild(lblOriginal);
+            chkOriginal.addEventListener("click", () => {
+                console.log(chkOriginal.checked)
+                routePath.setVisible(chkOriginal.checked);
+                routeMarkers.map(rm => rm.marker.setVisible(chkOriginal.checked))
+            });
+
+            //mapbox
+            const chkMapbox = document.createElement("INPUT");
+            chkMapbox.setAttribute("type", "checkbox");
+            chkMapbox.checked = true;
+            chkMapbox.id = "mapbox";
+            const lblMapbox = document.createElement("Label");
+            lblMapbox.setAttribute("for",  "mapbox");
+            lblMapbox.innerHTML = "Mapbox Matching";
+
+            controlUI.appendChild(chkMapbox);
+            controlUI.appendChild(lblMapbox);
+            chkMapbox.addEventListener("click", () => {
+                console.log(chkMapbox.checked)
+                snappedPolyline.setVisible(chkMapbox.checked);
+            });
+
+            //google roads
+            const chkGoogleSnap = document.createElement("INPUT");
+            chkGoogleSnap.setAttribute("type", "checkbox");
+            chkGoogleSnap.checked = true;
+            chkGoogleSnap.id = "chkGoogleSnap";
+            const lblGoogleSnap = document.createElement("Label");
+            lblGoogleSnap.setAttribute("for",  "chkGoogleSnap");
+            lblGoogleSnap.innerHTML = "Google Snap To Road";
+
+            controlUI.appendChild(chkGoogleSnap);
+            controlUI.appendChild(lblGoogleSnap);
+            chkGoogleSnap.addEventListener("click", () => {
+                console.log(chkGoogleSnap.checked)
+                snappedPolylineGmaps.setVisible(chkGoogleSnap.checked);
+            });
+        }
+
+
+
+
     </script>
 
 
