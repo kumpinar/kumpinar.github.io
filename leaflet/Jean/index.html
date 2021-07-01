@@ -155,15 +155,6 @@
         var d = new Date();
         var currentDayName = days[d.getDay()];
 
-        const copyToClipboard = str => {
-            const el = document.createElement('textarea');
-            el.value = str;
-            document.body.appendChild(el);
-            el.select();
-            document.execCommand('copy');
-            document.body.removeChild(el);
-        };
-
         var trades = [];
         var markerIndexWillPlay = 0;
 
@@ -178,12 +169,6 @@
         var image = L.imageOverlay('world.png', bounds).addTo(map);
         map.fitBounds(bounds);
 
-        map.on('click', function (evt) {
-            console.log(evt.latlng.lat + '\t' + evt.latlng.lng)
-
-            copyToClipboard(evt.latlng.lat + '\t' + evt.latlng.lng);
-
-        })
         var markers = [];
         var markersPulse = [];
         let myIconPulse = L.divIcon({
