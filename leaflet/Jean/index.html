@@ -150,6 +150,11 @@
     </div>
     <script>
 
+        var days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+        var inactiveDays = ['Saturday', 'Sunday' ];
+        var d = new Date();
+        var currentDayName = days[d.getDay()];
+
         const copyToClipboard = str => {
             const el = document.createElement('textarea');
             el.value = str;
@@ -185,16 +190,18 @@
             className: 'my-div-icon-pulse'
         });
 
-
+        
+        if(!inactiveDays.includes(currentDayName)){
         fetch('live-trades.json')
             .then(response => response.json())
             .then(data => {
                 trades = data;
                 VisualiseTrades();
             });
+        }
 
         function VisualiseTrades() {
-            console.log('rows:',trades.filter(t => t["X"] != '').length );
+            console.log('rows:', trades.filter(t => t["X"] != '').length);
             trades.filter(t => t["X"] != '').forEach(trade => {
 
                 let myIcon = L.divIcon({
