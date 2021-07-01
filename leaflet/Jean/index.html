@@ -10,18 +10,38 @@
         crossorigin=""></script>
 
     <style>
+        @font-face {
+            font-family: 'Poppins';
+            src:
+                url('Poppins/Poppins-Bold.ttf') format('truetype')
+        }
+
         html,
         body {
-            font-family: Roboto, -apple-system, "Helvetica Neue", Helvetica, "Segoe UI", Arial, sans-serif;
+            font-family: 'Poppins', Roboto, -apple-system, "Helvetica Neue", Helvetica, "Segoe UI", Arial, sans-serif;
         }
 
         .leaflet-container {
             background: white;
         }
 
+        .leaflet-interactive {
+            cursor: default;
+        }
+
+        .leaflet-grab {
+            cursor: -webkit-default;
+            cursor: -moz-default;
+            cursor: default;
+        }
+
+        .leaflet-container {
+            font: 12px/1.5 'Poppins', "Helvetica Neue", Arial, Helvetica, sans-serif;
+        }
+
         .my-div-icon {
             font-size: 10px;
-            color: blue;
+            color: #15A2F1;
             -webkit-animation: floatBubble 2s forwards ease-out;
             animation: floatBubble 2s forwards ease-out;
         }
@@ -65,60 +85,60 @@
             width: 0px;
             height: 0px;
             border-radius: 50%;
-            background:blue;
-            box-shadow: 0 0 0 rgba(10, 100, 245, 0.4);
+            background: #15A2F1;
+            box-shadow: 0 0 0 rgba(21, 162, 241, 0.4);
             animation: pulse 2s forwards;
         }
 
 
         @-webkit-keyframes pulse {
             0% {
-                -webkit-box-shadow: 0 0 0 0 rgba(10, 100, 245, 0.4);
+                -webkit-box-shadow: 0 0 0 0 rgba(21, 162, 241, 0.4);
                 width: 0px;
                 height: 0px;
-                top:0px;
+                top: 10px;
             }
 
             70% {
-                -webkit-box-shadow: 0 0 0 30px rgba(10, 100, 245, 0);
+                -webkit-box-shadow: 0 0 0 15px rgba(21, 162, 241, 0);
                 width: 10px;
                 height: 10px;
-                top:5px;
+                top: 5px;
             }
 
             100% {
-                -webkit-box-shadow: 0 0 0 0 rgba(10, 100, 245, 0);
+                -webkit-box-shadow: 0 0 0 0 rgba(21, 162, 241, 0);
                 width: 0px;
                 height: 0px;
-                top:0px;
+                top: 10px;
             }
         }
 
         @keyframes pulse {
             0% {
-                -moz-box-shadow: 0 0 0 0 rgba(10, 100, 245, 0.4);
-                box-shadow: 0 0 0 0 rgba(10, 100, 245, 0.4);
+                -moz-box-shadow: 0 0 0 0 rgba(21, 162, 241, 0.4);
+                box-shadow: 0 0 0 0 rgba(21, 162, 241, 0.4);
                 width: 0px;
                 height: 0px;
-                top:0px;
+                top: 10px;
             }
 
             70% {
-                -moz-box-shadow: 0 0 0 30px rgba(10, 100, 245, 0);
-                box-shadow: 0 0 0 30px rgba(10, 100, 245, 0);
+                -moz-box-shadow: 0 0 0 15px rgba(21, 162, 241, 0);
+                box-shadow: 0 0 0 15px rgba(21, 162, 241, 0);
                 width: 10px;
                 height: 10px;
-                top:5px;
+                top: 5px;
             }
 
             100% {
-                -moz-box-shadow: 0 0 0 0 rgba(10, 100, 245, 0);
-                box-shadow: 0 0 0 0 rgba(10, 100, 245, 0);
+                -moz-box-shadow: 0 0 0 0 rgba(21, 162, 241, 0);
+                box-shadow: 0 0 0 0 rgba(21, 162, 241, 0);
                 width: 0px;
                 height: 0px;
-                top:0px;
+                top: 10px;
             }
-            }
+        }
         }
     </style>
 </head>
@@ -130,7 +150,17 @@
     </div>
     <script>
 
+        const copyToClipboard = str => {
+            const el = document.createElement('textarea');
+            el.value = str;
+            document.body.appendChild(el);
+            el.select();
+            document.execCommand('copy');
+            document.body.removeChild(el);
+        };
+
         var trades = [];
+        var markerIndexWillPlay = 0;
 
         var map = L.map('map', {
             crs: L.CRS.Simple,
@@ -144,18 +174,29 @@
         map.fitBounds(bounds);
 
         map.on('click', function (evt) {
-            console.log(evt.latlng)
+            console.log(evt.latlng.lat + '\t' + evt.latlng.lng)
+
+            copyToClipboard(evt.latlng.lat + '\t' + evt.latlng.lng);
+
         })
         var markers = [];
         var markersPulse = [];
         let myIconPulse = L.divIcon({
             className: 'my-div-icon-pulse'
         });
-        setTimeout(() => {
 
+
+        fetch('live-trades.json')
+            .then(response => response.json())
+            .then(data => {
+                trades = data;
+                VisualiseTrades();
+            });
+
+        function VisualiseTrades() {
+            console.log('rows:',trades.filter(t => t["X"] != '').length );
             trades.filter(t => t["X"] != '').forEach(trade => {
 
-                console.log(trade)
                 let myIcon = L.divIcon({
                     className: 'my-div-icon',
                     html: trade.Position,
@@ -170,1033 +211,31 @@
 
             });
 
-            var markerIndexWillPlay = 0;
+            markerIndexWillPlay = 0;
             animateMarkers();
-            function animateMarkers() {
 
-                if (markers.length == 0) {
-                    return;
-                }
-                if (markers.length == markerIndexWillPlay) {
-                    markerIndexWillPlay = 0;
-                }
+        }
 
-                markers[markerIndexWillPlay].remove();
-                markers[markerIndexWillPlay].addTo(map);
-                markersPulse[markerIndexWillPlay].remove();
-                markersPulse[markerIndexWillPlay].addTo(map);
-                markerIndexWillPlay++;
+        function animateMarkers() {
 
-                setTimeout(() => {
-                    animateMarkers();
-                }, 1000);
+            if (markers.length == 0) {
+                return;
+            }
+            if (markers.length == markerIndexWillPlay) {
+                markerIndexWillPlay = 0;
             }
 
-        }, 100);
+            markers[markerIndexWillPlay].remove();
+            markers[markerIndexWillPlay].addTo(map);
+            markersPulse[markerIndexWillPlay].remove();
+            markersPulse[markerIndexWillPlay].addTo(map);
+            markerIndexWillPlay++;
 
+            setTimeout(() => {
+                animateMarkers();
+            }, 700);
+        }
 
-        trades = [
-            {
-                "Position": "U30USD 1.00 é Dublin",
-                "X": 313,
-                "Y": 388
-            },
-            {
-                "Position": "EURUSD 0.40 é Istanbul",
-                "X": 284,
-                "Y": 470
-            },
-            {
-                "Position": "XAUUSD 1.00 é Jeddah",
-                "X": 240,
-                "Y": 493
-            },
-            {
-                "Position": "SPXUSD 1.00 é Johannesburg",
-                "X": 143,
-                "Y": 463
-            },
-            {
-                "Position": "USDCHF 1.00 ê Ho Chi Minh",
-                "X": 216,
-                "Y": 449
-            },
-            {
-                "Position": "USDJPY 1.00 é Incheon",
-                "X": 276,
-                "Y": 694
-            },
-            {
-                "Position": "USDJPY 2.50 ê Brno",
-                "X": 305,
-                "Y": 438
-            },
-            {
-                "Position": "XAUEUR 0.80 é Helsinki",
-                "X": 331,
-                "Y": 457
-            },
-            {
-                "Position": "EURUSD 0.02 ê Manila",
-                "X": 220,
-                "Y": 684
-            },
-            {
-                "Position": "GBPJPY 1.25 ê Seoul",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "EURGBP 0.10 ê Prague",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "EURJPY 1.00 ê Dubai",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "XAUUSD 1.00 ê Prague",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "EURUSD 0.50 ê Birmingham",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "XNGUSD 300.00 ê Košice",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "D30EUR 1.00 ê Vancouver",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "USDJPY 3.00 é Kuwait",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "EURGBP 0.20 é Durban",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "EURUSD 0.01 é London",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "EURNZD 0.02 ê Shanghai",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "BTCUSD 0.50 é London",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "GBPNZD 0.70 é Lisbon",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "UKOUSD 0.50 ê Karagandy",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "ETHUSD 5.00 é Tokyo",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "AUDCAD 0.08 é Valencia",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "EURUSD 0.07 é Belo Horizonte",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "GBPCHF 0.30 ê Plymouth",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "EURUSD 0.05 ê Bangkok",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "GBPCAD 0.40 é Montevideo",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "LTCUSD 100.00 é Manchester",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "EURUSD 1.00 é Ho Chi Minh",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "NASUSD 5.00 ê Mendoza",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "BTCUSD 1.50 ê Moscow",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "U30USD 1.00 ê Kuala Lumpur",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "USDNOK 0.10 é Quezon",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "XAUUSD 1.00 é Birmingham",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "EURUSD 0.01 é Karachi",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "EURGBP 1.50 ê Madrid",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "EURUSD 0.75 ê Dongguan",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "NASUSD 5.00 ê Santiago",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "USDZAR 0.20 é Johannesburg",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "D30EUR 3.00 é Sarajevo",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "GBPAUD 0.25 ê Kiev",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "AUDUSD 0.50 é Abuja",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "GBPUSD 1.00 ê Toronto",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "EURNZD 0.30 ê Lima",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "BTCUSD 0.25 é St. Petersburg",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "USDJPY 0.40 é Bratislava",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "EURUSD 0.75 ê Yokohama",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "USDCHF 0.10 ê Rio de Janeiro",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "USDCHF 0.50 ê Cape Town",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "GBPUSD 2.00 ê Buenos Aires",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "EURJPY 0.25 é Sydney",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "USDCAD 0.05 ê Pretoria",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "XLMUSD 2000.00 ê Novi Sad",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "GBPJPY 0.05 é Mexico City",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "EURAUD 0.75 é Tokyo",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "NZDJPY 0.45 é Prague",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "GBPPLN 0.50 ê Warsaw",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "NZDCHF 0.02 ê Kharkov",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "U30USD 1.00 é Den Haag",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "GBPUSD 0.01 é Cebu",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "BTCUSD 1.00 ê Jeddah",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "AUDUSD 0.20 ê London",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "EURUSD 0.10 é Ipoh",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "GBPUSD 0.50 ê Kuala Lumpur",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "USDJPY 0.50 ê London",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "EURUSD 0.10 é Manchester",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "XAUUSD 0.20 é Johor Bahru",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "EURUSD 10.00 é Quanzhou",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "ETHUSD 0.10 ê Kolkata",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "EURJPY 0.60 é Beijing",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "BTCUSD 1.00 é Nairobi",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "EURUSD 0.10 ê Nagoya",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "EURUSD 5.00 ê Budapest",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "EURGBP 1.00 ê Santiago",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "AUDCHF 0.30 ê Berlin",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "EURGBP 0.01 é Manchester",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "USDCHF 0.70 é Luanda",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "XAUUSD 0.20 ê Leeds",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "EURUSD 0.20 é Lahore",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "GBPUSD 0.75 é Shenzhen",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "USOUSD 1.00 é Tokyo",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "GBPJPY 0.50 é Budapest",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "SPXUSD 5.00 é Melbourne",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "D30EUR 5.00 ê Shanghai",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "BTCUSD 0.25 ê Khartoum",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "USDJPY 0.60 ê Montréal",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "CHFJPY 0.10 ê Bristol",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "EURJPY 2.00 ê Brno",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "AUDNZD 0.20 ê Bangkok",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "EURUSD 0.75 é Taipei",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "RPLUSD 1500.00 é Tokyo",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "GBPNZD 0.10 ê Lima",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "EURUSD 0.75 ê Hyderabad",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "EURUSD 0.50 é Hanoi",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "EURNZD 1.00 ê Barcelona",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "EURUSD 1.00 é London",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "USOUSD 2.00 é Belo Horizonte",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "EURGBP 1.00 é Yokohama",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "EURUSD 0.50 é Tokyo",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "EURCHF 0.50 ê Espoo",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "EURUSD 0.30 ê Shanghai",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "EURJPY 1.25 é Manchester",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "CADCHF 1.00 é Ibadan",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "EURUSD 0.50 ê Manchester",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "USOUSD 5.00 ê Barcelona",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "EURUSD 2.00 é Johannesburg",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "GBPUSD 2.00 é Johannesburg",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "GBPUSD 0.05 é Tokyo",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "GBPUSD 5.00 ê Wuhan",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "GBPUSD 0.03 ê Shanghai",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "EURUSD 5.00 é Hong Kong",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "EURGBP 3.00 ê Singapore",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "GBPJPY 1.00 é Vancouver",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "USDCAD 0.50 ê Guangzhou",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "XAUUSD 1.50 é Poznan",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "USDJPY 0.50 é London",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "USDJPY 1.25 é Yokohama",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "SPXUSD 3.00 ê Taiyuan",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "BTCUSD 0.20 ê Poznan",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "EURUSD 0.01 ê Brno",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "CADJPY 0.01 é Manchester",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "SPXUSD 5.00 ê Campinas",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "CADCHF 0.10 ê Miscolc",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "USOUSD 5.00 é Kuwait",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "EURJPY 0.50 ê Prague",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "EURNZD 0.10 é Paris",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "EURUSD 1.00 ê Tehran",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "GBPJPY 0.75 ê Durban",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "USOUSD 1.00 ê Monterrey",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "100GBP 1.00 é Doha",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "EURUSD 0.15 ê Yokohama",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "EURUSD 5.00 ê Cape Town",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "EURGBP 2.50 é Cape Town",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "USDCAD 0.01 é Ipoh",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "XPTUSD 0.80 é Kuwait",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "EURGBP 0.01 ê Warsaw",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "GBPDKK 0.01 é Copenhagen",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "EURJPY 0.10 ê Alexandria",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "GBPUSD 4.00 é Tokyo",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "USDJPY 1.25 ê Riyadh",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "XAUUSD 1.00 ê Madrid",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "D30EUR 1.00 é Varna",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "EURUSD 0.30 é Bangalore",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "100GBP 1.50 ê Belgrade",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "U30USD 0.20 é Brno",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "USDCAD 0.10 é Sao Paulo",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "XAUEUR 1.25 ê Monte Carlo",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "XAUEUR 0.40 ê Timisoara",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "USDJPY 0.10 é Delhi",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "GBPJPY 0.10 é Busan",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "EURJPY 0.10 é Johor Bahru",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "EURUSD 0.20 ê Berlin",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "D30EUR 2.00 ê Vienna",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "NZDUSD 0.50 ê Porto",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "BTCUSD 0.10 é Hanoi",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "BCHUSD 15.00 é Brno",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "EURUSD 0.10 ê Prague",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "EURUSD 0.50 ê Chennai",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "EURUSD 10.00 ê Toronto",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "E35EUR 2.00 ê Rotterdam",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "SPXUSD 1.00 ê Zagreb",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "BTCUSD 1.25 é Sao Paulo",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "GBPJPY 0.10 ê Katowice",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "EURUSD 0.02 é Tokyo",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "EURUSD 0.20 é Medellín",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "EURUSD 0.20 ê Cairo",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "NASUSD 2.00 é Amsterdam",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "NASUSD 10.00 é London",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "USDCAD 0.75 é London",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "EURUSD 0.75 é Montréal",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "E50EUR 8.00 é Hamburg",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "AUDJPY 0.45 é Cork",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "EURCAD 0.60 é London",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "U30USD 0.50 ê Lyon",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "EURGBP 0.80 é Kuwait",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "EURNZD 0.50 é Lagos",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "NZDCAD 0.01 é Abu Dhabi",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "GBPJPY 0.50 ê Kano",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "EURUSD 0.75 é Prague",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "USDPLN 0.70 ê Katowice",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "EURUSD 2.00 ê Brno",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "USDJPY 0.30 ê Rio de Janeiro",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "USDCHF 0.30 é Chengdu",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "XAUUSD 0.50 ê Osaka",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "EURDKK 0.01 é Malmö",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "GBPUSD 0.50 é London",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "UKOUSD 1.30 é Cape Town",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "EURGBP 0.50 ê Dusseldorf",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "NASUSD 5.00 é Brasília",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "GBPJPY 1.00 ê Busan",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "GBPUSD 0.10 ê Athens",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "BTCUSD 1.20 ê Amsterdam",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "EURUSD 0.50 é Bogota",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "GBPJPY 0.80 é Dhaka",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "EURAUD 0.02 ê Pattaya",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "EURGBP 0.05 é Leeds",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "IND50USD 2.50 ê Mumbai",
-                "X": "",
-                "Y": ""
-            },
-            {
-                "Position": "EURUSD 1.00 ê Tianjin",
-                "X": "",
-                "Y": ""
-            }
-        ];
 
     </script>
 </body>
