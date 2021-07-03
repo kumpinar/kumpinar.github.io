@@ -1,6 +1,7 @@
 <html>
 
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
         integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
@@ -36,11 +37,27 @@
         }
 
         .leaflet-container {
-            font: 12px/1.5 'Poppins', "Helvetica Neue", Arial, Helvetica, sans-serif;
+            font-family: 'Poppins', "Helvetica Neue", Arial, Helvetica, sans-serif;
+            font-size: 13px;
+        }
+
+        @media (min-width: 481px) and (max-width: 767px) {
+
+            .leaflet-container {
+                font-size: 18px;
+            }
+
+        }
+
+        @media (max-width: 480px) {
+
+            .leaflet-container {
+                font-size: 22px;
+            }
+
         }
 
         .my-div-icon {
-            font-size: 10px;
             color: #15A2F1;
             -webkit-animation: floatBubble 2s forwards ease-out;
             animation: floatBubble 2s forwards ease-out;
@@ -149,11 +166,20 @@
 
     </div>
     <script>
+        const copyToClipboard = str => {
+            const el = document.createElement('textarea');
+            el.value = str;
+            document.body.appendChild(el);
+            el.select();
+            document.execCommand('copy');
+            document.body.removeChild(el);
+        };
 
         var days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-        var inactiveDays = ['Saturday', 'Sunday' ];
+        var inactiveDays = ['Sunday']; // ['Saturday', 'Sunday']
         var d = new Date();
         var currentDayName = days[d.getDay()];
+
 
         var trades = [];
         var markerIndexWillPlay = 0;
@@ -169,20 +195,27 @@
         var image = L.imageOverlay('world.png', bounds).addTo(map);
         map.fitBounds(bounds);
 
+        map.on('click', function (evt) {
+            console.log(evt.latlng.lat + '\t' + evt.latlng.lng)
+
+            copyToClipboard(evt.latlng.lat + '\t' + evt.latlng.lng);
+
+        })
+
         var markers = [];
         var markersPulse = [];
         let myIconPulse = L.divIcon({
             className: 'my-div-icon-pulse'
         });
 
-        
-        if(!inactiveDays.includes(currentDayName)){
-        fetch('live-trades.json')
-            .then(response => response.json())
-            .then(data => {
-                trades = data;
-                VisualiseTrades();
-            });
+
+        if (!inactiveDays.includes(currentDayName)) {
+            fetch('live-trades.json?v2')
+                .then(response => response.json())
+                .then(data => {
+                    trades = data;
+                    VisualiseTrades();
+                });
         }
 
         function VisualiseTrades() {
@@ -192,7 +225,7 @@
                 let myIcon = L.divIcon({
                     className: 'my-div-icon',
                     html: trade.Position,
-                    iconSize: [200, 12],
+                    iconSize: [250, 12],
                     iconAnchor: [50, 6]
                 });
                 let m = L.marker([trade.X, trade.Y], { icon: myIcon });
@@ -209,19 +242,20 @@
         }
 
         function animateMarkers() {
+            if (!document.hidden) {
+                if (markers.length == 0) {
+                    return;
+                }
+                if (markers.length == markerIndexWillPlay) {
+                    markerIndexWillPlay = 0;
+                }
 
-            if (markers.length == 0) {
-                return;
+                markers[markerIndexWillPlay].remove();
+                markers[markerIndexWillPlay].addTo(map);
+                markersPulse[markerIndexWillPlay].remove();
+                markersPulse[markerIndexWillPlay].addTo(map);
+                markerIndexWillPlay++;
             }
-            if (markers.length == markerIndexWillPlay) {
-                markerIndexWillPlay = 0;
-            }
-
-            markers[markerIndexWillPlay].remove();
-            markers[markerIndexWillPlay].addTo(map);
-            markersPulse[markerIndexWillPlay].remove();
-            markersPulse[markerIndexWillPlay].addTo(map);
-            markerIndexWillPlay++;
 
             setTimeout(() => {
                 animateMarkers();
