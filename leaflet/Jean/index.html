@@ -14,7 +14,7 @@
         @font-face {
             font-family: 'Poppins';
             src:
-                url('Poppins/Poppins-Bold.ttf') format('truetype')
+                url('Poppins/Poppins-ExtraLightItalic.ttf') format('truetype')
         }
 
         html,
@@ -118,8 +118,8 @@
 
             70% {
                 -webkit-box-shadow: 0 0 0 15px rgba(21, 162, 241, 0);
-                width: 10px;
-                height: 10px;
+                width: 7px;
+                height: 7px;
                 top: 5px;
             }
 
@@ -143,8 +143,8 @@
             70% {
                 -moz-box-shadow: 0 0 0 15px rgba(21, 162, 241, 0);
                 box-shadow: 0 0 0 15px rgba(21, 162, 241, 0);
-                width: 10px;
-                height: 10px;
+                width: 7px;
+                height: 7px;
                 top: 5px;
             }
 
@@ -210,7 +210,7 @@
 
 
         if (!inactiveDays.includes(currentDayName)) {
-            fetch('live-trades.json?v2')
+            fetch('live-trades.json?v6')
                 .then(response => response.json())
                 .then(data => {
                     trades = data;
@@ -259,7 +259,7 @@
 
             setTimeout(() => {
                 animateMarkers();
-            }, 300);
+            }, 1000);
         }
 
 
