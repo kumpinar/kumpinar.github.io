@@ -59,40 +59,61 @@
 
         .my-div-icon {
             color: #15A2F1;
-            -webkit-animation: floatBubble 2s forwards ease-out;
-            animation: floatBubble 2s forwards ease-out;
+            animation: floatBubble 2s forwards linear;
+            -webkit-animation: floatBubble 2s forwards linear;
+            animation-iteration-count: 1;
         }
 
         @-webkit-keyframes floatBubble {
             0% {
-                top: 0px;
+                top: -10px;
                 opacity: 0;
             }
 
+            25% {
+                top: -18px;
+                opacity: 1;
+            }
+
             50% {
-                top: -10px;
+                top: -26px;
+                opacity: 1;
+            }
+
+            75% {
+                top: -34px;
                 opacity: 1;
             }
 
             100% {
-                top: -30px;
+                top: -42px;
                 opacity: 0;
             }
         }
 
         @keyframes floatBubble {
             0% {
-                top: 0px;
+                top: -10px;
                 opacity: 0;
             }
 
+            25% {
+                top: -18px;
+                opacity: 1;
+            }
+
             50% {
-                top: -10px;
+                top: -26px;
+                opacity: 1;
+            }
+
+            75% {
+                top: -34px;
                 opacity: 1;
             }
 
             100% {
-                top: -20px;
+                top: -42px;
                 opacity: 0;
             }
         }
@@ -104,7 +125,9 @@
             border-radius: 50%;
             background: #15A2F1;
             box-shadow: 0 0 0 rgba(21, 162, 241, 0.4);
-            animation: pulse 2s forwards;
+            animation: pulse 2s forwards linear;
+            -webkit-animation: pulse 2s forwards linear;
+            animation-iteration-count: 1;
         }
 
 
@@ -179,6 +202,8 @@
         var inactiveDays = ['Sunday']; // ['Saturday', 'Sunday']
         var d = new Date();
         var currentDayName = days[d.getDay()];
+        var currentTimeNumber = new Date().getTime();
+        const speed_ms = 1000;
 
 
         var trades = [];
@@ -236,7 +261,10 @@
 
             });
 
-            markerIndexWillPlay = 0;
+            currentTimeNumber = new Date().getTime();
+            markerIndexWillPlay = (currentTimeNumber / speed_ms) % trades.filter(t => t["X"] != '').length;
+            markerIndexWillPlay = Math.round(markerIndexWillPlay);
+            console.log(markerIndexWillPlay);
             animateMarkers();
 
         }
@@ -259,7 +287,7 @@
 
             setTimeout(() => {
                 animateMarkers();
-            }, 1000);
+            }, speed_ms);
         }
 
 
