@@ -270,24 +270,27 @@
         }
 
         function animateMarkers() {
-            if (!document.hidden) {
-                if (markers.length == 0) {
-                    return;
-                }
-                if (markers.length == markerIndexWillPlay) {
-                    markerIndexWillPlay = 0;
-                }
-
-                markers[markerIndexWillPlay].remove();
-                markers[markerIndexWillPlay].addTo(map);
-                markersPulse[markerIndexWillPlay].remove();
-                markersPulse[markerIndexWillPlay].addTo(map);
-                markerIndexWillPlay++;
+            if (markers.length == 0) {
+                return;
             }
 
             setTimeout(() => {
                 animateMarkers();
             }, speed_ms);
+            
+            if (markers.length == markerIndexWillPlay) {
+                markerIndexWillPlay = 0;
+            }
+
+            if (!document.hidden) {
+
+                markers[markerIndexWillPlay].remove();
+                markers[markerIndexWillPlay].addTo(map);
+                markersPulse[markerIndexWillPlay].remove();
+                markersPulse[markerIndexWillPlay].addTo(map);
+            }
+
+            markerIndexWillPlay++;
         }
 
 
