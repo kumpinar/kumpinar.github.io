@@ -204,6 +204,7 @@
         var currentDayName = days[d.getDay()];
         var currentTimeNumber = new Date().getTime();
         const speed_ms = 1000;
+        const multiplePointsIndex = [5, 9];
 
 
         var trades = [];
@@ -246,12 +247,14 @@
         function VisualiseTrades() {
             console.log('rows:', trades.filter(t => t["X"] != '').length);
             trades.filter(t => t["X"] != '').forEach(trade => {
-
+                let markerLabel = trade.Position;
+                markerLabel = markerLabel.replace('▲', '<span style="color:black;">▲</span>');
+                markerLabel = markerLabel.replace('▼', '<span style="color:black;">▼</span>');
                 let myIcon = L.divIcon({
                     className: 'my-div-icon',
-                    html: trade.Position,
+                    html: markerLabel,
                     iconSize: [300, 12],
-                    iconAnchor: [50, 6]
+                    iconAnchor: [80, 6]
                 });
                 let m = L.marker([trade.X, trade.Y], { icon: myIcon });
                 markers.push(m);
@@ -263,7 +266,7 @@
 
             currentTimeNumber = new Date().getTime();
             markerIndexWillPlay = Math.floor(currentTimeNumber / speed_ms) % trades.filter(t => t["X"] != '').length;
-            console.log(markerIndexWillPlay);
+
             animateMarkers();
 
         }
@@ -288,8 +291,25 @@
                 markers[markerIndexWillPlay].addTo(map);
                 markersPulse[markerIndexWillPlay].addTo(map);
             }
-            console.log(markerIndexWillPlay);
+
+
             markerIndexWillPlay++;
+
+            /* multiplePointsIndex.forEach((mpIndex, index) => {
+                if (markerIndexWillPlay % mpIndex == 0) {
+                    for (let j = 0; j < index + 1; j++) {
+                        markers[markerIndexWillPlay].remove();
+                        markersPulse[markerIndexWillPlay].remove();
+                        if (!document.hidden) {
+
+                            markers[markerIndexWillPlay].addTo(map);
+                            markersPulse[markerIndexWillPlay].addTo(map);
+                        }
+                        markerIndexWillPlay++;
+                    }
+                }
+
+            }); */
         }
 
         // Set the name of the hidden property and the change event for visibility
