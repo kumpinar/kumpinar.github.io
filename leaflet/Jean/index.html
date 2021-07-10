@@ -204,7 +204,7 @@
         var currentDayName = days[d.getDay()];
         var currentTimeNumber = new Date().getTime();
         const speed_ms = 1000;
-        const multiplePointsIndex = [5, 9];
+        const multiplePointsIndex = [4, 5, 9];
 
 
         var trades = [];
@@ -295,21 +295,22 @@
 
             markerIndexWillPlay++;
 
-            /* multiplePointsIndex.forEach((mpIndex, index) => {
+            multiplePointsIndex.forEach((mpIndex, index) => {
                 if (markerIndexWillPlay % mpIndex == 0) {
                     for (let j = 0; j < index + 1; j++) {
-                        markers[markerIndexWillPlay].remove();
-                        markersPulse[markerIndexWillPlay].remove();
+                        let randomIndex=(markerIndexWillPlay+mpIndex*(j+1))%trades.filter(t => t["X"] != '').length;
+                        
+                        markers[randomIndex].remove();
+                        markersPulse[randomIndex].remove();
+                        
                         if (!document.hidden) {
-
-                            markers[markerIndexWillPlay].addTo(map);
-                            markersPulse[markerIndexWillPlay].addTo(map);
+                            markers[randomIndex].addTo(map);
+                            markersPulse[randomIndex].addTo(map);
                         }
-                        markerIndexWillPlay++;
                     }
                 }
 
-            }); */
+            });
         }
 
         // Set the name of the hidden property and the change event for visibility
