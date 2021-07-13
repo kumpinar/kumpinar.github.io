@@ -236,7 +236,7 @@
 
 
         if (!inactiveDays.includes(currentDayName)) {
-            fetch('live-trades.json?v6')
+            fetch('live-trades.json?v7')
                 .then(response => response.json())
                 .then(data => {
                     trades = data;
