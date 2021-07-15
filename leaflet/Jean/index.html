@@ -1,7 +1,7 @@
 <html>
 
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
         integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
@@ -17,8 +17,18 @@
                 url('Poppins/Poppins-Regular.ttf') format('truetype')
         }
 
-        html,
+        
+
         body {
+            padding: 0;
+            margin: 0;
+        }
+
+        html,
+        body,
+        #map {
+            height: 100%;
+            width: 100vw;
             font-family: 'Poppins', Roboto, -apple-system, "Helvetica Neue", Helvetica, "Segoe UI", Arial, sans-serif;
         }
 
@@ -118,74 +128,53 @@
             }
         }
 
-        .my-div-icon-pulse {
+
+
+        .trade-icon {
+            background-image: url(trade-favicon.png);
+            opacity: 0;
             display: block;
-            width: 0px;
-            height: 0px;
-            border-radius: 50%;
-            background: #15A2F1;
-            box-shadow: 0 0 0 rgba(21, 162, 241, 0.4);
-            animation: pulse 2s forwards linear;
-            -webkit-animation: pulse 2s forwards linear;
+            width: 32px;
+            height: 32px;
+            animation: hiding 2s forwards linear;
+            -webkit-animation: hiding 2s forwards linear;
             animation-iteration-count: 1;
         }
 
 
-        @-webkit-keyframes pulse {
+        @-webkit-keyframes hiding {
             0% {
-                -webkit-box-shadow: 0 0 0 0 rgba(21, 162, 241, 0.4);
-                width: 0px;
-                height: 0px;
-                top: 10px;
+                opacity: 0;
             }
 
-            70% {
-                -webkit-box-shadow: 0 0 0 15px rgba(21, 162, 241, 0);
-                width: 7px;
-                height: 7px;
-                top: 5px;
+            50% {
+                opacity: 1;
             }
 
             100% {
-                -webkit-box-shadow: 0 0 0 0 rgba(21, 162, 241, 0);
-                width: 0px;
-                height: 0px;
-                top: 10px;
+                opacity: 0;
             }
         }
 
-        @keyframes pulse {
+        @keyframes hiding {
             0% {
-                -moz-box-shadow: 0 0 0 0 rgba(21, 162, 241, 0.4);
-                box-shadow: 0 0 0 0 rgba(21, 162, 241, 0.4);
-                width: 0px;
-                height: 0px;
-                top: 10px;
+                opacity: 0;
             }
 
-            70% {
-                -moz-box-shadow: 0 0 0 15px rgba(21, 162, 241, 0);
-                box-shadow: 0 0 0 15px rgba(21, 162, 241, 0);
-                width: 7px;
-                height: 7px;
-                top: 5px;
+            50% {
+                opacity: 1;
             }
 
             100% {
-                -moz-box-shadow: 0 0 0 0 rgba(21, 162, 241, 0);
-                box-shadow: 0 0 0 0 rgba(21, 162, 241, 0);
-                width: 0px;
-                height: 0px;
-                top: 10px;
+                opacity: 0;
             }
-        }
         }
     </style>
 </head>
 
 <body>
 
-    <div id="map" style="position:absolute; width: 832px; height: 401px;">
+    <div id="map">
 
     </div>
     <script>
@@ -215,7 +204,9 @@
             zoomControl: false,
             attributionControl: false,
             zoom: 0,
-            maxZoom: 0
+            maxZoom: 0,
+            doubleClickZoom: false,
+            dragging: false
         });
         var bounds = [[0, 0], [401, 832]];
         var image = L.imageOverlay('world.png', bounds).addTo(map);
@@ -230,10 +221,11 @@
 
         var markers = [];
         var markersPulse = [];
-        let myIconPulse = L.divIcon({
-            className: 'my-div-icon-pulse'
+        var tradeFavicon = L.divIcon({
+            className: 'trade-icon',
+            iconSize: [32, 32],
+            iconAnchor: [16, 16]
         });
-
 
         if (!inactiveDays.includes(currentDayName)) {
             fetch('live-trades.json?v7')
@@ -259,7 +251,7 @@
                 let m = L.marker([trade.X, trade.Y], { icon: myIcon });
                 markers.push(m);
 
-                let mp = L.marker([trade.X, trade.Y], { icon: myIconPulse });
+                let mp = L.marker([trade.X, trade.Y], { icon: tradeFavicon });
                 markersPulse.push(mp);
 
             });
@@ -298,11 +290,11 @@
             multiplePointsIndex.forEach((mpIndex, index) => {
                 if (markerIndexWillPlay % mpIndex == 0) {
                     for (let j = 0; j < index + 1; j++) {
-                        let randomIndex=(markerIndexWillPlay+mpIndex*(j+1))%trades.filter(t => t["X"] != '').length;
-                        
+                        let randomIndex = (markerIndexWillPlay + mpIndex * (j + 1)) % trades.filter(t => t["X"] != '').length;
+
                         markers[randomIndex].remove();
                         markersPulse[randomIndex].remove();
-                        
+
                         if (!document.hidden) {
                             markers[randomIndex].addTo(map);
                             markersPulse[randomIndex].addTo(map);
