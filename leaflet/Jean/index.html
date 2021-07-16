@@ -54,7 +54,7 @@
         @media (min-width: 481px) and (max-width: 767px) {
 
             .leaflet-container {
-                font-size: 18px;
+                font-size: 15px;
             }
 
         }
@@ -62,7 +62,7 @@
         @media (max-width: 480px) {
 
             .leaflet-container {
-                font-size: 22px;
+                font-size: 17px;
             }
 
         }
@@ -250,6 +250,9 @@
             document.body.removeChild(el);
         };
 
+        var imageWidth = 832, imageHeight = 401, mapDivWidth = 0;
+        var scale = 1;
+        var animateTimeout;
         var days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
         var inactiveDays = ['Sunday']; // ['Saturday', 'Sunday']
         var d = new Date();
@@ -266,12 +269,11 @@
             crs: L.CRS.Simple,
             zoomControl: false,
             attributionControl: false,
-            zoom: 0,
-            maxZoom: 0,
             doubleClickZoom: false,
-            dragging: false
+            dragging: false,
+            scrollWheelZoom: false
         });
-        var bounds = [[0, 0], [401, 832]];
+        var bounds = [[0, 0], [imageHeight, imageWidth]];
         var image = L.imageOverlay('world.png', bounds).addTo(map);
         map.fitBounds(bounds);
 
@@ -279,8 +281,33 @@
             console.log(evt.latlng.lat + '\t' + evt.latlng.lng)
 
             copyToClipboard(evt.latlng.lat + '\t' + evt.latlng.lng);
+        });
 
-        })
+        function calculateScale() {
+
+            let mapDiv = document.querySelector('#map');
+            let width = mapDiv.offsetWidth;
+
+            if (width != mapDivWidth && trades.length>0) {
+                mapDivWidth = width;
+                if (width < imageWidth) {
+                    scale = width / imageWidth;
+                }
+                else {
+                    scale = 1;
+                }
+                bounds = [[0, 0], [imageHeight * scale, imageWidth * scale]];
+                image.setBounds(bounds);
+                map.fitBounds(bounds);
+                console.log(width);
+                VisualiseTrades()
+            }
+
+        }
+
+        setInterval(() => {
+            calculateScale();
+        }, 100);
 
         var markers = [];
         var markersPulse = [];
@@ -288,7 +315,7 @@
             className: 'trade-icon',
             iconSize: [32, 32],
             iconAnchor: [16, 16]
-        });        
+        });
         let myIconPulse = L.divIcon({
             className: 'my-div-icon-pulse'
         });
@@ -303,6 +330,8 @@
         }
 
         function VisualiseTrades() {
+            markers = [];
+            markersPulse = [];
             console.log('rows:', trades.filter(t => t["X"] != '').length);
             trades.filter(t => t["X"] != '').forEach(trade => {
                 let markerLabel = trade.Position;
@@ -314,16 +343,20 @@
                     iconSize: [300, 12],
                     iconAnchor: [80, 6]
                 });
-                let m = L.marker([trade.X, trade.Y], { icon: myIcon });
+                let m = L.marker([trade.X * scale, trade.Y * scale], { icon: myIcon });
                 markers.push(m);
 
-                let mp = L.marker([trade.X, trade.Y], { icon: myIconPulse });
+                let mp = L.marker([trade.X * scale, trade.Y * scale], { icon: myIconPulse });
                 markersPulse.push(mp);
 
             });
 
             currentTimeNumber = new Date().getTime();
             markerIndexWillPlay = Math.floor(currentTimeNumber / speed_ms) % trades.filter(t => t["X"] != '').length;
+
+            if (animateTimeout) {
+                clearTimeout(animateTimeout);
+            }
 
             animateMarkers();
 
@@ -334,7 +367,7 @@
                 return;
             }
 
-            setTimeout(() => {
+            animateTimeout = setTimeout(() => {
                 animateMarkers();
             }, speed_ms);
 
@@ -345,7 +378,6 @@
             markers[markerIndexWillPlay].remove();
             markersPulse[markerIndexWillPlay].remove();
             if (!document.hidden) {
-
                 markers[markerIndexWillPlay].addTo(map);
                 markersPulse[markerIndexWillPlay].addTo(map);
             }
