@@ -17,7 +17,7 @@
                 url('Poppins/Poppins-Regular.ttf') format('truetype')
         }
 
-        
+
 
         body {
             padding: 0;
@@ -169,6 +169,69 @@
                 opacity: 0;
             }
         }
+
+
+        .my-div-icon-pulse {
+            display: block;
+            width: 0px;
+            height: 0px;
+            border-radius: 50%;
+            background: #15A2F1;
+            box-shadow: 0 0 0 rgba(21, 162, 241, 0.4);
+            animation: pulse 2s forwards linear;
+            -webkit-animation: pulse 2s forwards linear;
+            animation-iteration-count: 1;
+        }
+
+
+        @-webkit-keyframes pulse {
+            0% {
+                -webkit-box-shadow: 0 0 0 0 rgba(21, 162, 241, 0.4);
+                width: 0px;
+                height: 0px;
+                top: 10px;
+            }
+
+            70% {
+                -webkit-box-shadow: 0 0 0 15px rgba(21, 162, 241, 0);
+                width: 7px;
+                height: 7px;
+                top: 5px;
+            }
+
+            100% {
+                -webkit-box-shadow: 0 0 0 0 rgba(21, 162, 241, 0);
+                width: 0px;
+                height: 0px;
+                top: 10px;
+            }
+        }
+
+        @keyframes pulse {
+            0% {
+                -moz-box-shadow: 0 0 0 0 rgba(21, 162, 241, 0.4);
+                box-shadow: 0 0 0 0 rgba(21, 162, 241, 0.4);
+                width: 0px;
+                height: 0px;
+                top: 10px;
+            }
+
+            70% {
+                -moz-box-shadow: 0 0 0 15px rgba(21, 162, 241, 0);
+                box-shadow: 0 0 0 15px rgba(21, 162, 241, 0);
+                width: 7px;
+                height: 7px;
+                top: 5px;
+            }
+
+            100% {
+                -moz-box-shadow: 0 0 0 0 rgba(21, 162, 241, 0);
+                box-shadow: 0 0 0 0 rgba(21, 162, 241, 0);
+                width: 0px;
+                height: 0px;
+                top: 10px;
+            }
+        }
     </style>
 </head>
 
@@ -225,6 +288,9 @@
             className: 'trade-icon',
             iconSize: [32, 32],
             iconAnchor: [16, 16]
+        });        
+        let myIconPulse = L.divIcon({
+            className: 'my-div-icon-pulse'
         });
 
         if (!inactiveDays.includes(currentDayName)) {
@@ -251,7 +317,7 @@
                 let m = L.marker([trade.X, trade.Y], { icon: myIcon });
                 markers.push(m);
 
-                let mp = L.marker([trade.X, trade.Y], { icon: tradeFavicon });
+                let mp = L.marker([trade.X, trade.Y], { icon: myIconPulse });
                 markersPulse.push(mp);
 
             });
