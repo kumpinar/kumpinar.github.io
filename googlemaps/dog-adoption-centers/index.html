@@ -146,6 +146,12 @@
                 mapTypeControl: false,
             });
 
+            //extend world
+            const worldBounds = new google.maps.LatLngBounds(
+                new google.maps.LatLng(69.0371, -159.2578),
+                new google.maps.LatLng(-38.2726, 169.1015));
+            map.fitBounds(worldBounds);
+
             const options = {
                 fields: ["formatted_address", "geometry", "name"],
                 types: ["(regions)"],
