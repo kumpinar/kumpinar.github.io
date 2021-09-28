@@ -238,14 +238,12 @@
 
 
         function SearcAdoptionCenters() {
-            console.log('search');
             loadingModal.show();
             searchTisAreaDiv.style.display = "none";
             var request = {
                 bounds: map.getBounds(),
                 query: keyword
             };
-            console.log(1, map.getBounds());
 
             service.textSearch(request, function (results, status) {
                 loadingModal.hide();
