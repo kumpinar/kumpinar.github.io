@@ -25,25 +25,6 @@
         }
 
 
-
-        #description {
-            font-family: Roboto;
-            font-size: 15px;
-            font-weight: 300;
-        }
-
-        #infowindow-content .title {
-            font-weight: bold;
-        }
-
-        #infowindow-content {
-            display: none;
-        }
-
-        #map #infowindow-content {
-            display: inline;
-        }
-
         .pac-card {
             background-color: #fff;
             border: 0;
@@ -58,17 +39,6 @@
         }
 
 
-
-        .pac-controls {
-            display: inline-block;
-            padding: 5px 11px;
-        }
-
-        .pac-controls label {
-            font-family: Roboto;
-            font-size: 13px;
-            font-weight: 300;
-        }
 
         #pac-input {
             background-color: #fff;
@@ -91,6 +61,25 @@
             font-size: 25px;
             font-weight: 500;
             padding: 6px 12px;
+        }
+
+
+
+        .custom-map-control-button {
+            background-color: #fff;
+            border: 0;
+            border-radius: 2px;
+            box-shadow: 0 1px 4px -1px rgba(0, 0, 0, 0.3);
+            margin: 60px 10px 10px 10px;
+            padding: 0 0.5em;
+            font: 400 16px Roboto, Arial, sans-serif;
+            overflow: hidden;
+            height: 40px;
+            cursor: pointer;
+        }
+
+        .custom-map-control-button:hover {
+            background: #ebebeb;
         }
     </style>
 </head>
@@ -119,12 +108,13 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ"
         crossorigin="anonymous"></script>
+
     <script>
         let map;
         let service;
         let infoWindow;
-        let keyword = 'dog adoption center';
-        let searchTisAreaDiv;
+        let keywords = ['dog adoption center', 'dog rescue', 'pet rescue'];
+        let searchTisAreaDiv, searchThisAreaButton, locationButtonDiv;
         let autocomplete;
         let markers = [];
 
@@ -167,20 +157,20 @@
             // bounds option in the request.
             autocomplete.bindTo("bounds", map);
 
-
-
             searchTisAreaDiv = document.createElement("div");
-
             SearchThisAreaControl(searchTisAreaDiv);
             map.controls[google.maps.ControlPosition.TOP_CENTER].push(searchTisAreaDiv);
 
+            locationButtonDiv = document.createElement("div");
+            SetLocationButton(locationButtonDiv);
+            map.controls[google.maps.ControlPosition.TOP_CENTER].push(locationButtonDiv);
 
             service = new google.maps.places.PlacesService(map);
 
 
             let isFirstLoad = true;
             map.addListener("bounds_changed", () => {
-                searchTisAreaDiv.style.display = "block";
+                searchTisAreaDiv.style.visibility = "visible";
                 if (isFirstLoad) {
                     setTimeout(() => {
                         SearcAdoptionCenters();
@@ -199,11 +189,11 @@
                     map.fitBounds(place.geometry.viewport);
                 } else {
                     map.setCenter(place.geometry.location);
-                    map.setZoom(17);
+                    map.setZoom(10);
                 }
                 setTimeout(() => {
                     SearcAdoptionCenters();
-                }, 100);
+                }, 300);
             });
 
 
@@ -219,23 +209,23 @@
             controlUI.style.borderRadius = "3px";
             controlUI.style.boxShadow = "0 2px 6px rgba(0,0,0,.3)";
             controlUI.style.cursor = "pointer";
-            controlUI.style.marginTop = "8px";
+            controlUI.style.marginTop = "58px";
             controlUI.style.marginBottom = "22px";
             controlUI.style.textAlign = "center";
             controlUI.title = "Click to search this area";
             controlDiv.appendChild(controlUI);
 
             // Set CSS for the control interior.
-            const controlText = document.createElement("div");
+            searchThisAreaButton = document.createElement("div");
 
-            controlText.style.color = "rgb(25,25,25)";
-            controlText.style.fontFamily = "Roboto,Arial,sans-serif";
-            controlText.style.fontSize = "16px";
-            controlText.style.lineHeight = "38px";
-            controlText.style.paddingLeft = "5px";
-            controlText.style.paddingRight = "5px";
-            controlText.innerHTML = "Search this area";
-            controlUI.appendChild(controlText);
+            searchThisAreaButton.style.color = "rgb(25,25,25)";
+            searchThisAreaButton.style.fontFamily = "Roboto,Arial,sans-serif";
+            searchThisAreaButton.style.fontSize = "16px";
+            searchThisAreaButton.style.lineHeight = "38px";
+            searchThisAreaButton.style.paddingLeft = "5px";
+            searchThisAreaButton.style.paddingRight = "5px";
+            searchThisAreaButton.innerHTML = "Search this area";
+            controlUI.appendChild(searchThisAreaButton);
             // Setup the click event listeners: simply set the map to Chicago.
             controlUI.addEventListener("click", () => {
                 SearcAdoptionCenters();
@@ -246,25 +236,25 @@
 
         function SearcAdoptionCenters() {
             loadingModal.show();
-            searchTisAreaDiv.style.display = "none";
-            var request = {
-                bounds: map.getBounds(),
-                query: keyword
-            };
+            searchTisAreaDiv.style.visibility = "hidden";
+            markers.forEach(marker => {
+                marker.setMap(null);
+            });
+            markers = [];
+            keywords.forEach(keyword => {
+                var request = {
+                    bounds: map.getBounds(),
+                    query: keyword
+                };
+                service.textSearch(request, function (results, status) {
+                    loadingModal.hide();
 
-            service.textSearch(request, function (results, status) {
-                loadingModal.hide();
-
-                markers.forEach(marker => {
-                    marker.setMap(null);
-                });
-                markers = [];
-
-                if (status === google.maps.places.PlacesServiceStatus.OK) {
-                    for (var i = 0; i < results.length; i++) {
-                        createMarker(results[i]);
+                    if (status === google.maps.places.PlacesServiceStatus.OK) {
+                        for (var i = 0; i < results.length; i++) {
+                            createMarker(results[i]);
+                        }
                     }
-                }
+                });
             });
 
         }
@@ -277,35 +267,98 @@
             let marker = new google.maps.Marker({
                 map,
                 position: place.geometry.location,
-                icon: 'dog-marker_32X32.png',
+                icon: '/s/DogGuys_mappointer-01.png',
             });
             markers.push(marker);
 
             google.maps.event.addListener(marker, "click", () => {
                 infoWindow.close();
                 let placeName = place.name || "";
-                let photoUrl = "";
-                if (place.photos.length > 0) {
-                    photoUrl = place.photos[0].getUrl();
+                let photoElement = "";
+                if (place.photos?.length > 0) {
+                    let photoUrl = place.photos[0].getUrl();
+                    photoElement = `<img src="${photoUrl}" class="card-img-top" style="max-height:250px;" alt="${placeName}">`
                 }
                 infoWindow.setContent(`
-                <div class="card" style="width: 18rem;">
-                <img src="${photoUrl}" class="card-img-top" style="max-height:250px;" alt="${placeName}">
-                <div class="card-body">
-                    <h5 class="card-title">${placeName}</h5>
-                    <p class="card-text">${place.formatted_address}</p>
-                    
-                </div>
-                </div>
-                `);
+                    <div class="card" style="width: 18rem;"> 
+                    ${photoElement}
+                    <div class="card-body">
+                        <h5 class="card-title">${placeName}</h5>
+                        <p class="card-text">${place.formatted_address}</p>
+                        
+                    </div>
+                    </div>
+                    `);
                 infoWindow.open(marker.getMap(), marker);
 
             });
         }
 
 
+        function SetLocationButton(controlDiv) {
+            const controlUI = document.createElement("div");
+
+            controlUI.style.backgroundColor = "#fff";
+            controlUI.style.border = "2px solid #fff";
+            controlUI.style.borderRadius = "3px";
+            controlUI.style.boxShadow = "0 2px 6px rgba(0,0,0,.3)";
+            controlUI.style.cursor = "pointer";
+            controlUI.style.marginTop = "58px";
+            controlUI.style.marginBottom = "22px";
+            controlUI.style.marginLeft = "10px";
+            controlUI.style.textAlign = "center";
+            controlUI.title = "Click to pan to current location";
+            controlDiv.appendChild(controlUI);
+
+            // Set CSS for the control interior.
+            const controlText = document.createElement("div");
+
+            controlText.style.color = "rgb(25,25,25)";
+            controlText.style.fontFamily = "Roboto,Arial,sans-serif";
+            controlText.style.fontSize = "16px";
+            controlText.style.lineHeight = "38px";
+            controlText.style.paddingLeft = "5px";
+            controlText.style.paddingRight = "5px";
+            controlText.innerHTML = "Pan to Current Location";
+            controlUI.appendChild(controlText);
+            controlUI.addEventListener("click", () => {
+                // Try HTML5 geolocation.
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(
+                        (position) => {
+                            const pos = {
+                                lat: position.coords.latitude,
+                                lng: position.coords.longitude,
+                            };
+                            map.setCenter(pos);
+                            map.setZoom(10);
+                            setTimeout(() => {
+                                SearcAdoptionCenters();
+                            }, 300);
+                        },
+                        () => {
+                            handleLocationError(true, infoWindow, map.getCenter());
+                        }
+                    );
+                } else {
+                    // Browser doesn't support Geolocation
+                    handleLocationError(false, infoWindow, map.getCenter());
+                }
+            });
+        }
+
+        function handleLocationError(browserHasGeolocation, infoWindow, pos) {
+            infoWindow.setPosition(pos);
+            infoWindow.setContent(
+                browserHasGeolocation
+                    ? "Error: The Geolocation service failed."
+                    : "Error: Your browser doesn't support geolocation."
+            );
+            infoWindow.open(map);
+        }
 
     </script>
+
 
     <script
         src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCIMGYqh87spu4tzi2IQ_eZbIxCb3XFJds&callback=initMap&libraries=places&v=weekly"
