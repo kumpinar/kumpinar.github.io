@@ -136,6 +136,9 @@
                 zoom: 3,
                 mapTypeControl: false,
             });
+            google.maps.event.addListener(map, "click", function (event) {
+                infoWindow.close();
+            });
 
             //extend world
             const worldBounds = new google.maps.LatLngBounds(
@@ -277,7 +280,7 @@
                 let photoElement = "";
                 if (place.photos?.length > 0) {
                     let photoUrl = place.photos[0].getUrl();
-                    photoElement = `<img src="${photoUrl}" class="card-img-top" style="max-height:250px;" alt="${placeName}">`
+                    photoElement = `<img src="${photoUrl}" class="card-img-top" style="max-height:200px;" alt="${placeName}">`
                 }
                 infoWindow.setContent(`
                     <div class="card" style="width: 18rem;"> 
@@ -290,6 +293,51 @@
                     </div>
                     `);
                 infoWindow.open(marker.getMap(), marker);
+
+                const request = {
+                    placeId: place.place_id,
+                    fields: ["international_phone_number", "opening_hours", "website", "utc_offset_minutes"],
+                };
+
+                service.getDetails(request, (placeDetail, status) => {
+                    if (
+                        status === google.maps.places.PlacesServiceStatus.OK &&
+                        placeDetail
+                    ) {
+                        let phoneLink = '';
+                        if (placeDetail.international_phone_number) {
+                            phoneLink = `<a href="tel:${placeDetail.international_phone_number}">${placeDetail.international_phone_number}</a><br><br>`;
+                        }
+                        let website = '';
+                        if (placeDetail.website) {
+                            website = `<p><a style="color:blue" target="_blank" href="${placeDetail.website}">${placeDetail.website}</a></p>`;
+                        }
+                        let openningHours = '';
+                        if (placeDetail.opening_hours) {
+                            if (placeDetail.opening_hours.isOpen()) {
+                                openningHours = "Open now: " + placeDetail.opening_hours.weekday_text[(new Date()).getDay()-1];
+                            } else {
+                                openningHours = "Closed now: " + placeDetail.opening_hours.weekday_text[(new Date()).getDay()-1];
+                            }
+                            openningHours='<span>'+openningHours+'</span><br><br>';
+                        }
+
+                        infoWindow.setContent(`
+                                <div class="card" style="width: 18rem;"> 
+                                ${photoElement}
+                                <div class="card-body">
+                                    <h5 class="card-title">${placeName}</h5>
+                                    <p>${place.formatted_address}</p>
+                                    ${openningHours} 
+                                    ${phoneLink} 
+                                    ${website}
+
+                                </div>
+                                </div>
+                                `
+                        );
+                    }
+                });
 
             });
         }
