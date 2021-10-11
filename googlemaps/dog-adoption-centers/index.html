@@ -164,9 +164,7 @@
             SearchThisAreaControl(searchTisAreaDiv);
             map.controls[google.maps.ControlPosition.TOP_CENTER].push(searchTisAreaDiv);
 
-            locationButtonDiv = document.createElement("div");
-            SetLocationButton(locationButtonDiv);
-            map.controls[google.maps.ControlPosition.TOP_CENTER].push(locationButtonDiv);
+
 
             service = new google.maps.places.PlacesService(map);
 
@@ -176,7 +174,7 @@
                 searchTisAreaDiv.style.visibility = "visible";
                 if (isFirstLoad) {
                     setTimeout(() => {
-                        SearcAdoptionCenters();
+                        UseGeolocation();
                     }, 500);
                     isFirstLoad = false;
                 }
@@ -310,16 +308,16 @@
                         }
                         let website = '';
                         if (placeDetail.website) {
-                            website = `<p><a style="color:blue" target="_blank" href="${placeDetail.website}">${placeDetail.website}</a></p>`;
+                            website = `<p><a style="color:blue;" target="_blank" href="${placeDetail.website}">${placeDetail.website}</a></p>`;
                         }
                         let openningHours = '';
                         if (placeDetail.opening_hours) {
                             if (placeDetail.opening_hours.isOpen()) {
-                                openningHours = "Open now: " + placeDetail.opening_hours.weekday_text[(new Date()).getDay()-1];
+                                openningHours = "Open now: " + placeDetail.opening_hours.weekday_text[(new Date()).getDay() - 1];
                             } else {
-                                openningHours = "Closed now: " + placeDetail.opening_hours.weekday_text[(new Date()).getDay()-1];
+                                openningHours = "Closed now: " + placeDetail.opening_hours.weekday_text[(new Date()).getDay() - 1];
                             }
-                            openningHours='<span>'+openningHours+'</span><br><br>';
+                            openningHours = '<span>' + openningHours + '</span><br><br>';
                         }
 
                         infoWindow.setContent(`
@@ -343,66 +341,56 @@
         }
 
 
-        function SetLocationButton(controlDiv) {
-            const controlUI = document.createElement("div");
-
-            controlUI.style.backgroundColor = "#fff";
-            controlUI.style.border = "2px solid #fff";
-            controlUI.style.borderRadius = "3px";
-            controlUI.style.boxShadow = "0 2px 6px rgba(0,0,0,.3)";
-            controlUI.style.cursor = "pointer";
-            controlUI.style.marginTop = "58px";
-            controlUI.style.marginBottom = "22px";
-            controlUI.style.marginLeft = "10px";
-            controlUI.style.textAlign = "center";
-            controlUI.title = "Click to pan to current location";
-            controlDiv.appendChild(controlUI);
-
-            // Set CSS for the control interior.
-            const controlText = document.createElement("div");
-
-            controlText.style.color = "rgb(25,25,25)";
-            controlText.style.fontFamily = "Roboto,Arial,sans-serif";
-            controlText.style.fontSize = "16px";
-            controlText.style.lineHeight = "38px";
-            controlText.style.paddingLeft = "5px";
-            controlText.style.paddingRight = "5px";
-            controlText.innerHTML = "Pan to Current Location";
-            controlUI.appendChild(controlText);
-            controlUI.addEventListener("click", () => {
-                // Try HTML5 geolocation.
-                if (navigator.geolocation) {
-                    navigator.geolocation.getCurrentPosition(
-                        (position) => {
-                            const pos = {
-                                lat: position.coords.latitude,
-                                lng: position.coords.longitude,
-                            };
-                            map.setCenter(pos);
-                            map.setZoom(10);
-                            setTimeout(() => {
-                                SearcAdoptionCenters();
-                            }, 300);
-                        },
-                        () => {
-                            handleLocationError(true, infoWindow, map.getCenter());
-                        }
-                    );
-                } else {
-                    // Browser doesn't support Geolocation
-                    handleLocationError(false, infoWindow, map.getCenter());
-                }
-            });
+        function UseGeolocation() {
+            // Try HTML5 geolocation.
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const pos = {
+                            lat: position.coords.latitude,
+                            lng: position.coords.longitude,
+                        };
+                        map.setCenter(pos);
+                        map.setZoom(10);
+                        setTimeout(() => {
+                            SearcAdoptionCenters();
+                        }, 300);
+                    },
+                    () => {
+                        setLocationByIp()
+                    }
+                );
+            } else {
+                // Browser doesn't support Geolocation
+                setLocationByIp();
+            }
         }
 
-        function handleLocationError(browserHasGeolocation, infoWindow, pos) {
-            infoWindow.setPosition(pos);
-            infoWindow.setContent(
-                browserHasGeolocation
-                    ? "Error: The Geolocation service failed."
-                    : "Error: Your browser doesn't support geolocation."
-            );
-            infoWindow.open(map);
+        function setLocationByIp() {
+
+            var endpoint = 'https://api.ipdata.co?api-key=f4c441993a972000470ee6b1e148f2d90178bf61b22405271362885b';
+
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    var response = JSON.parse(this.responseText);
+                    const pos = {
+                        lat: response.latitude,
+                        lng: response.longitude,
+                    };
+                    map.setCenter(pos);
+                    map.setZoom(10);
+
+                    setTimeout(() => {
+                        SearcAdoptionCenters();
+                    }, 300);
+
+                }
+            };
+            xhr.open('GET', endpoint, true);
+            xhr.send();
+
+
         }
 
     </script>
