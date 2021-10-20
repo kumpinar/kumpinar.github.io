@@ -113,7 +113,7 @@
         let map;
         let service;
         let infoWindow;
-        let keywords = ['dog adoption center', 'dog rescue', 'pet rescue'];
+        let keywords = ['dog adoption', 'dog rescue', 'dog adoption service'];
         let searchTisAreaDiv, searchThisAreaButton, locationButtonDiv;
         let autocomplete;
         let markers = [];
@@ -237,7 +237,6 @@
 
         function SearcAdoptionCenters() {
             loadingModal.show();
-            searchTisAreaDiv.style.visibility = "hidden";
             markers.forEach(marker => {
                 marker.setMap(null);
             });
@@ -257,6 +256,9 @@
                     }
                 });
             });
+            setTimeout(() => {
+                searchTisAreaDiv.style.visibility = "hidden";
+            }, 500);
 
         }
 
@@ -264,6 +266,10 @@
 
         function createMarker(place) {
             if (!place.geometry || !place.geometry.location) return;
+
+            let placeName = place.name || "";
+            if (place.name.toLowerCase().includes("pet store")) return;
+            if (place.name.toLowerCase().includes("pet supply store")) return;
 
             let marker = new google.maps.Marker({
                 map,
@@ -274,7 +280,6 @@
 
             google.maps.event.addListener(marker, "click", () => {
                 infoWindow.close();
-                let placeName = place.name || "";
                 let photoElement = "";
                 if (place.photos?.length > 0) {
                     let photoUrl = place.photos[0].getUrl();
