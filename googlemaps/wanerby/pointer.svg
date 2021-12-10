@@ -1,0 +1,7 @@
+<?xml version="1.0" standalone="no"?>
+<svg viewBox="0 0 200 300"
+    xmlns="http://www.w3.org/2000/svg" version="1.1">
+
+    <rect y="30" width="200" height="180" rx="50" fill="blue" stroke="green" />
+    <polygon points="20,190 180,190 100,280" style="fill:blue;stroke:blue;stroke-width:1"></polygon>
+</svg>

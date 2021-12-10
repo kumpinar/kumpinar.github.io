@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Product Map</title>
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
+
+    <style>
+        /* Always set the map height explicitly to define the size of the div
+       * element that contains the map. */
+        #map {
+            height: 100%;
+        }
+
+        /* Optional: Makes the sample page fill the window. */
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+
+        .pac-card {
+            background-color: #fff;
+            border: 0;
+            border-radius: 2px;
+            box-shadow: 0 1px 4px -1px rgba(0, 0, 0, 0.3);
+            margin: 10px;
+            padding: 0 0.5em;
+            font: 400 18px Roboto, Arial, sans-serif;
+            overflow: hidden;
+            font-family: Roboto;
+            padding: 0;
+        }
+
+
+
+        #pac-input {
+            background-color: #fff;
+            font-family: Roboto;
+            font-size: 15px;
+            font-weight: 300;
+            margin: 12px;
+            padding: 0 11px 0 13px;
+            text-overflow: ellipsis;
+            width: 400px;
+        }
+
+        #pac-input:focus {
+            border-color: #4d90fe;
+        }
+
+        #title {
+            color: #fff;
+            background-color: #4d90fe;
+            font-size: 25px;
+            font-weight: 500;
+            padding: 6px 12px;
+        }
+
+
+
+        .custom-map-control-button {
+            background-color: #fff;
+            border: 0;
+            border-radius: 2px;
+            box-shadow: 0 1px 4px -1px rgba(0, 0, 0, 0.3);
+            margin: 60px 10px 10px 10px;
+            padding: 0 0.5em;
+            font: 400 16px Roboto, Arial, sans-serif;
+            overflow: hidden;
+            height: 40px;
+            cursor: pointer;
+        }
+
+        .custom-map-control-button:hover {
+            background: #ebebeb;
+        }
+
+        .labels {
+            color: white;
+            font-family: Roboto, Arial, sans-serif;
+            font-size: 10px;
+            font-weight: bold;
+            text-align: center;
+            width: 60px;
+            padding: 2px;
+            white-space: nowrap;
+        }
+    </style>
+
+    <script src="https://unpkg.com/@googlemaps/markerclusterer/dist/index.min.js"></script>
+    <script src="https://unpkg.com/@googlemaps/markerwithlabel/dist/index.min.js"></script>
+</head>
+
+<body>
+    <div class="pac-card" id="pac-card">
+        <div id="pac-container">
+            <input id="pac-input" class="form-control" type="text" placeholder="Enter a location" />
+        </div>
+    </div>
+    <div id="map"></div>
+
+
+    <div class="modal" id="loadingModal" tabindex="-1" aria-labelledby="loadingModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="loadingModalLabel">Loading...</h5>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ"
+        crossorigin="anonymous"></script>
+
+    <script>
+        let map;
+        let service;
+        let infoWindow;
+        let searchTisAreaDiv, searchThisAreaButton, locationButtonDiv;
+        let autocomplete;
+        let markers = [];
+        let markerCluster;
+
+        const mapRequestUrl = 'https://www.wanerby.com/rest/V1/wanerby-customapi/customapi';
+
+        let mapRequestData = {
+            productId: 2089,
+            southWest: '-75.8111572265625 39.590873865955906',
+            northEast: '-75.135498046875 39.96725356408459',
+        }
+
+        var loadingModal = new bootstrap.Modal(document.getElementById('loadingModal'), {
+            keyboard: false
+        })
+
+        const card = document.getElementById("pac-card");
+        const input = document.getElementById("pac-input");
+
+        function initMap() {
+
+            infoWindow = new google.maps.InfoWindow();
+            map = new google.maps.Map(document.getElementById("map"), {
+                center: {
+                    lat: 40.97989806962013,
+                    lng: 9.140625
+                },
+                zoom: 3,
+                mapTypeControl: false,
+            });
+            google.maps.event.addListener(map, "click", function (event) {
+                infoWindow.close();
+            });
+
+            //extend world
+            const worldBounds = new google.maps.LatLngBounds(
+                new google.maps.LatLng(25.1651, -82.4414),
+                new google.maps.LatLng(30.2970, -80.3320));
+            map.fitBounds(worldBounds);
+
+            const options = {
+                fields: ["formatted_address", "geometry", "name"],
+                types: ["(regions)"],
+            };
+
+            map.controls[google.maps.ControlPosition.TOP_LEFT].push(card);
+
+            autocomplete = new google.maps.places.Autocomplete(input, options);
+
+            // Bind the map's bounds (viewport) property to the autocomplete object,
+            // so that the autocomplete requests use the current map bounds for the
+            // bounds option in the request.
+            autocomplete.bindTo("bounds", map);
+
+            searchTisAreaDiv = document.createElement("div");
+            SearchThisAreaControl(searchTisAreaDiv);
+            map.controls[google.maps.ControlPosition.TOP_CENTER].push(searchTisAreaDiv);
+
+
+
+            service = new google.maps.places.PlacesService(map);
+
+
+            let isFirstLoad = true;
+            map.addListener("bounds_changed", () => {
+                searchTisAreaDiv.style.visibility = "visible";
+                if (isFirstLoad) {
+                    setTimeout(() => {
+                        //UseGeolocation();
+                        SearchProducts();
+                    }, 500);
+                    isFirstLoad = false;
+                }
+            });
+
+            autocomplete.addListener("place_changed", () => {
+                const place = autocomplete.getPlace();
+                if (!place.geometry || !place.geometry.location) {
+                    return;
+                }
+                // If the place has a geometry, then present it on a map.
+                if (place.geometry.viewport) {
+                    map.fitBounds(place.geometry.viewport);
+                } else {
+                    map.setCenter(place.geometry.location);
+                    map.setZoom(10);
+                }
+                setTimeout(() => {
+                    SearchProducts();
+                }, 300);
+            });
+
+
+
+        }
+
+        function SearchThisAreaControl(controlDiv) {
+            // Set CSS for the control border.
+            const controlUI = document.createElement("div");
+
+            controlUI.style.backgroundColor = "#fff";
+            controlUI.style.border = "2px solid #fff";
+            controlUI.style.borderRadius = "3px";
+            controlUI.style.boxShadow = "0 2px 6px rgba(0,0,0,.3)";
+            controlUI.style.cursor = "pointer";
+            controlUI.style.marginTop = "65px";
+            controlUI.style.marginBottom = "22px";
+            controlUI.style.textAlign = "center";
+            controlUI.title = "Click to search this area";
+            controlDiv.appendChild(controlUI);
+
+            // Set CSS for the control interior.
+            searchThisAreaButton = document.createElement("div");
+
+            searchThisAreaButton.style.color = "rgb(25,25,25)";
+            searchThisAreaButton.style.fontFamily = "Roboto,Arial,sans-serif";
+            searchThisAreaButton.style.fontSize = "16px";
+            searchThisAreaButton.style.lineHeight = "38px";
+            searchThisAreaButton.style.paddingLeft = "5px";
+            searchThisAreaButton.style.paddingRight = "5px";
+            searchThisAreaButton.innerHTML = "Search this area";
+            controlUI.appendChild(searchThisAreaButton);
+            // Setup the click event listeners: simply set the map to Chicago.
+            controlUI.addEventListener("click", () => {
+                SearchProducts();
+            });
+        }
+
+        const interpolatedRenderer = {
+            //palette: interpolateRgb("red", "blue"),
+            render: function (
+                { count, position, markers },
+                stats
+            ) {
+                // use d3-interpolateRgb to interpolate between red and blue
+                const color = 'blue'; // this.palette(count / stats.clusters.markers.max);
+
+                // create svg url with fill color
+                const svg = window.btoa(`
+                <svg viewBox="0 0 200 280"
+    xmlns="http://www.w3.org/2000/svg" version="1.1">
+
+    <rect y="30" width="200" height="180" rx="20" fill="blue"  stroke="white" />
+    <polygon points="20,190 180,190 100,280" style="fill:blue;stroke:blue;stroke-width:1"></polygon>
+</svg>`);
+
+                const qty = markers.map(m => m.qty).reduce((a, b) => a + b);
+                return new MarkerWithLabel({
+                    position,
+                    icon: {
+                        url: `data:image/svg+xml;base64,${svg}`,
+                        scaledSize: new google.maps.Size(70, 70),
+                    },
+                    labelContent: String(count) + " stores <br>" + String(qty)+"<br>pcs.",
+                    labelAnchor: new google.maps.Point(-30, -60),
+                    labelClass: "labels", // the CSS class for the label
+                    labelStyle: { opacity: 1.0, textAlign: "center" },
+                    zIndex: Number(google.maps.Marker.MAX_ZINDEX) + count,
+                })
+            },
+        };
+
+
+
+        function SearchProducts() {
+            loadingModal.show();
+            markers.forEach(marker => {
+                marker.setMap(null);
+            });
+            if (markerCluster) {
+                markerCluster.setMap(null);
+            }
+            markers = [];
+            let request = new Request('http://localhost:8086/' + mapRequestUrl, {
+                method: 'POST',
+                body: mapRequestData,
+                headers: new Headers()
+            });
+
+            fetch('response.json')
+                .then((resp) => resp.json())
+                .then(function (data) {
+                    objList = JSON.parse(data);
+                    results = Object.keys(objList).map((key) => objList[key]);
+                    searchTisAreaDiv.style.visibility = "hidden";
+                    loadingModal.hide();
+                    /*   results.forEach(element => {
+                          createMarker(element);
+                      }); */
+
+                    // Add some markers to the map.
+                    markers = results.map((storeResult, i) => {
+
+                        const position = { lat: Number(storeResult.shop_latitude), lng: Number(storeResult.shop_longitude) };
+                        const marker = new google.maps.Marker({
+                            position,
+                            optimized: true,
+                            label:{
+                                text:String(storeResult.product_qty),
+                                color:'white',
+                                fontWeight:'bold'
+                            },
+                            qty: storeResult.product_qty,
+                            icon: {
+                                url:'blueMarker.png',
+                                labelOrigin: new google.maps.Point(15, 15)
+                            },
+                        });
+
+                        // markers can only be keyboard focusable when they have click listeners
+                        // open info window when marker is clicked
+                        marker.addListener("click", () => {
+                            infoWindow.setContent("There are <b>" + storeResult.product_qty + "</b> products in " + storeResult.shop_title);
+                            infoWindow.open(map, marker);
+                        });
+                        return marker;
+                    });
+
+                    // Add a marker clusterer to manage the markers.
+                    markerCluster = new markerClusterer.MarkerClusterer({
+                        map, markers, renderer: interpolatedRenderer
+                    });
+
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+
+        }
+
+
+
+        function createMarker(storeResult) {
+
+            let marker = new google.maps.Marker({
+                map,
+                position: { lat: Number(storeResult.shop_latitude), lng: Number(storeResult.shop_longitude) },
+            });
+            markers.push(marker);
+        }
+
+
+        function UseGeolocation() {
+            // Try HTML5 geolocation.
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const pos = {
+                            lat: position.coords.latitude,
+                            lng: position.coords.longitude,
+                        };
+                        map.setCenter(pos);
+                        map.setZoom(10);
+                        setTimeout(() => {
+                            SearchProducts();
+                        }, 300);
+                    },
+                    () => {
+                        setLocationByIp()
+                    }
+                );
+            } else {
+                // Browser doesn't support Geolocation
+                setLocationByIp();
+            }
+        }
+
+        function setLocationByIp() {
+
+            var endpoint = 'https://api.ipdata.co?api-key=f4c441993a972000470ee6b1e148f2d90178bf61b22405271362885b';
+
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    var response = JSON.parse(this.responseText);
+                    const pos = {
+                        lat: response.latitude,
+                        lng: response.longitude,
+                    };
+                    map.setCenter(pos);
+                    map.setZoom(10);
+
+                    setTimeout(() => {
+                        SearchProducts();
+                    }, 300);
+
+                }
+            };
+            xhr.open('GET', endpoint, true);
+            xhr.send();
+
+
+        }
+
+    </script>
+
+
+    <script
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCIMGYqh87spu4tzi2IQ_eZbIxCb3XFJds&callback=initMap&libraries=places&v=weekly"
+        async></script>
+</body>
+
+</html>
