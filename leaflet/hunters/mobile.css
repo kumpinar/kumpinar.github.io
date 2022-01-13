@@ -1,0 +1,476 @@
+@charset "utf-8";
+/* CSS Document */
+@media (max-width: 1850px) {
+	#home .wrapper.news {
+		width: 80%;
+	}
+	
+	#home .wrapper{
+		width:60%;
+	}
+	
+	#pages.about h1, #pages.contact h1{width:43%;
+	}
+	
+	#innerwrapper .main{
+		width:80%;
+	}
+	
+	#pages.development h1{
+		font-size:90px;
+		line-height:90px;
+	}
+	
+	#pages.contact .callout{
+		width:57%;
+	}
+}
+
+@media (max-width: 1600px) {
+	#home .wrapper {
+		width: 70%;
+	}
+	
+	#home .map .overlay{
+		left:3%;
+	}
+	
+	#innerwrapper .main {
+		width: 90%;
+	}
+	
+	#pages.development h1 {
+		font-size: 80px;
+		line-height: 80px;
+	}
+	.fancybox-content{
+		width:80%!important;
+	}
+	
+	#pages.contact .callout {
+	 
+		font-size: 30px;
+		line-height: 35px;
+	}
+	
+	#topwrapper .logo{
+		width:14%;}
+}
+
+@media (max-width: 1400px) {
+	#home .wrapper {
+		width: 90%;
+	}
+	
+	h2{
+		font-size:60px;
+		line-height:65px;
+	}
+	
+	#home .map .overlay {
+		left: 0;
+	}
+	
+	#pages.about .callout, #pages.contact .callout {
+		 
+		line-height: 38px;
+		font-size: 30px;
+	 
+	}
+	
+	#pages.about h1, #pages.contact h1{
+		margin:0;
+	}
+	
+	#pages.development h1 {
+		font-size: 60px;
+		line-height: 60px;
+	}
+		
+	 
+}
+
+@media (max-width: 1200px) {
+	#topwrapper .logo {
+		width: 20%;
+	}
+	
+	#home .wrapper.news {
+		width: 95%;
+	}
+	
+	#pages.about h1, #pages.contact h1{
+		float:none;
+		padding:0;
+		width:100%;}
+		
+	#pages.popup h1 {
+	 
+		float:left;
+		padding:0 0 45px 0;
+		width: 40%;
+	}
+	
+	#pages.about .callout, #pages.contact .callout{
+		float:none;
+		margin:0 0 30px 0;
+		width:100%;}
+	
+	#pages.popup .callout  {
+		float: left;
+		margin:40px 0 0 0; 
+		width: 51%;
+	}
+	
+	#innerwrapper .main.padding {
+		padding: 50px 0px;
+	}
+	
+	#pages.about .pic {
+		 
+		margin: 0 3% 0 0;
+	}
+	
+	#pages.about .text {
+		float: none;
+		width: 100%;
+	}
+	
+	#pages.development .left, #pages.development .text{
+		float:none;
+		width:100%;}
+	
+	#pages.development h1{
+		margin:0 0 20px 0;
+	}
+	
+	.fancybox-content {
+		width: 95%!important;
+	}
+}
+
+@media (max-width:960px) {
+	#home .about .left, #home .about .right{
+		float:none;
+		width:100%;
+	}
+	
+	#home .about h2, #home .about h3 {
+		text-align: center;
+	}
+	
+	#home .stats .stat, #home .stats .stat.bottom, #home .stats .stat.bottom.last, #home .stats .stat.last{
+		width:47%;
+		border: 1px solid #E8E8E8;
+		margin:1%;
+		padding:30px 0;
+	}
+	
+	#home .stats .wrapper{
+		padding:20px;
+	}
+	
+	#home .news .left, #home .news .right{
+		float:none;
+		width:100%;
+	}
+	
+	#home .news .right{
+		margin:0px 0 0 0;
+		padding:80px 0 0 ;
+		border:none;
+		 
+	}
+	
+	#pages.team .box .pix {
+		float: left;
+		width: 30%;
+		margin: 0 3% 0 0;
+	}
+	
+	#pages.team .box .info {
+		float: none;
+		width: 100%;
+	}
+	
+	#pages.contact .pic{
+		float:none;
+		width:100%;
+	}
+	
+	#pages.contact .form{
+		float:none;
+		width:90%;
+		margin:30px 0 0 0;
+		padding:30px 5%;
+	}
+	
+	
+}
+
+@media (max-width:850px) {
+	#topwrapper .logo {
+		width: 40%;
+	}
+	
+	#home .tagline {
+		font-size: 90px;
+		line-height: 95px;
+	}
+	
+	#home .map .overlay {
+		position: absolute;
+		top: 20px;
+		left: 0%;
+		width: 100%;
+		 
+	}
+	
+	#home .map .button {
+	 
+		margin: 25px 0 0 6%;
+	}
+	
+	#pages.popup h1, #pages.popup .callout{
+		float:none;
+		width:100%;
+	}
+	
+	#pages.popup .callout{
+		margin:20px 0;
+	}
+	
+	#pages.popup h1{
+		padding:0;
+	}
+	
+	#pages.popup h1 br{
+		display:none;
+	}
+	
+	#pages.popup .wrapper {
+		padding: 30px 5%;
+	}
+	
+	#pages.popup .photo, #pages.popup .desc{
+		float:none;
+		width:100%;
+	}
+	
+	#pages.popup .iframe ,#pages.popup .specs{
+		float:none;
+		width:100%;
+	}
+}
+
+@media (max-width:750px) {
+	#home .tagline {
+		font-size: 70px;
+		line-height: 75px;
+	}
+	
+	#home .stats .number{
+		font-size:60px;
+	}
+	
+	#pages.about .pic{
+		float:none;
+		width:100%;
+		margin:0 0 0 20px 0;
+	}
+	
+	h1{
+		font-size:80px;
+	}
+}
+
+@media (max-width:650px) {
+	#home .stats .wrapper{
+		margin:0 0 50px 0;
+	}
+	
+	h2, #pages.map h1 {
+		font-size: 40px;
+		line-height: 45px;
+	}
+	
+	h3 {
+		 
+		font-size: 20px;
+		line-height: 25px;
+		 
+		letter-spacing: 2px;
+	 
+	}
+	
+	#pages.development h1{
+		font-size:50px;
+	}
+}
+
+@media (max-width:550px) {
+	#innerwrapper.home {
+		padding: 10px 0 0 0;
+	}
+	
+	#home #topwrapper{
+		padding:20px 3% 0 3%;
+	}
+	
+	#home .tagline {
+		font-size: 50px;
+		line-height: 55px;
+	}
+	
+	#home .sub {
+		width: 300px;
+		 
+		font-size: 15px;
+		 
+	}
+	
+	h2 {
+		font-size: 40px;
+		line-height: 45px;
+	}
+	
+	#home .about .left .pic {
+		margin:20px 0 0 0;
+	}
+	
+	body, #pages.popup .desc{
+		font-size:18px;
+	}
+	
+	#home .stats .number{
+		font-size:50px;
+		margin:0;
+	}
+	
+	#home .stats .stat, #home .stats .stat.bottom, #home .stats .stat.bottom.last, #home .stats .stat.last{
+		width:100%;
+		border:none;
+		margin:0 0 30px 0;
+		padding:0;
+	}
+	
+	#home .stats .stat .desc br{
+		display:none;
+	}
+	
+	#home .map .overlay h2{
+		font-size:30px;
+		line-height:30px;
+	}
+	
+	#home .map .button {
+		margin: 60px 0 0 6%;
+	}
+	
+	.padding {
+		padding: 40px 0;
+	}
+	
+	#home .stats .wrapper{
+		box-shadow:none;
+		padding:0;
+		margin:20px 0;
+	}
+	.copy .left, .copy .social, .copy .right{
+		float:none;
+		width:100%;
+		text-align:center;
+		 
+	}
+	
+	.copy .social{
+		margin:15px 0;
+	}
+	
+	#navwrapper .main-menu li a {
+		 
+		padding: 1.2em 15px;
+		 
+		font-size: 20px;
+		 
+	}
+	
+	#topwrapper{
+		padding:20px 0;
+	}
+	
+	#innerwrapper .main.padding {
+		padding: 30px 0px;
+	}
+	
+	h1 {
+		font-size: 60px;
+		padding:0 0 15px 0;
+	}
+	
+	#pages.about .callout, #pages.contact .callout {
+		line-height: 28px;
+		font-size: 20px;
+	}
+	
+	#pages.team h2 {
+		font-size: 30px;
+		line-height: 35px;
+	}
+	
+	#pages.team .box .bio {
+		padding: 10px 0px 0px 0px;
+	}
+	
+	#pages.team .box {
+		margin: 0px 0px 50px 0px;
+	}
+	
+	#pages.development h1 {
+		font-size: 30px;
+		line-height: 30px;
+	}
+	
+	#pages.development ul {
+		margin: 30px 0 0 0;
+	}
+	
+	.fancybox-content {
+		width: 100%!important;
+	}
+	
+	#pages.popup .wrapper {
+		padding: 20px 5%;
+	}
+	
+	#pages.popup h1{
+		font-size:40px;
+		line-height:40px;
+	}
+	
+	#pages.popup .callout{
+		margin:20px 0;
+	}
+	
+	#pages.popup .owner span{
+		display:block;
+		padding:5px 0 0 0;
+	}
+	
+	#pages.popup .specs{
+		font-size:14px;
+		letter-spacing:1px;
+	}
+	
+	#pages.popup .desc{
+		margin:30px 0 0 0;
+	}
+	
+	#pages.contact .callout span{
+		display:block;
+		padding:0;
+	}
+
+ 
+}
+

@@ -1,0 +1,339 @@
+<!doctype html>
+<html lang="en">
+<!-- InstanceBegin template="/Templates/hunters-ridge.dwt.php" codeOutsideHTMLIsLocked="false" -->
+
+<head>
+    <meta charset="utf-8" />
+    <!-- InstanceBeginEditable name="doctitle" -->
+    <title>Map: Hunters Ridge</title>
+    <!-- InstanceEndEditable -->
+    <script type="text/javascript" src="//code.jquery.com/jquery-latest.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.typekit.net/yuq1qmi.css">
+
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="site.webmanifest">
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="theme-color" content="#ffffff">
+
+    <!-- Open Graph Tags -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://huntersridge.duvys.media/" />
+    <meta property="og:title" content="Hunters Ridge" />
+    <meta property="og:image" content="https://huntersridge.duvys.media/images/logo.jpg" />
+    <meta property="og:image:secure_url" content="https://huntersridge.duvys.media/images/logo.jpg" />
+    <meta property="og:image:width" content="250" />
+    <meta property="og:image:height" content="250" />
+    <meta property="og:description" content="" />
+
+
+    <meta property="og:locale" content="en_US" />
+    <meta name="twitter:site" content="@duvysmedia" />
+    <meta name="twitter:image:src" content="https://" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:creator" content="@duvysmedia" />
+    <meta property="article:publisher" content="https://www.facebook.com/DuvysMedia" />
+    <meta name="twitter:title" content="Hunters Ridge " />
+    <meta name="twitter:description" content="" />
+    <meta name="twitter:image" content="https://huntersridge.duvys.media/images/logo.jpg ;w=200&amp;h=200" />
+
+
+    <meta name="fb:app_id" content="xxx" />
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-55Q73C2587"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'G-55Q73C2587');
+    </script>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link href="reset-min.css" rel="stylesheet" />
+    <link href="style.css" rel="stylesheet" />
+    <link href="mobile.css" rel="stylesheet" />
+    <!-- InstanceBeginEditable name="head" -->
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/fancybox/3.3.5/jquery.fancybox.js"></script>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/fancybox/3.3.5/jquery.fancybox.css" type="text/css"
+        media="screen" />
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+        integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+        crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+        integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+        crossorigin=""></script>
+
+    <script language='JavaScript' type="text/javascript">
+        $(document).ready(function () {
+            $("[data-fancybox]").fancybox({
+                iframe: {
+                    css: {
+                        width: '65%'
+                    }
+                }
+            });
+        });
+
+
+
+    </script>
+    <!-- InstanceEndEditable -->
+</head>
+
+<body>
+    <script type="application/ld+json">
+{
+  "@context" : "http://schema.org",
+  "@type" : "LocalBusiness",
+  "name" : "Hunters Ridge",
+  "url": "https://huntersridge.duvys.media/",
+  "image" : "https://huntersridge.duvys.media/images/logo.png",
+  "telephone" : "732-552-5154",
+  "address" : {
+    "@type" : "PostalAddress",
+    "streetAddress" : "880 Airport Road",
+    "addressLocality" : "Ormond Beach",
+    "addressRegion" : "FL",
+    "postalCode" : "32174"
+  }
+}
+</script>
+    <!--[if IE]>
+    <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience and security.</p>
+  <![endif]-->
+    <div id="innerwrapper">
+        <script>
+            $('.drop').click(function () {
+                $(this).toggleClass('toggle');
+
+            });
+
+        </script>
+
+
+
+        <div id="topwrapper">
+            <div class="top">
+
+                <div class="logo">
+                    <a itemprop="url" href="https://huntersridge.duvys.media/">
+                        <img src="images/logo.svg" itemprop="image" width="100%" alt="Hunters Ridge" />
+                    </a>
+
+                </div>
+
+                <div id="navwrapper">
+                    <a href="#main-menu" id="main-menu-toggle" class="menu-toggle" aria-label="Open main menu">
+                        <img class="icon" src="images/menu.jpg" />
+
+
+                    </a>
+                    <div role="navigation">
+
+                        <div id="main-menu" class="main-menu" aria-label="Main menu">
+                            <a href="#main-menu-toggle" id="main-menu-close" class="menu-close"
+                                aria-label="Close main menu"><img src="images/close.png" class="close" /></a>
+
+
+
+
+                            <ul class="nav">
+
+                                <li class="first"><a href="https://huntersridge.duvys.media/"
+                                        title="Hunters Ridge">Home</a></li>
+                                <li><a href="https://huntersridge.duvys.media/about"
+                                        title="About Hunters Ridge">About</a></li>
+                                <li><a href="https://huntersridge.duvys.media/team" title="Hunters Ridge Team">Team</a>
+                                </li>
+                                <li><a href="https://huntersridge.duvys.media/development-strategy"
+                                        title="Hunters Ridge Development Strategy">Development Strategy</a></li>
+                                <li><a href="https://huntersridge.duvys.media/map"
+                                        title="Hunters Ridge Interactive Map">Interactive Map</a></li>
+                                <li><a href="https://huntersridge.duvys.media/contact"
+                                        title="Contact Hunters Ridge">Contact</a></li>
+                                <div class="clear"></div>
+                            </ul>
+                        </div>
+
+                        <a href="#main-menu-toggle" class="backdrop" tabindex="-1" aria-hidden="true" hidden></a>
+
+                    </div>
+                </div>
+                <div class="clear"></div>
+            </div>
+        </div>
+        <div role="main">
+            <!-- InstanceBeginEditable name="main" -->
+            <div id="pages" class="map">
+                <div class="main padding">
+                    <h1>Interactive Map</h1>
+
+                    <div class="flex-container">
+                        <div class="map-left">
+                            <a style="color:#000;"
+                                data-src="https://www.huntersridge.duvys.media/map-detail.php?map=celedine"
+                                data-fancybox data-type="iframe" href="javascript:;">Celedine</a>
+                            <br>
+                            <a style="color:#000;"
+                                data-src="https://www.huntersridge.duvys.media/map-detail.php?map=iris1" data-fancybox
+                                data-type="iframe" href="javascript:;">Iris I</a><br>
+                            <a style="color:#000;"
+                                data-src="https://www.huntersridge.duvys.media/map-detail.php?map=iris2" data-fancybox
+                                data-type="iframe" href="javascript:;">Iris II</a><br>
+                            <a style="color:#000;"
+                                data-src="https://www.huntersridge.duvys.media/map-detail.php?map=ironwood"
+                                data-fancybox data-type="iframe" href="javascript:;">Ironwood</a><br>
+                            <a style="color:#000;"
+                                data-src="https://www.huntersridge.duvys.media/map-detail.php?map=mace" data-fancybox
+                                data-type="iframe" href="javascript:;">Mace</a><br>
+                            <a style="color:#000;"
+                                data-src="https://www.huntersridge.duvys.media/map-detail.php?map=indigo" data-fancybox
+                                data-type="iframe" href="javascript:;">Indigo</a><br>
+                            <a style="color:#000;"
+                                data-src="https://www.huntersridge.duvys.media/map-detail.php?map=lavender"
+                                data-fancybox data-type="iframe" href="javascript:;">Lavender</a><br>
+                            <a style="color:#000;"
+                                data-src="https://www.huntersridge.duvys.media/map-detail.php?map=turmeric"
+                                data-fancybox data-type="iframe" href="javascript:;">Turmeric</a><br>
+                            <a style="color:#000;"
+                                data-src="https://www.huntersridge.duvys.media/map-detail.php?map=orchid" data-fancybox
+                                data-type="iframe" href="javascript:;">Orchid</a><br>
+                            <a style="color:#000;"
+                                data-src="https://www.huntersridge.duvys.media/map-detail.php?map=mint" data-fancybox
+                                data-type="iframe" href="javascript:;">Mint</a><br>
+                            <a style="color:#000;"
+                                data-src="https://www.huntersridge.duvys.media/map-detail.php?map=coriander"
+                                data-fancybox data-type="iframe" href="javascript:;">Coriander</a><br>
+                            <a style="color:#000;"
+                                data-src="https://www.huntersridge.duvys.media/map-detail.php?map=amberwoods"
+                                data-fancybox data-type="iframe" href="javascript:;">Amberwoods</a><br>
+                            <a style="color:#000;"
+                                data-src="https://www.huntersridge.duvys.media/map-detail.php?map=saffron" data-fancybox
+                                data-type="iframe" href="javascript:;">Saffron</a><br>
+                        </div>
+
+                        <div id="map" class="map-right">
+
+                        </div>
+
+                    </div>
+
+
+
+                </div>
+            </div>
+            <!-- InstanceEndEditable -->
+        </div>
+        <div class="copy">
+            <div class="left">&copy; 2022 Hunters Ridge &nbsp; &nbsp; <a href="disclaimer">Disclaimer</a></div>
+
+            <div class="social">Follow Us
+                <a href="https://www.linkedin.com/in/jake-jakey-beren-783212186/" target="_blank"><i
+                        class="fa fa-linkedin"></i></a>
+            </div>
+            <div class="right">Website by <a href="http://www.duvys.com" target="_blank">Duvys Media</a></div>
+        </div>
+        
+
+    </div>
+    <script>
+
+        var map = L.map('map').setView([51.505, -0.09], 13);
+        var fillColorPalette = ["f4f1de", "e07a5f", "3d405b", "81b29a", "f2cc8f"];
+        var strokeColorPalette = ["ccd5ae", "e9edc9", "fefae0", "faedcd", "d4a373"];
+
+        var hunterPolygons;
+
+
+        var satelliteLayer = L.tileLayer('https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', {
+            attribution: '<a href="https://www.google.com/intl/tr/earth/">Google Aerial</a>'
+        }).addTo(map);
+
+        L.marker([51.5, -0.09]).addTo(map)
+            .bindPopup('Hunters')
+            .openPopup();
+
+
+        fetch('hunters.json')
+            .then(response => response.json())
+            .then(data => {
+                var colorCounter = 0;
+                hunterPolygons = L.geoJSON(data, {
+                    style: function (feature) {
+                        let colorIndex = colorCounter % fillColorPalette.length;
+                        colorCounter++;
+                        return {
+                            color: "#" + strokeColorPalette[colorIndex],
+                            fillColor: "#" + fillColorPalette[colorIndex],
+                            fillOpacity: 0.4,
+                            opacity: 0.8
+                        };
+                    },
+                    onEachFeature: function (feature, layer) {
+                        layer.on('mouseover', function () {
+                            $(`.map-left a[data-src='https://www.huntersridge.duvys.media/map-detail.php?map=${feature.properties.Key}']`).css("background-color", "#83c5be");
+                            this.setStyle({
+                                fillOpacity: 0.9,
+                                opacity: 1
+                            });
+                        });
+                        layer.on('mouseout', function () {
+                            $(`.map-left a[data-src='https://www.huntersridge.duvys.media/map-detail.php?map=${feature.properties.Key}']`).css("background-color", "");
+                            this.setStyle({
+                                fillOpacity: 0.4,
+                                opacity: 0.8
+                            });
+                        });
+                        layer.on('click', function () {
+                            $(`.map-left a[data-src='https://www.huntersridge.duvys.media/map-detail.php?map=${feature.properties.Key}']`).click();
+                        });
+                    }
+                }).addTo(map);
+
+
+                map.fitBounds(hunterPolygons.getBounds());
+            }
+            );
+
+
+        $('.map-left a').on('mouseover', function () {
+            $(this).css("background-color", "#83c5be");
+            if (hunterPolygons) {
+                let key = $(this).attr('data-src').replace("https://www.huntersridge.duvys.media/map-detail.php?map=", "");
+                hunterPolygons.eachLayer(function (layer) {
+                    if (layer.feature.properties.Key == key) {
+                        layer.setStyle({
+                            fillOpacity: 0.9,
+                            opacity: 1
+                        });
+                    }
+                });
+            }
+        });
+
+
+        $('.map-left a').on('mouseout', function () {
+            $(this).css("background-color", "");
+            if (hunterPolygons) {
+                let key = $(this).attr('data-src').replace("https://www.huntersridge.duvys.media/map-detail.php?map=", "");
+                hunterPolygons.eachLayer(function (layer) {
+                    layer.setStyle({
+                        fillOpacity: 0.4,
+                        opacity: 0.8
+                    });
+                });
+            }
+        });
+
+
+
+    </script>
+</body>
+<!-- InstanceEnd -->
+
+</html>
