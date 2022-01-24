@@ -14,7 +14,7 @@
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-    <link rel="manifest" href="site.webmanifest">
+    <link rel="manifest" href="/site.webmanifest">
     <meta name="msapplication-TileColor" content="#da532c">
     <meta name="theme-color" content="#ffffff">
 
@@ -92,7 +92,7 @@
   "@type" : "LocalBusiness",
   "name" : "Hunters Ridge",
   "url": "https://huntersridge.duvys.media/",
-  "image" : "https://huntersridge.duvys.media/images/logo.png",
+  "image" : "https://huntersridge.duvys.media//images/logo.png",
   "telephone" : "732-552-5154",
   "address" : {
     "@type" : "PostalAddress",
@@ -215,6 +215,29 @@
                             <a style="color:#000;"
                                 data-src="https://www.huntersridge.duvys.media/map-detail.php?map=saffron" data-fancybox
                                 data-type="iframe" href="javascript:;">Saffron</a><br>
+
+
+                            <a style="color:#000;"
+                                data-src="https://www.huntersridge.duvys.media/map-detail.php?map=town-center" data-fancybox
+                                data-type="iframe" href="javascript:;">Town Center</a><br>
+                            <a style="color:#000;"
+                                data-src="https://www.huntersridge.duvys.media/map-detail.php?map=damiana1" data-fancybox
+                                data-type="iframe" href="javascript:;">Damiana 1</a><br>
+                            <a style="color:#000;"
+                                data-src="https://www.huntersridge.duvys.media/map-detail.php?map=damiana2" data-fancybox
+                                data-type="iframe" href="javascript:;">Damiana 2</a><br>
+                            <a style="color:#000;"
+                                data-src="https://www.huntersridge.duvys.media/map-detail.php?map=self-storage" data-fancybox
+                                data-type="iframe" href="javascript:;">Self Storage</a><br>
+                            <a style="color:#000;"
+                                data-src="https://www.huntersridge.duvys.media/map-detail.php?map=laurel" data-fancybox
+                                data-type="iframe" href="javascript:;">Laurel</a><br>
+                            <a style="color:#000;"
+                                data-src="https://www.huntersridge.duvys.media/map-detail.php?map=alder" data-fancybox
+                                data-type="iframe" href="javascript:;">Alder</a><br>
+                            <a style="color:#000;"
+                                data-src="https://www.huntersridge.duvys.media/map-detail.php?map=sumac" data-fancybox
+                                data-type="iframe" href="javascript:;">Sumac</a><br>
                         </div>
 
                         <div id="map" class="map-right">
@@ -238,7 +261,7 @@
             </div>
             <div class="right">Website by <a href="http://www.duvys.com" target="_blank">Duvys Media</a></div>
         </div>
-        
+
 
     </div>
     <script>
@@ -259,7 +282,7 @@
             .openPopup();
 
 
-        fetch('hunters.json')
+        fetch('hunters-2.json')
             .then(response => response.json())
             .then(data => {
                 var colorCounter = 0;
