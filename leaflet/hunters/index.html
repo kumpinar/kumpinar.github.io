@@ -61,12 +61,8 @@
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/fancybox/3.3.5/jquery.fancybox.css" type="text/css"
         media="screen" />
 
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
-        integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
-        crossorigin="" />
-    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
-        integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
-        crossorigin=""></script>
+    <link rel="stylesheet" href="leaflet/leaflet.css"/>
+    <script src="leaflet/leaflet.js"></script>
 
     <script language='JavaScript' type="text/javascript">
         $(document).ready(function () {
@@ -175,9 +171,8 @@
 
                     <div class="flex-container">
                         <div class="map-left">
-                            <a style="color:#000;"
-                                data-src="https://www.huntersridge.duvys.media/map-detail.php?map=celedine"
-                                data-fancybox data-type="iframe" href="javascript:;">Celedine</a>
+                            <a style="color:#000;" data-src="celedine" data-fancybox data-type="iframe"
+                                href="javascript:;">Celedine</a>
                             <br>
                             <a style="color:#000;"
                                 data-src="https://www.huntersridge.duvys.media/map-detail.php?map=iris1" data-fancybox
@@ -218,17 +213,17 @@
 
 
                             <a style="color:#000;"
-                                data-src="https://www.huntersridge.duvys.media/map-detail.php?map=town-center" data-fancybox
-                                data-type="iframe" href="javascript:;">Town Center</a><br>
+                                data-src="https://www.huntersridge.duvys.media/map-detail.php?map=town-center"
+                                data-fancybox data-type="iframe" href="javascript:;">Town Center</a><br>
                             <a style="color:#000;"
-                                data-src="https://www.huntersridge.duvys.media/map-detail.php?map=damiana1" data-fancybox
-                                data-type="iframe" href="javascript:;">Damiana 1</a><br>
+                                data-src="https://www.huntersridge.duvys.media/map-detail.php?map=damiana1"
+                                data-fancybox data-type="iframe" href="javascript:;">Damiana 1</a><br>
                             <a style="color:#000;"
-                                data-src="https://www.huntersridge.duvys.media/map-detail.php?map=damiana2" data-fancybox
-                                data-type="iframe" href="javascript:;">Damiana 2</a><br>
+                                data-src="https://www.huntersridge.duvys.media/map-detail.php?map=damiana2"
+                                data-fancybox data-type="iframe" href="javascript:;">Damiana 2</a><br>
                             <a style="color:#000;"
-                                data-src="https://www.huntersridge.duvys.media/map-detail.php?map=self-storage" data-fancybox
-                                data-type="iframe" href="javascript:;">Self Storage</a><br>
+                                data-src="https://www.huntersridge.duvys.media/map-detail.php?map=self-storage"
+                                data-fancybox data-type="iframe" href="javascript:;">Self Storage</a><br>
                             <a style="color:#000;"
                                 data-src="https://www.huntersridge.duvys.media/map-detail.php?map=laurel" data-fancybox
                                 data-type="iframe" href="javascript:;">Laurel</a><br>
@@ -266,21 +261,16 @@
     </div>
     <script>
 
-        var map = L.map('map').setView([51.505, -0.09], 13);
+        var map = L.map('map', {
+            attributionControl: false,
+            scrollWheelZoom: false
+        }).setView([51.505, -0.09], 13);
         var fillColorPalette = ["f4f1de", "e07a5f", "3d405b", "81b29a", "f2cc8f"];
         var strokeColorPalette = ["ccd5ae", "e9edc9", "fefae0", "faedcd", "d4a373"];
 
         var hunterPolygons;
 
-
-        var satelliteLayer = L.tileLayer('https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', {
-            attribution: '<a href="https://www.google.com/intl/tr/earth/">Google Aerial</a>'
-        }).addTo(map);
-
-        L.marker([51.5, -0.09]).addTo(map)
-            .bindPopup('Hunters')
-            .openPopup();
-
+        var satelliteLayer = L.tileLayer('https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}').addTo(map);
 
         fetch('hunters-2.json')
             .then(response => response.json())
@@ -299,21 +289,38 @@
                     },
                     onEachFeature: function (feature, layer) {
                         layer.on('mouseover', function () {
-                            $(`.map-left a[data-src='https://www.huntersridge.duvys.media/map-detail.php?map=${feature.properties.Key}']`).css("background-color", "#83c5be");
+                            
+                            if ($(`.map-left a[data-src='https://www.huntersridge.duvys.media/map-detail.php?map=${feature.properties.Key}']`).length > 0) {
+                                $(`.map-left a[data-src='https://www.huntersridge.duvys.media/map-detail.php?map=${feature.properties.Key}']`).css("background-color", "#83c5be");
+                            }
+                            else {
+                                $(`.map-left a[data-src='${feature.properties.Key}']`).css("background-color", "#83c5be");
+                            }
                             this.setStyle({
                                 fillOpacity: 0.9,
                                 opacity: 1
                             });
                         });
-                        layer.on('mouseout', function () {
-                            $(`.map-left a[data-src='https://www.huntersridge.duvys.media/map-detail.php?map=${feature.properties.Key}']`).css("background-color", "");
+                        layer.on('mouseout', function () {                                 
+                            if ($(`.map-left a[data-src='https://www.huntersridge.duvys.media/map-detail.php?map=${feature.properties.Key}']`).length > 0) {
+                                $(`.map-left a[data-src='https://www.huntersridge.duvys.media/map-detail.php?map=${feature.properties.Key}']`).css("background-color", ""); 
+                            }
+                            else {
+                                $(`.map-left a[data-src='${feature.properties.Key}']`).css("background-color", ""); 
+                            }
                             this.setStyle({
                                 fillOpacity: 0.4,
                                 opacity: 0.8
                             });
                         });
                         layer.on('click', function () {
-                            $(`.map-left a[data-src='https://www.huntersridge.duvys.media/map-detail.php?map=${feature.properties.Key}']`).click();
+                            if ($(`.map-left a[data-src='https://www.huntersridge.duvys.media/map-detail.php?map=${feature.properties.Key}']`).length > 0) {
+                                $(`.map-left a[data-src='https://www.huntersridge.duvys.media/map-detail.php?map=${feature.properties.Key}']`).click();
+                            }
+                            else {
+                                $(`.map-left a[data-src='${feature.properties.Key}']`).click();
+                            }
+
                         });
                     }
                 }).addTo(map);
@@ -323,7 +330,7 @@
             }
             );
 
-
+        var fitBoundsTimeout;
         $('.map-left a').on('mouseover', function () {
             $(this).css("background-color", "#83c5be");
             if (hunterPolygons) {
@@ -334,7 +341,12 @@
                             fillOpacity: 0.9,
                             opacity: 1
                         });
-                        map.fitBounds(layer.getBounds());
+                        if (fitBoundsTimeout) {
+                            clearTimeout(fitBoundsTimeout);
+                        }
+                        fitBoundsTimeout = setTimeout(() => {
+                            map.fitBounds(layer.getBounds());
+                        }, 300);
                     }
                 });
             }
@@ -351,6 +363,13 @@
                         opacity: 0.8
                     });
                 });
+                if (fitBoundsTimeout) {
+                    clearTimeout(fitBoundsTimeout);
+                }
+                fitBoundsTimeout = setTimeout(() => {
+                    map.fitBounds(hunterPolygons.getBounds());
+                }, 300);
+
             }
         });
 

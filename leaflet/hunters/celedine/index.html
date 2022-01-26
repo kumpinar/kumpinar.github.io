@@ -1,0 +1,63 @@
+<hmtl>
+
+    <head>
+
+
+        <link rel="stylesheet" href="../leaflet/leaflet.css" />
+        <script src="../leaflet/leaflet.js"></script>
+
+        <style>
+            #map {
+                height: calc(100vh - 120px);
+                margin: 20px;
+            }
+        </style>
+
+    </head>
+
+    <body>
+
+        <h1 style="text-align: center;">Detail page</h1>
+
+        <div id="map"></div>
+
+
+        <script>
+
+            var featureKey="celedine";
+
+            var map = L.map('map', {
+                attributionControl: false,
+                scrollWheelZoom: false
+            }).setView([51.505, -0.09], 13);
+
+            var hunterPolygons;
+
+            var satelliteLayer = L.tileLayer('https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}').addTo(map);
+
+
+            fetch('../hunters-2.json')
+                .then(response => response.json())
+                .then(data => {
+                    var colorCounter = 0;
+                    hunterPolygons = L.geoJSON(data, {
+                        style: {
+                            color: "#ccd5ae",
+                            fillColor: "#f4f1de",
+                            fillOpacity: 0.7,
+                            opacity: 0.8
+                        },
+                        filter: function (feature) {
+                            return feature.properties.Key == featureKey;
+                        }
+                    }).addTo(map);
+
+
+                    map.fitBounds(hunterPolygons.getBounds());
+                }
+                );
+
+        </script>
+
+    </body>
+</hmtl>
