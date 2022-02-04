@@ -19,6 +19,7 @@
         body {
             margin: 0;
             padding: 0;
+            background-color: bisque;
         }
 
         #map {
@@ -116,14 +117,14 @@
         function flyToMarker1() {
             map.flyTo({
                 center: marker1.getLngLat(),
-                zoom: 11,
+                zoom: 10,
                 essential: true // this animation is considered essential with respect to prefers-reduced-motion
             });
         }
         function flyToMarker2() {
             map.flyTo({
                 center: marker2.getLngLat(),
-                zoom: 11,
+                zoom: 10,
                 essential: true // this animation is considered essential with respect to prefers-reduced-motion
             });
 
@@ -131,7 +132,7 @@
         function flyToMarker3() {
             map.flyTo({
                 center: marker3.getLngLat(),
-                zoom: 11,
+                zoom: 10,
                 essential: true // this animation is considered essential with respect to prefers-reduced-motion
             });
 
