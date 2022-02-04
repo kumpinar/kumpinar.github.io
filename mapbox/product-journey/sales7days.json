@@ -1,0 +1,326 @@
+[
+    {
+        "country_code": "AT",
+        "amout_of_sales_in_usd": "507.79"
+    },
+    {
+        "country_code": "AU",
+        "amout_of_sales_in_usd": "46.37"
+    },
+    {
+        "country_code": "CA",
+        "amout_of_sales_in_usd": "330.34"
+    },
+    {
+        "country_code": "CH",
+        "amout_of_sales_in_usd": "131.34"
+    },
+    {
+        "country_code": "CN",
+        "amout_of_sales_in_usd": "374.09"
+    },
+    {
+        "country_code": "DE",
+        "amout_of_sales_in_usd": "506.04"
+    },
+    {
+        "country_code": "ES",
+        "amout_of_sales_in_usd": "99.74"
+    },
+    {
+        "country_code": "ET",
+        "amout_of_sales_in_usd": "0.00"
+    },
+    {
+        "country_code": "FI",
+        "amout_of_sales_in_usd": "241.75"
+    },
+    {
+        "country_code": "FR",
+        "amout_of_sales_in_usd": "113.40"
+    },
+    {
+        "country_code": "GB",
+        "amout_of_sales_in_usd": "312.60"
+    },
+    {
+        "country_code": "HK",
+        "amout_of_sales_in_usd": "397.64"
+    },
+    {
+        "country_code": "JP",
+        "amout_of_sales_in_usd": "100.98"
+    },
+    {
+        "country_code": "KR",
+        "amout_of_sales_in_usd": "555.22"
+    },
+    {
+        "country_code": "KW",
+        "amout_of_sales_in_usd": "10.93"
+    },
+    {
+        "country_code": "NO",
+        "amout_of_sales_in_usd": "1486.90"
+    },
+    {
+        "country_code": "PH",
+        "amout_of_sales_in_usd": "14.65"
+    },
+    {
+        "country_code": "PK",
+        "amout_of_sales_in_usd": "0.00"
+    },
+    {
+        "country_code": "PL",
+        "amout_of_sales_in_usd": "0"
+    },
+    {
+        "country_code": "PM",
+        "amout_of_sales_in_usd": "0"
+    },
+    {
+        "country_code": "PR",
+        "amout_of_sales_in_usd": "0"
+    },
+    {
+        "country_code": "PT",
+        "amout_of_sales_in_usd": "0"
+    },
+    {
+        "country_code": "PW",
+        "amout_of_sales_in_usd": "0"
+    },
+    {
+        "country_code": "PY",
+        "amout_of_sales_in_usd": "0"
+    },
+    {
+        "country_code": "QA",
+        "amout_of_sales_in_usd": "0"
+    },
+    {
+        "country_code": "RO",
+        "amout_of_sales_in_usd": "0.00"
+    },
+    {
+        "country_code": "RU",
+        "amout_of_sales_in_usd": "0"
+    },
+    {
+        "country_code": "RW",
+        "amout_of_sales_in_usd": "0"
+    },
+    {
+        "country_code": "SA",
+        "amout_of_sales_in_usd": "0"
+    },
+    {
+        "country_code": "SB",
+        "amout_of_sales_in_usd": "0"
+    },
+    {
+        "country_code": "SC",
+        "amout_of_sales_in_usd": "0"
+    },
+    {
+        "country_code": "SD",
+        "amout_of_sales_in_usd": "0"
+    },
+    {
+        "country_code": "SE",
+        "amout_of_sales_in_usd": "933.75"
+    },
+    {
+        "country_code": "SG",
+        "amout_of_sales_in_usd": "0"
+    },
+    {
+        "country_code": "SH",
+        "amout_of_sales_in_usd": "0"
+    },
+    {
+        "country_code": "SI",
+        "amout_of_sales_in_usd": "0"
+    },
+    {
+        "country_code": "SJ",
+        "amout_of_sales_in_usd": "0"
+    },
+    {
+        "country_code": "SJ",
+        "amout_of_sales_in_usd": "0"
+    },
+    {
+        "country_code": "SK",
+        "amout_of_sales_in_usd": "0"
+    },
+    {
+        "country_code": "SL",
+        "amout_of_sales_in_usd": "0"
+    },
+    {
+        "country_code": "SM",
+        "amout_of_sales_in_usd": "0"
+    },
+    {
+        "country_code": "SN",
+        "amout_of_sales_in_usd": "0"
+    },
+    {
+        "country_code": "SO",
+        "amout_of_sales_in_usd": "0"
+    },
+    {
+        "country_code": "SR",
+        "amout_of_sales_in_usd": "0"
+    },
+    {
+        "country_code": "SV",
+        "amout_of_sales_in_usd": "0"
+    },
+    {
+        "country_code": "SY",
+        "amout_of_sales_in_usd": "0"
+    },
+    {
+        "country_code": "SZ",
+        "amout_of_sales_in_usd": "0"
+    },
+    {
+        "country_code": "T1",
+        "amout_of_sales_in_usd": "0"
+    },
+    {
+        "country_code": "TA",
+        "amout_of_sales_in_usd": "0"
+    },
+    {
+        "country_code": "TC",
+        "amout_of_sales_in_usd": "0"
+    },
+    {
+        "country_code": "TD",
+        "amout_of_sales_in_usd": "0"
+    },
+    {
+        "country_code": "TG",
+        "amout_of_sales_in_usd": "0"
+    },
+    {
+        "country_code": "TH",
+        "amout_of_sales_in_usd": "0"
+    },
+    {
+        "country_code": "TJ",
+        "amout_of_sales_in_usd": "0"
+    },
+    {
+        "country_code": "TM",
+        "amout_of_sales_in_usd": "0"
+    },
+    {
+        "country_code": "TN",
+        "amout_of_sales_in_usd": "0"
+    },
+    {
+        "country_code": "TO",
+        "amout_of_sales_in_usd": "0"
+    },
+    {
+        "country_code": "TR",
+        "amout_of_sales_in_usd": "597.22"
+    },
+    {
+        "country_code": "TT",
+        "amout_of_sales_in_usd": "0"
+    },
+    {
+        "country_code": "TV",
+        "amout_of_sales_in_usd": "0"
+    },
+    {
+        "country_code": "TW",
+        "amout_of_sales_in_usd": "38.14"
+    },
+    {
+        "country_code": "TZ",
+        "amout_of_sales_in_usd": "0"
+    },
+    {
+        "country_code": "UA",
+        "amout_of_sales_in_usd": "0"
+    },
+    {
+        "country_code": "UG",
+        "amout_of_sales_in_usd": "0"
+    },
+    {
+        "country_code": "US",
+        "amout_of_sales_in_usd": "819.51"
+    },
+    {
+        "country_code": "UZ",
+        "amout_of_sales_in_usd": "0"
+    },
+    {
+        "country_code": "VA",
+        "amout_of_sales_in_usd": "0"
+    },
+    {
+        "country_code": "VC",
+        "amout_of_sales_in_usd": "0"
+    },
+    {
+        "country_code": "VE",
+        "amout_of_sales_in_usd": "0"
+    },
+    {
+        "country_code": "VG",
+        "amout_of_sales_in_usd": "0"
+    },
+    {
+        "country_code": "VI",
+        "amout_of_sales_in_usd": "0"
+    },
+    {
+        "country_code": "VN",
+        "amout_of_sales_in_usd": "0"
+    },
+    {
+        "country_code": "VU",
+        "amout_of_sales_in_usd": "0"
+    },
+    {
+        "country_code": "WF",
+        "amout_of_sales_in_usd": "0"
+    },
+    {
+        "country_code": "WS",
+        "amout_of_sales_in_usd": "0"
+    },
+    {
+        "country_code": "YE",
+        "amout_of_sales_in_usd": "0"
+    },
+    {
+        "country_code": "YT",
+        "amout_of_sales_in_usd": "0"
+    },
+    {
+        "country_code": "YU",
+        "amout_of_sales_in_usd": "0"
+    },
+    {
+        "country_code": "ZA",
+        "amout_of_sales_in_usd": "0"
+    },
+    {
+        "country_code": "ZM",
+        "amout_of_sales_in_usd": "0"
+    },
+    {
+        "country_code": "ZW",
+        "amout_of_sales_in_usd": "0"
+    }
+]
