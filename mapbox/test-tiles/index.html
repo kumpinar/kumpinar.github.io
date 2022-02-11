@@ -30,11 +30,128 @@
         var map = new mapboxgl.Map({
             container: 'map',
             renderWorldCopies: false,
-            style: 'mapbox://styles/assema1/ckzg4nrks002314ny0kpsg0nx'
+            style: 'mapbox://styles/mapbox/light-v10',
+            zoom: 10,
+            center: [50.140189, 26.369169]
         });
         map.addControl(new mapboxgl.NavigationControl());
 
         map.on('load', function () {
+
+            map.addSource('district', {
+                type: 'vector',
+                url: 'mapbox://assema1.district-test-tiles'
+            });
+            map.addSource('boundry', {
+                type: 'vector',
+                url: 'mapbox://assema1.polygon-tiles'
+            });
+            map.addSource('centroids', {
+                type: 'vector',
+                url: 'mapbox://assema1.point-tiles'
+            });
+            map.addLayer({
+                'id': 'district-data',
+                'type': 'fill',
+                'source': 'district',
+                'source-layer': 'district-test-layer',
+                'paint': {
+                    'fill-color': '#0080ff', // blue color fill
+                    'fill-opacity': 0.1
+                }
+            });
+
+            // Add a black outline around the polygon.
+            map.addLayer({
+                'id': 'outline',
+                'type': 'line',
+                'source': 'district',
+                'source-layer': 'district-test-layer',
+                'layout': {},
+                'paint': {
+                    'line-color': '#000',
+                    'line-width': 1
+                }
+            });
+
+            map.addLayer({
+                'id': 'district-labels',
+                'type': 'symbol',
+                'source': 'district',
+                'source-layer': 'district-test-layer',
+                'layout': {
+                    'text-field': ['get', 'EnglishName'],
+                    'text-variable-anchor': ['top', 'bottom', 'left', 'right'],
+                    'text-radial-offset': 0.5,
+                    'text-justify': 'auto'
+                },
+                'minzoom': 12,
+                'maxzoom': 14
+            });
+
+
+            map.addLayer({
+                'id': 'boundry-data',
+                'type': 'fill',
+                'source': 'boundry',
+                'source-layer': 'polygon_layer',
+                'paint': {
+                    'fill-color': '#00ffbf',
+                    'fill-opacity': 0.4
+                },
+                'minzoom': 14
+            });
+            map.addLayer({
+                'id': 'boundry-outline',
+                'type': 'line',
+                'source': 'boundry',
+                'source-layer': 'polygon_layer',
+                'paint': {
+                    'line-color': '#000',
+                    'line-width': 1
+                },
+                'minzoom': 14
+            });
+
+
+
+            map.addLayer({
+                'id': 'centroid-data',
+                'type': 'circle',
+                'source': 'centroids',
+                'source-layer': 'point_layer',
+                'paint': {
+                    // Make circles larger as the user zooms from z12 to z22.
+                    'circle-radius': {
+                        'base': 1.75,
+                        'stops': [
+                            [16, 4],
+                            [22, 8]
+                        ]
+                    },
+                    'circle-color': '#007cbf'
+                },
+                'minzoom': 16
+            });
+
+            map.addLayer({
+                'id': 'centroid-labels',
+                'type': 'symbol',
+                'source': 'centroids',
+                'source-layer': 'point_layer',
+                'layout': {
+                    'text-field': ['get', 'length'],
+                    'text-variable-anchor': ['top', 'bottom', 'left', 'right'],
+                    'text-radial-offset': 0.5,
+                    'text-justify': 'auto'
+                },
+                'paint': {
+                    'text-color': '#202',
+                    'text-halo-color': '#fff',
+                    'text-halo-width': 2
+                },
+                'minzoom': 18
+            });
 
 
         });
