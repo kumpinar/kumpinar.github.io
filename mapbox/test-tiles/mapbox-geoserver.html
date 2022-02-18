@@ -10,20 +10,56 @@
   <link href="https://api.mapbox.com/mapbox-gl-js/v2.7.0/mapbox-gl.css" rel="stylesheet">
   <script src="https://api.mapbox.com/mapbox-gl-js/v2.7.0/mapbox-gl.js"></script>
 
+  <script src="terraformer-1.0.12.min.js"></script>
+  <script src="terraformer-wkt-parser-1.2.1.min.js"></script>
+  <script src="turf.min.js"></script>
+
   <style>
     html,
-    body,
-    #map {
+    body{
       height: 100%;
       width: 100%;
       padding: 0;
       margin: 0;
     }
+
+
+
+    #wrapper {
+      display: flex;
+      height: 100%;
+      width: 100%;
+    }
+
+    #left {
+      flex: 1;
+    }
+
+    #map {
+      flex: 3;
+      height: 100%;
+      width: 100%;
+      padding: 0;
+      margin: 0;
+      top:0;
+      bottom: 0;
+    }
   </style>
 </head>
 
 <body>
-  <div id="map" class="map"></div>
+
+  <div id="wrapper">
+    <div id="left">
+      <h5> Click a parcel for information</h5>
+      <div id="parcel-info">
+
+      </div>
+    </div>
+    <div id="map"></div>
+  </div>
+
+
 </body>
 
 <script>
@@ -44,7 +80,6 @@
       "source": {
         "type": "vector",
         "scheme": "tms",
-        //"tiles": ["http://3.23.244.144:8080/geoserver/gwc/service/tms/1.0.0/East_Viz:district_test_gpkg@EPSG%3A900913@pbf/{z}/{x}/{y}.pbf"],
         "tiles": ["http://3.23.244.144:8080/geoserver/gwc/service/tms/1.0.0/SA_Regions:East_Districts_parcel_11@EPSG%3A900913@pbf/{z}/{x}/{y}.pbf"],
 
 
@@ -78,75 +113,125 @@
       }
     });
 
+    map.addSource('parcel-source', {
+      "type": "vector",
+      "scheme": "tms",
+      "tiles": ["http://3.23.244.144:8080/geoserver/gwc/service/tms/1.0.0/SA_Regions_PGIS%3Aparcels_11_with_east_districts_parcel_11@EPSG%3A900913@pbf/{z}/{x}/{y}.pbf"]
+    });
+
     map.addLayer({
-      "id": "up_Vis_Dims_id",
-      'type': 'line',
-
-      'layout': {
-        'line-join': 'round',
-        'line-cap': 'round'
+      "id": "parcel",
+      'type': 'fill',
+      "paint": {
+        "fill-opacity": 0.6,
+        "fill-color": "rgb(157, 168, 50)",
+        'fill-outline-color': 'white'
       },
-      'paint': {
-        'line-color': '#888',
-        'line-width': 2
-      },
-      "source": {
-        "type": "vector",
-        "scheme": "tms",
-        "tiles": ["http://3.23.244.144:8080/geoserver/gwc/service/tms/1.0.0/SA_Regions:parcels_11_Exploded_Saved_Dims@EPSG%3A900913@pbf/{z}/{x}/{y}.pbf"],
-
-      },
+      "source": 'parcel-source',
+      "source-layer": "parcels_11_with_east_districts_parcel_11",
       "minzoom": 15,
-      //"maxzoom": 20,
-      //"source-layer": "up_Vis_Dims",
-      "source-layer": "parcels_11_Exploded_Saved_Dims",
 
+    });
+
+    map.addLayer(
+      {
+        'id': 'parcel-highlighted',
+        'type': 'fill',
+        'source': 'parcel-source',
+        'source-layer': 'parcels_11_with_east_districts_parcel_11',
+        'paint': {
+          'fill-outline-color': '#484896',
+          'fill-color': '#6e599f',
+          'fill-opacity': 0.75
+        },
+        'filter': ['in', 'parcelcode', '']
+      }
+    );
+
+    map.addLayer(
+      {
+        'id': 'parcel-selected-fill',
+        'type': 'fill',
+        'source': 'parcel-source',
+        'source-layer': 'parcels_11_with_east_districts_parcel_11',
+        'paint': {
+          'fill-color': '#fff',
+          'fill-opacity': 0.9
+        },
+        'filter': ['in', 'parcelcode', '']
+      }
+    );
+
+    map.addLayer(
+      {
+        'id': 'parcel-selected',
+        'type': 'line',
+        'source': 'parcel-source',
+        'source-layer': 'parcels_11_with_east_districts_parcel_11',
+        'paint': {
+          'line-color': '#fff',
+          'line-width': 4
+        },
+        'filter': ['in', 'parcelcode', '']
+      }
+    );
+
+
+
+    map.addSource('centroids-source', {
+      "type": "geojson",
+      "data": null
     });
 
     map.addLayer({
       'id': 'length_centroids_label',
       'type': 'symbol',
-      'source': {
-        "type": "vector",
-        "scheme": "tms",
-        "tiles": ["http://3.23.244.144:8080/geoserver/gwc/service/tms/1.0.0/SA_Regions:parcels_11_Exploded_Saved_Dims_Centroids@EPSG%3A900913@pbf/{z}/{x}/{y}.pbf"],
-
-      },
-      "minzoom": 16,
-      //"maxzoom": 20,
+      'source': 'centroids-source',
+      "minzoom": 15,
       'layout': {
-
         "text-field": "{length}",
-        //'text-variable-anchor': ['top'],
-
-        //'text-justify': 'auto',
         "text-size": 9,
-
-
-
         'visibility': 'visible'
-      },
-
-      'source-layer': 'parcels_11_Exploded_Saved_Dims_Centroids'
-
-
-
+      }
     });
   });
 
-  map.on('click', 'up_Vis_Dims_id', function (e) {
-    new mapboxgl.Popup()
-      .setLngLat(e.lngLat)
-      .setHTML(e.features[0].properties.PARCEL_PLAN_NO)
-      .addTo(map);
+  map.on('click', 'parcel', function (e) {
+    map.setFilter('parcel-selected', ['in', 'parcelcode', e.features[0].properties.parcelcode]);
+    map.setFilter('parcel-selected-fill', ['in', 'parcelcode', e.features[0].properties.parcelcode]);
+    fetch(`http://3.23.244.144:8080/geoserver/SA_Regions_PGIS/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=parcels_11_with_east_districts_parcel_11&FEATUREID=${e.features[0].id}&outputFormat=application%2Fjson`)
+      .then(response => response.json())
+      .then(parcelPolygon => {
+        let polygonWkt = Terraformer.WKT.convert(parcelPolygon.features[0].geometry);
+        let cql = `DWITHIN(geom, ${polygonWkt}, 0.000001, meters)`;
+        fetch(`http://3.23.244.144:8080/geoserver/SA_Regions/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=parcels_11_Exploded_Saved_Dims_Centroids&outputFormat=application%2Fjson&CQL_FILTER=${cql}`)
+          .then(response => response.json())
+          .then(centroids => {
+            console.log(centroids);
+            map.getSource('centroids-source').setData(centroids);
+          }
+          );
+      }
+      );
+
+    const centroinds = map.querySourceFeatures('centroids-source', {
+      sourceLayer: 'parcels_11_Exploded_Saved_Dims_Centroids'
+    });
+    console.log('centroids', centroinds);
+  });
+  map.on('mouseleave', 'parcel', function (e) {
+    map.setFilter('parcel-highlighted', ['in', 'parcelcode', '']);
   });
 
-  map.on('mouseenter', 'up_Vis_Dims_id', function () {
-    map.getCanvas().style.cursor = 'pointer';
-  });
-
-  map.on('mouseleave', 'up_Vis_Dims_id', function () {
-    map.getCanvas().style.cursor = '';
+  map.on('mousemove', (e) => {
+    const features = map.queryRenderedFeatures(e.point, {
+      layers: ['parcel']
+    });
+    // Change the cursor style as a UI indicator.
+    map.getCanvas().style.cursor = features.length ? 'pointer' : '';
+    if (features && features.length > 0) {
+      map.setFilter('parcel-highlighted', ['in', 'parcelcode', features[0].properties.parcelcode]);
+    }
   });
 
   map.addControl(new mapboxgl.NavigationControl());
