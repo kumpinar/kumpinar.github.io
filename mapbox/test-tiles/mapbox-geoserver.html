@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Mapbox GL</title>
+
+  <link href="https://api.mapbox.com/mapbox-gl-js/v2.7.0/mapbox-gl.css" rel="stylesheet">
+  <script src="https://api.mapbox.com/mapbox-gl-js/v2.7.0/mapbox-gl.js"></script>
+
+  <style>
+    html,
+    body,
+    #map {
+      height: 100%;
+      width: 100%;
+      padding: 0;
+      margin: 0;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="map" class="map"></div>
+</body>
+
+<script>
+  mapboxgl.accessToken = 'pk.eyJ1IjoiYXNzZW1hMSIsImEiOiJja3ppNHJlYXAyMnc3MnNvNjgzenRvZ2NkIn0.rI0KWtTa31O7jiENm1vAmQ';
+  var map = new mapboxgl.Map({
+    container: 'map',
+    style: 'mapbox://styles/mapbox/streets-v9',
+    center: [50.066658225566016, 26.40411722910345],
+    zoom: 8
+  });
+
+  map.on('load', function () {
+
+
+    map.addLayer({
+      "id": "district_test_id",
+      "type": "fill",
+      "source": {
+        "type": "vector",
+        "scheme": "tms",
+        //"tiles": ["http://3.23.244.144:8080/geoserver/gwc/service/tms/1.0.0/East_Viz:district_test_gpkg@EPSG%3A900913@pbf/{z}/{x}/{y}.pbf"],
+        "tiles": ["http://3.23.244.144:8080/geoserver/gwc/service/tms/1.0.0/SA_Regions:East_Districts_parcel_11@EPSG%3A900913@pbf/{z}/{x}/{y}.pbf"],
+
+
+      },
+      "minzoom": 0,
+      "maxzoom": 12,
+      "source-layer": "East_Districts_parcel_11",
+      "paint": {
+        "fill-opacity": 0.6,
+        "fill-color": "rgb(53, 175, 109)",
+        'fill-outline-color': 'white'
+      }
+    });
+
+    map.addLayer({
+      "id": "zip_test_id",
+      "type": "fill",
+      "source": {
+        "type": "vector",
+        "scheme": "tms",
+        "tiles": ["http://3.23.244.144:8080/geoserver/gwc/service/tms/1.0.0/SA_Regions:parcels_11_Polygonal_Buffered_Single_parts_F@EPSG%3A900913@pbf/{z}/{x}/{y}.pbf"],
+
+      },
+      "minzoom": 12,
+      "maxzoom": 15,
+      "source-layer": "parcels_11_Polygonal_Buffered_Single_parts_F",
+      "paint": {
+        "fill-opacity": 0.6,
+        "fill-color": "rgb(53, 175, 109)",
+        'fill-outline-color': 'white'
+      }
+    });
+
+    map.addLayer({
+      "id": "up_Vis_Dims_id",
+      'type': 'line',
+
+      'layout': {
+        'line-join': 'round',
+        'line-cap': 'round'
+      },
+      'paint': {
+        'line-color': '#888',
+        'line-width': 2
+      },
+      "source": {
+        "type": "vector",
+        "scheme": "tms",
+        "tiles": ["http://3.23.244.144:8080/geoserver/gwc/service/tms/1.0.0/SA_Regions:parcels_11_Exploded_Saved_Dims@EPSG%3A900913@pbf/{z}/{x}/{y}.pbf"],
+
+      },
+      "minzoom": 15,
+      //"maxzoom": 20,
+      //"source-layer": "up_Vis_Dims",
+      "source-layer": "parcels_11_Exploded_Saved_Dims",
+
+    });
+
+    map.addLayer({
+      'id': 'length_centroids_label',
+      'type': 'symbol',
+      'source': {
+        "type": "vector",
+        "scheme": "tms",
+        "tiles": ["http://3.23.244.144:8080/geoserver/gwc/service/tms/1.0.0/SA_Regions:parcels_11_Exploded_Saved_Dims_Centroids@EPSG%3A900913@pbf/{z}/{x}/{y}.pbf"],
+
+      },
+      "minzoom": 16,
+      //"maxzoom": 20,
+      'layout': {
+
+        "text-field": "{length}",
+        //'text-variable-anchor': ['top'],
+
+        //'text-justify': 'auto',
+        "text-size": 9,
+
+
+
+        'visibility': 'visible'
+      },
+
+      'source-layer': 'parcels_11_Exploded_Saved_Dims_Centroids'
+
+
+
+    });
+  });
+
+  map.on('click', 'up_Vis_Dims_id', function (e) {
+    new mapboxgl.Popup()
+      .setLngLat(e.lngLat)
+      .setHTML(e.features[0].properties.PARCEL_PLAN_NO)
+      .addTo(map);
+  });
+
+  map.on('mouseenter', 'up_Vis_Dims_id', function () {
+    map.getCanvas().style.cursor = 'pointer';
+  });
+
+  map.on('mouseleave', 'up_Vis_Dims_id', function () {
+    map.getCanvas().style.cursor = '';
+  });
+
+  map.addControl(new mapboxgl.NavigationControl());
+  map.addControl(new mapboxgl.ScaleControl());
+  map.addControl(new mapboxgl.FullscreenControl());
+</script>
+
+</html>
