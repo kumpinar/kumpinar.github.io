@@ -16,7 +16,7 @@
 
   <style>
     html,
-    body{
+    body {
       height: 100%;
       width: 100%;
       padding: 0;
@@ -33,6 +33,7 @@
 
     #left {
       flex: 1;
+      padding: 1rem;
     }
 
     #map {
@@ -41,8 +42,12 @@
       width: 100%;
       padding: 0;
       margin: 0;
-      top:0;
+      top: 0;
       bottom: 0;
+    }
+
+    #parcel-info {
+      margin-top: 0.5rem;
     }
   </style>
 </head>
@@ -169,8 +174,13 @@
         'source': 'parcel-source',
         'source-layer': 'parcels_11_with_east_districts_parcel_11',
         'paint': {
-          'line-color': '#fff',
-          'line-width': 4
+          'line-color': 'red',
+          'line-width': 3,
+          'line-opacity': 0.5
+        },
+        'layout': {
+          'line-join': 'round',
+          'line-cap': 'round'
         },
         'filter': ['in', 'parcelcode', '']
       }
@@ -207,7 +217,6 @@
         fetch(`http://3.23.244.144:8080/geoserver/SA_Regions/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=parcels_11_Exploded_Saved_Dims_Centroids&outputFormat=application%2Fjson&CQL_FILTER=${cql}`)
           .then(response => response.json())
           .then(centroids => {
-            console.log(centroids);
             map.getSource('centroids-source').setData(centroids);
           }
           );
@@ -217,7 +226,7 @@
     const centroinds = map.querySourceFeatures('centroids-source', {
       sourceLayer: 'parcels_11_Exploded_Saved_Dims_Centroids'
     });
-    console.log('centroids', centroinds);
+    showParcelProperties(e.features[0].properties);
   });
   map.on('mouseleave', 'parcel', function (e) {
     map.setFilter('parcel-highlighted', ['in', 'parcelcode', '']);
@@ -234,9 +243,37 @@
     }
   });
 
+  map.on('click', (e) => {
+    const features = map.queryRenderedFeatures(
+      e.point,
+      { layers: ['parcel'] }
+    );
+    if (features.length == 0) {
+      map.setFilter('parcel-selected', ['in', 'parcelcode', '']);
+      map.setFilter('parcel-selected-fill', ['in', 'parcelcode', '']);
+      map.getSource('centroids-source').setData({
+        "type": "FeatureCollection",
+        "features": []
+      });
+      document.querySelector("#parcel-info").innerHTML = '';
+    }
+  });
+
   map.addControl(new mapboxgl.NavigationControl());
   map.addControl(new mapboxgl.ScaleControl());
   map.addControl(new mapboxgl.FullscreenControl());
+
+  function showParcelProperties(properties) {
+    let propHtml = '';
+    Object.keys(properties).forEach(key => {
+
+      propHtml += `<div><strong>${key}</strong>: ${properties[key]}</div>`
+
+    });
+
+    document.querySelector("#parcel-info").innerHTML = propHtml;
+  }
+
 </script>
 
 </html>
