@@ -76,6 +76,8 @@
     zoom: 8
   });
 
+
+
   map.on('load', function () {
 
 
@@ -124,12 +126,36 @@
       "tiles": ["http://3.23.244.144:8080/geoserver/gwc/service/tms/1.0.0/SA_Regions_PGIS%3Aparcels_11_with_east_districts_parcel_11@EPSG%3A900913@pbf/{z}/{x}/{y}.pbf"]
     });
 
+
+    var parcelTypeColor = {
+      "سكني": "#ede0d4",
+      "تجاري": "#e6ccb2",
+      "سكنى": "#ddb892",
+      "تجارى": "#b08968",
+      "خدمات عامة": "#bc6c25",
+      "ورشة": "#dda15e",
+      "المرافق العامة والنقل والاتصالات": "#ffbe0b"
+    };
+
+    var defaultParcelColor = "#7f5539";
+
     map.addLayer({
       "id": "parcel",
       'type': 'fill',
       "paint": {
         "fill-opacity": 0.6,
-        "fill-color": "rgb(157, 168, 50)",
+        "fill-color": [
+          'match',
+          ['get', 'mainlandusedescription'],
+          "سكني", "#ede0d4",
+          "تجاري", "#e6ccb2",
+          "سكنى", "#ddb892",
+          "تجارى", "#b08968",
+          "خدمات عامة", "#bc6c25",
+          "ورشة", "#dda15e",
+          "المرافق العامة والنقل والاتصالات", "#ffbe0b",
+          /* other */ "#7f5539"
+        ],
         'fill-outline-color': 'white'
       },
       "source": 'parcel-source',
@@ -201,7 +227,19 @@
       'layout': {
         "text-field": "{length}",
         "text-size": 9,
-        'visibility': 'visible'
+        'visibility': 'visible',
+        'text-offset': [0, 1],
+      }
+    });
+
+    map.addLayer({
+      'id': 'length_centroids_point',
+      'type': 'circle',
+      'source': 'centroids-source',
+      "minzoom": 15,
+      'paint': {
+        // Make circles larger as the user zooms from z12 to z22.
+        'circle-radius': 3
       }
     });
   });
@@ -273,6 +311,8 @@
 
     document.querySelector("#parcel-info").innerHTML = propHtml;
   }
+
+
 
 </script>
 
