@@ -1,0 +1,314 @@
+    <!-- CSS only -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.1.1/mapbox-gl.css" rel="stylesheet">
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.1.1/mapbox-gl.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/@turf/turf@6/turf.min.js"></script>
+    <style>
+    
+        #map {
+            width: 100%;
+            height: 500px;
+        }
+
+        .button {
+            display: inline-block;
+            position: relative;
+            cursor: pointer;
+            padding: 20px 10px 20px 10px;
+            border-radius: 2px;
+            margin-top: 10px;
+            margin-bottom: 20px;
+            font-size: 10px;
+            text-align: center;
+            color: #fff;
+            background: #0fc0fc;
+            font-family: sans-serif;
+            font-weight: bold;
+            font-size: 14px;
+            border-radius: 100px;
+            width: 100%;
+            border-color: rgba(0,0,0,0.2);
+        }
+
+        .button.active {
+            background: #dcfe69;
+            color: #000;
+        }
+
+
+       
+    </style>
+    
+    <div class="container">
+        <div class="row"  id="buttons">
+            <div class="col-6 col-md-3">
+                <button class="button active"  onclick="flyToMarker1()">Harvest</button> 
+            </div>
+            <div class="col-6 col-md-3" >
+                 <button class="button"  onclick="flyToMarker2()">Process</button> 
+            </div>
+            <div class="col-6 col-md-3">
+                 <button class="button"  onclick="flyToMarker3()">Selling</button> 
+            </div>
+            <div class="col-6 col-md-3">
+                 <button class="button"  onclick="flyToMarker4()">Again Harvest</button> 
+            </div>
+        </div>
+        <div class="row">
+            <div class="col" id="descriptionContainer" >
+                 
+            </div>
+        </div>
+    </div>
+    
+    <div id="map">
+    </div>
+
+    <script>
+
+
+        mapboxgl.accessToken = 'pk.eyJ1IjoiYWNlbWltdWhlbmRpcyIsImEiOiJjajNvZnZvd3IwMDI0MnJydHhpZjZ5bnRsIn0.mVZMKTNJSZ0rWxy1F7nXhg';
+
+        var map = new mapboxgl.Map({
+            container: 'map',
+            renderWorldCopies: false,
+            style: 'mapbox://styles/mapbox/light-v10', // stylesheet location
+            bounds: new mapboxgl.LngLatBounds([-138.592994, 67.875541], [185.977896, -43.580391]),
+            //zoom: -4 // starting zoom
+        });
+        map.addControl(new mapboxgl.NavigationControl());
+
+        $('.button').click(function () {
+            $('#buttons div button').removeClass('active');
+            $(this).addClass('active');
+        });
+
+
+        let marker1 = new mapboxgl.Marker()
+            .setLngLat([32.493156, 37.874641])
+            .addTo(map);
+        let marker2 = new mapboxgl.Marker()
+            .setLngLat([4.469936, 50.503887])
+            .addTo(map);
+        let marker3 = new mapboxgl.Marker()
+            .setLngLat([-74.405663, 40.058323])
+            .addTo(map);
+        let selectedMarker;
+
+        function flyToMarker1() {
+            if(selectedMarker && selectedMarker != marker1){
+                initializeAnimation(selectedMarker.getLngLat().toArray(), marker1.getLngLat().toArray(), function(){
+                    map.flyTo({
+                        center: marker1.getLngLat(),
+                        zoom: 10,
+                        essential: true // this animation is considered essential with respect to prefers-reduced-motion
+                    });
+                });
+            }else {
+                map.flyTo({
+                    center: marker1.getLngLat(),
+                    zoom: 10,
+                    essential: true // this animation is considered essential with respect to prefers-reduced-motion
+                });
+            }
+            selectedMarker = marker1;
+            
+            
+            $("#descriptionContainer").html($(".description1").text());
+        }
+        function flyToMarker2() {
+            initializeAnimation(selectedMarker.getLngLat().toArray(), marker2.getLngLat().toArray(), function(){
+                map.flyTo({
+                    center: marker2.getLngLat(),
+                    zoom: 10,
+                    essential: true // this animation is considered essential with respect to prefers-reduced-motion
+                });
+            });
+            selectedMarker = marker2;
+            
+            $("#descriptionContainer").html($(".description2").text());
+
+        }
+        function flyToMarker3() {
+            initializeAnimation(selectedMarker.getLngLat().toArray(), marker3.getLngLat().toArray(), function(){
+                map.flyTo({
+                    center: marker3.getLngLat(),
+                    zoom: 10,
+                    essential: true // this animation is considered essential with respect to prefers-reduced-motion
+                });
+            });
+            selectedMarker = marker3;
+            $("#descriptionContainer").html($(".description3").text());
+
+        }
+        function flyToMarker4() {
+            if(selectedMarker && selectedMarker != marker1){
+                initializeAnimation(selectedMarker.getLngLat().toArray(), marker1.getLngLat().toArray(), function(){
+                    map.flyTo({
+                        center: marker1.getLngLat(),
+                        zoom: 10,
+                        essential: true // this animation is considered essential with respect to prefers-reduced-motion
+                    });
+                });
+            }
+            selectedMarker = marker1;
+            
+            $("#descriptionContainer").html($(".description4").text());
+        }
+
+        setTimeout(function(){
+            flyToMarker1();
+        }, 2000);
+        let mapAnimationFrameId;
+        function initializeAnimation(origin, destination, onEndAnimation){
+            if(mapAnimationFrameId){
+                cancelAnimationFrame(mapAnimationFrameId);
+                mapAnimationFrameId=null;
+            }
+            // A simple line from origin to destination.
+            const route = {
+            'type': 'FeatureCollection',
+            'features': [
+            {
+            'type': 'Feature',
+            'geometry': {
+            'type': 'LineString',
+            'coordinates': [origin, destination]
+            }
+            }
+            ]
+            };
+             
+            // A single point that animates along the route.
+            // Coordinates are initially set to origin.
+            const point = {
+            'type': 'FeatureCollection',
+            'features': [
+            {
+            'type': 'Feature',
+            'properties': {},
+            'geometry': {
+            'type': 'Point',
+            'coordinates': origin
+            }
+            }
+            ]
+            };
+             
+            // Calculate the distance in kilometers between route start/end point.
+            const lineDistance = turf.length(route.features[0]);
+             
+            const arc = [];
+             
+            // Number of steps to use in the arc and animation, more steps means
+            // a smoother arc and animation, but too many steps will result in a
+            // low frame rate
+            const steps = 200;
+             
+            // Draw an arc between the `origin` & `destination` of the two points
+            for (let i = 0; i < lineDistance; i += lineDistance / steps) {
+            const segment = turf.along(route.features[0], i);
+            arc.push(segment.geometry.coordinates);
+            }
+             
+            arc.push(destination);
+            // Update the route with calculated arc coordinates
+            route.features[0].geometry.coordinates = arc;
+             
+            // Used to increment the value of the point measurement against the route.
+            let counter = 0;
+            
+            if(map.getLayer('route')) map.removeLayer('route');
+            if(map.getLayer('point')) map.removeLayer('point');
+            if(map.getSource('route')) map.removeSource('route');
+            if(map.getSource('point')) map.removeSource('point');
+            
+            
+            var bbox = turf.bbox(route);
+            map.fitBounds(bbox, {padding: 50});
+            
+            // Add a source and layer displaying a point which will be animated in a circle.
+            map.addSource('route', {
+            'type': 'geojson',
+            'data': route
+            });
+             
+            map.addSource('point', {
+            'type': 'geojson',
+            'data': point
+            });
+             
+            map.addLayer({
+            'id': 'route',
+            'source': 'route',
+            'type': 'line',
+            'paint': {
+            'line-width': 2,
+            'line-color': '#007cbf'
+            }
+            });
+             
+            map.addLayer({
+            'id': 'point',
+            'source': 'point',
+            'type': 'symbol',
+            'layout': {
+            // This icon is a part of the Mapbox Streets style.
+            // To view all images available in a Mapbox style, open
+            // the style in Mapbox Studio and click the "Images" tab.
+            // To add a new image to the style at runtime see
+            // https://docs.mapbox.com/mapbox-gl-js/example/add-image/
+            'icon-image': 'airport-15',
+            'icon-rotate': ['get', 'bearing'],
+            'icon-rotation-alignment': 'map',
+            'icon-allow-overlap': true,
+            'icon-ignore-placement': true
+            }
+            });
+             
+            function animate() {
+            const start =
+            route.features[0].geometry.coordinates[
+            counter >= steps ? counter - 1 : counter
+            ];
+            const end =
+            route.features[0].geometry.coordinates[
+            counter >= steps ? counter : counter + 1
+            ];
+            if (!start || !end) return;
+             
+            // Update point geometry to a new position based on counter denoting
+            // the index to access the arc
+            point.features[0].geometry.coordinates =
+            route.features[0].geometry.coordinates[counter];
+             
+            // Calculate the bearing to ensure the icon is rotated to match the route arc
+            // The bearing is calculated between the current point and the next point, except
+            // at the end of the arc, which uses the previous point and the current point
+            point.features[0].properties.bearing = turf.bearing(
+            turf.point(start),
+            turf.point(end)
+            );
+             
+            // Update the source with this new data
+            map.getSource('point').setData(point);
+             
+            // Request the next frame of animation as long as the end has not been reached
+            if (counter < steps) {
+                mapAnimationFrameId=requestAnimationFrame(animate);
+            }
+            else{
+                onEndAnimation();
+            }
+             
+            counter = counter + 1;
+            }
+             
+             
+            // Start the animation
+            animate(counter);
+        }
+        
+
+    </script>
