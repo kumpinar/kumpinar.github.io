@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Map with Dynamic Hotels in Copenhagen</title>
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="assets/style.css" />
+
+    <link rel="stylesheet" href="assets/MarkerCluster.css" />
+    <link rel="stylesheet" href="assets/MarkerCluster.Default.css" />
+    <script src="assets/leaflet.markercluster-src.js"></script>
+
+    <style>
+        .leaflet-popup-content {
+            text-align: center;
+            font-family: 'Open Sans', sans-serif;
+            padding: 5px;
+            height: 250px;
+            width: 250px;
+            overflow-y: auto
+        }
+
+        .leaflet-popup-content .property-infobox-item {
+            position: relative
+        }
+
+        .leaflet-popup-content .information {
+            position: absolute;
+            bottom: 20px;
+            color: #fff;
+            width: 100%;
+            display: flex;
+            justify-content: space-around;
+            padding-bottom: 5px;
+            padding-top: 5px;
+            background-color: rgba(0, 0, 0, 0.4)
+        }
+
+        .leaflet-popup-content .information .text {
+            vertical-align: middle
+        }
+
+        .leaflet-popup-content .information svg {
+            width: 28px;
+            height: 28px;
+            padding-right: 4px
+        }
+
+        .leaflet-popup-content picture>* {
+            max-width: 100%
+        }
+
+
+
+        .marker-unclustered-single {
+            background-color: rgba(97, 100, 195, 0.6);
+        }
+
+
+        .marker-unclustered {
+            background-clip: padding-box;
+            border-radius: 20px;
+        }
+
+        .marker-unclustered div {
+            width: 30px;
+            height: 30px;
+            padding: 5px;
+            text-align: center;
+            border-radius: 15px;
+            font-size: 10px;
+        }
+
+        .marker-unclustered span {
+            color: white;
+        }
+        
+        
+        .custom-cluster-30 div{
+            background-clip: padding-box;
+            border-radius: 30px;
+            width: 30px;
+            height: 30px;
+            padding: 15px;
+            text-align: center;
+            background-color: #3498db;
+            color: white;
+            font-weight: bold;
+        }
+        .custom-cluster-40 div{
+            background-clip: padding-box;
+            border-radius: 40px;
+            width: 40px;
+            height: 40px;
+            padding: 18px;
+            text-align: center;
+            background-color: #2c84bf;
+            color: white;
+            font-weight: bold;
+
+        }
+        .custom-cluster-50 div{
+            background-clip: padding-box;
+            border-radius: 50px;
+            width: 50px;
+            height: 50px;
+            padding: 20px;
+            text-align: center;
+            background-color: #2671a4;
+            color: white;
+            font-weight: bold;
+
+        }
+    </style>
+</head>
+
+<body>
+    <form class="filters-form">
+        <input type="hidden" id="sw_lng" name="sw_lng" value="12.453">
+        <input type="hidden" id="sw_lat" name="sw_lat" value="55.675">
+        <input type="hidden" id="ne_lng" name="ne_lng" value="12.603">
+        <input type="hidden" id="ne_lat" name="ne_lat" value="55.725">
+    </form>
+    <div id="map"></div>
+
+    <script type="text/javascript">
+        let domain = 'https://kvikbolig.dk'
+        var tiles = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 18,
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        });
+        let bounds = [
+            [
+                parseFloat(document.getElementById('sw_lat').value),
+                parseFloat(document.getElementById('sw_lng').value)
+            ],
+            [
+                parseFloat(document.getElementById('ne_lat').value),
+                parseFloat(document.getElementById('ne_lng').value)
+            ]
+        ]
+        var map = L.map('map', { zoom: 14, layers: [tiles] });
+        map.fitBounds(bounds);
+
+        var hotelsLayer = L.geoJson(null, {
+
+            pointToLayer: function (feature, latlng) {
+                let unclusteredMarkerIcon = new L.DivIcon({ html: '<div><span>' + feature.properties.price + '</span></div>', className: 'marker-unclustered marker-unclustered-single', iconSize: new L.Point(40, 40) })
+                return L.marker(latlng, { icon: unclusteredMarkerIcon });
+
+            },
+
+            onEachFeature: function (feature, layer) {
+                layer.once('click', function () {
+                    //let popupText = 'price: ' + feature.properties.price;
+                    let popup = layer.bindPopup('loading...').openPopup();
+                    fetch(`${domain}/api/map_infobox_item?ids=${feature.properties.id}`)
+                        .then((response) => response.text())
+                        .then((data) => {
+                            popup.setPopupContent(data);
+                        });
+                })
+            }
+        });
+
+        var hotelsCluster = L.markerClusterGroup({
+            showCoverageOnHover: false,
+            iconCreateFunction: function (cluster) {
+                let clusterSize=0;
+                let clusterStyle='';
+                if(cluster.getChildCount()<30) {
+                    clusterSize=40;
+                    clusterStyle='custom-cluster-30'
+                }
+                else if(cluster.getChildCount()<40) {
+                    clusterSize=60;
+                    clusterStyle='custom-cluster-40'
+                }
+                else {
+                    clusterSize=80;
+                    clusterStyle='custom-cluster-50'
+                }
+                //return L.divIcon({ html: '<b>' + cluster.getChildCount() + '</b>' });
+                return L.divIcon({ html: '<div>' + cluster.getChildCount() + '</div>', className: clusterStyle, iconSize: new L.Point(clusterSize, clusterSize) });
+            }
+        });
+        map.addLayer(hotelsCluster);
+
+
+        let search_params = $("form.filters-form input:not(.excluded)[value!=' ']").serialize()
+        fetch(`${domain}/api/map_markers?${search_params}`)
+            .then((response) => response.json())
+            .then((res) => {
+                if (!res) {
+                    return;
+                }
+                hotelsLayer.addData(res)
+                hotelsCluster.addLayer(hotelsLayer);
+            });
+
+    </script>
+</body>
+
+</html>

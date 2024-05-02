@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Map with Dynamic Hotels in Copenhagen</title>
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.7.0/mapbox-gl.css" rel="stylesheet">
+    <style>
+        #map { position: absolute; top: 0; bottom: 0; width: 100%; }
+
+        .mapboxgl-popup-content {
+            text-align: center;
+            font-family: 'Open Sans', sans-serif;
+            padding: 5px;
+            height: 250px;
+            width: 250px;
+            overflow-y:auto
+        }
+
+        .mapboxgl-popup-content .property-infobox-item {
+            position:relative
+        }
+
+        .mapboxgl-popup-content .information {
+            position: absolute;
+            bottom: 20px;
+            color: #fff;
+            width: 100%;
+            display: flex;
+            justify-content: space-around;
+            padding-bottom: 5px;
+            padding-top: 5px;
+            background-color:rgba(0, 0, 0, 0.4)
+        }
+
+        .mapboxgl-popup-content .information .text {
+            vertical-align:middle
+        }
+
+        .mapboxgl-popup-content .information svg {
+            width: 28px;
+            height: 28px;
+            padding-right:4px
+        }
+
+        .mapboxgl-popup-content picture > * {
+            max-width:100%
+        }
+        
+    </style>
+</head>
+<body>
+<div id="map-wrapper" class="map-wrapper" data-key="pk.eyJ1IjoiY29tcGZpeGRrIiwiYSI6ImNsdm92cHllcjAwbDIybXJvd3BkdmE1NXQifQ.E0zRlINf3AHsizOANi8I0w">
+    <form class="filters-form">
+        <input type="hidden" id="sw_lng" name="sw_lng" value="12.453">
+        <input type="hidden" id="sw_lat" name="sw_lat"  value="55.675">
+        <input type="hidden" id="ne_lng" name="ne_lng" value="12.603">
+        <input type="hidden" id="ne_lat" name="ne_lat"  value="55.725">
+    </form>
+    <div id="map"></div>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script>
+
+    //TODO just use /
+    let domain = 'https://kvikbolig.dk'
+    let is_bot = function () {
+        let botPattern, re, userAgent;
+        botPattern = '(googlebot/|bot|Googlebot-Mobile|Googlebot-Image|Google favicon|Mediapartners-Google|bingbot|slurp|java|wget|curl|Commons-HttpClient|Python-urllib|libwww|httpunit|nutch|phpcrawl|msnbot|jyxobot|FAST-WebCrawler|FAST Enterprise Crawler|biglotron|teoma|convera|seekbot|gigablast|exabot|ngbot|ia_archiver|GingerCrawler|webmon |httrack|webcrawler|grub.org|UsineNouvelleCrawler|antibot|netresearchserver|speedy|fluffy|bibnum.bnf|findlink|msrbot|panscient|yacybot|AISearchBot|IOI|ips-agent|tagoobot|MJ12bot|dotbot|woriobot|yanga|buzzbot|mlbot|yandexbot|purebot|Linguee Bot|Voyager|CyberPatrol|voilabot|baiduspider|citeseerxbot|spbot|twengabot|postrank|turnitinbot|scribdbot|page2rss|sitebot|linkdex|Adidxbot|blekkobot|ezooms|dotbot|Mail.RU_Bot|discobot|heritrix|findthatfile|europarchive.org|NerdByNature.Bot|sistrix crawler|ahrefsbot|Aboundex|domaincrawler|wbsearchbot|summify|ccbot|edisterbot|seznambot|ec2linkfinder|gslfbot|aihitbot|intelium_bot|facebookexternalhit|yeti|RetrevoPageAnalyzer|lb-spider|sogou|lssbot|careerbot|wotbox|wocbot|ichiro|DuckDuckBot|lssrocketcrawler|drupact|webcompanycrawler|acoonbot|openindexspider|gnam gnam spider|web-archive-net.com.bot|backlinkcrawler|coccoc|integromedb|content crawler spider|toplistbot|seokicks-robot|it2media-domain-crawler|ip-web-crawler.com|siteexplorer.info|elisabot|proximic|changedetection|blexbot|arabot|WeSEE:Search|niki-bot|CrystalSemanticsBot|rogerbot|360Spider|psbot|InterfaxScanBot|Lipperhey SEO Service|CC Metadata Scaper|g00g1e.net|GrapeshotCrawler|urlappendbot|brainobot|fr-crawler|binlar|SimpleCrawler|Livelapbot|Twitterbot|cXensebot|smtbot|bnf.fr_bot|A6-Indexer|ADmantX|Facebot|Twitterbot|OrangeBot|memorybot|AdvBot|MegaIndex|SemanticScholarBot|ltx71|nerdybot|xovibot|BUbiNG|Qwantify|archive.org_bot|Applebot|TweetmemeBot|crawler4j|findxbot|SemrushBot|yoozBot|lipperhey|y!j-asr|Domain Re-Animator Bot|AddThis)';
+        re = new RegExp(botPattern, 'i');
+        userAgent = navigator.userAgent;
+        return re.test(userAgent);
+    };
+
+    if (!is_bot()) {
+        $('#map').one('load-map', () => {
+            mapboxgl.accessToken = document.getElementById('map-wrapper').dataset.key;
+
+            let bounds = [
+                parseFloat(document.getElementById('sw_lng').value),
+                parseFloat(document.getElementById('sw_lat').value),
+                parseFloat(document.getElementById('ne_lng').value),
+                parseFloat(document.getElementById('ne_lat').value)
+            ]
+            let map = new mapboxgl.Map({
+                container: 'map',
+                //center: [8.500266, 55.944128],
+                bounds: bounds, //order is lng, lat here. Opposite of what it usually it
+                zoom: 14,
+                style: 'mapbox://styles/mapbox/streets-v11?optimize=true', // style URL
+            });
+            window.map_instance = map
+            const nav = new mapboxgl.NavigationControl();
+            map.addControl(nav, 'top-left');
+
+            if (window.is_development){
+                new mapboxgl.Marker()
+                    .setLngLat([bounds[0], bounds[1]])
+                    .addTo(map);
+
+                new mapboxgl.Marker()
+                    .setLngLat([bounds[2], bounds[3]])
+                    .addTo(map);
+            }
+
+            // debugger
+
+            map.fitBounds([
+                [bounds[0], bounds[1]], [bounds[2], bounds[3]] // northeastern corner of the bounds
+            ]);
+
+            map.on('load', () => {
+                let path = window.location.protocol + '//' + window.location.hostname + ':' + window.location.port;
+                map.loadImage(`${path}/assets/marker.png`, (error, image) => {
+                    if (error) throw error;
+
+                    // Add the image to the map style.
+                    map.addImage('marker', image);
+
+                    map.addSource('hotels', {
+                        type: 'geojson',
+                        // Point to GeoJSON data. This example visualizes all M1.0+ hotels
+                        // from 12/22/15 to 1/21/16 as logged by USGS' Earthquake hazards program.
+                        data: {
+                            "type": "FeatureCollection",
+                            "features": []
+                        },
+                        cluster: true,
+                        clusterMaxZoom: 20, // Max zoom to cluster points on
+                        clusterRadius: 50 // Radius of each cluster when clustering points (defaults to 50)
+                    });
+
+                    map.addLayer({
+                        id: 'clusters',
+                        type: 'circle',
+                        source: 'hotels',
+                        filter: ['has', 'point_count'],
+                        paint: {
+                            // Use step expressions (https://docs.mapbox.com/mapbox-gl-js/style-spec/#expressions-step)
+                            // with three steps to implement three types of circles:
+                            //   * Blue, 20px circles when point count is less than 100
+                            //   * Yellow, 30px circles when point count is between 100 and 750
+                            //   * Pink, 40px circles when point count is greater than or equal to 750
+                            'circle-color': ['step', ['get', 'point_count'], '#3498DB', 100, '#3498DB', 750, '#3498DB'],
+                            'circle-radius': ['step', ['get', 'point_count'], 20, 100, 30, 750, 40]
+                        }
+                    });
+
+                    map.addLayer({
+                        id: 'cluster-count',
+                        type: 'symbol',
+                        source: 'hotels',
+                        filter: ['has', 'point_count'],
+                        layout: {
+                            'text-field': '{point_count_abbreviated}',
+                            'text-font': ['Open Sans Semibold', 'Arial Unicode MS Bold'],
+                            'text-size': 12
+                        },
+                        paint: {
+                            'text-color': '#ffffff'
+                        }
+                    });
+
+                    map.addLayer({
+                        id: 'unclustered-point',
+                        type: 'symbol',
+                        source: 'hotels',
+                        filter: ['!', ['has', 'point_count']],
+                        layout: {
+                            'text-field': ['get', 'price'],
+                            'text-font': ['Open Sans Semibold', 'Arial Unicode MS Bold'],
+                            'text-size': 12,
+                            'icon-image': 'marker', // reference the image
+                            'icon-size': 1,
+                            'icon-offset': [0, 6]
+                        },
+                        paint: {
+                            'text-color': '#ffffff'
+                        }
+                    });
+
+                    // inspect a cluster on click
+                    map.on('click', 'clusters', (e) => {
+                        const features = map.queryRenderedFeatures(e.point, {
+                            layers: ['clusters']
+                        });
+                        const clusterId = features[0].properties.cluster_id,
+                            point_count = features[0].properties.point_count,
+                            clusterSource = map.getSource(/* cluster layer data source id */ 'hotels');
+
+                        // Get Next level cluster Children
+                        //
+                        // clusterSource.getClusterChildren(clusterId, function (err, aFeatures) {
+                        //     console.log('getClusterChildren', err, aFeatures);
+                        // });
+                        // Get all points under a cluster
+                        clusterSource.getClusterLeaves(clusterId, point_count, 0, (err, aFeatures) => {
+                            if (err) return;
+                            const zoom = map.getZoom();
+                            if (zoom > 16) {
+                                let ids = [];
+                                for (let i = 0; i < aFeatures.length; i++) {
+                                    const el = aFeatures[i];
+                                    ids.push(el.properties.id);
+                                }
+                                //console.log(ids);
+                                fetch(`${domain}/api/map_infobox_item?ids=${ids}`)
+                                    .then((response) => response.text())
+                                    .then((data) => {
+                                        new mapboxgl.Popup({offset: 25}).setLngLat(features[0].geometry.coordinates).setHTML(data).addTo(map);
+                                    });
+                            }
+                        });
+                        map.getSource('hotels').getClusterExpansionZoom(clusterId, (err, zoom) => {
+                            if (err) return;
+                            map.easeTo({
+                                center: features[0].geometry.coordinates,
+                                zoom: zoom
+                            });
+                        });
+                    });
+
+                    // When a click event occurs on a feature in
+                    // the unclustered-point layer, open a popup at
+                    // the location of the feature, with
+                    // description HTML from its properties.
+                    map.on('click', 'unclustered-point', (e) => {
+                        const coordinates = e.features[0].geometry.coordinates.slice();
+                        while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+                            coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+                        }
+
+                        const id = e.features[0].properties.id;
+                        fetch(`${domain}/api/map_infobox_item?ids=${id}`)
+                            .then((response) => response.text())
+                            .then((data) => {
+                                new mapboxgl.Popup({offset: 25}).setLngLat(coordinates).setHTML(data).addTo(map);
+                            });
+                    });
+
+                    map.on('mouseenter', 'clusters', () => {
+                        map.getCanvas().style.cursor = 'pointer';
+                    });
+                    map.on('mouseleave', 'clusters', () => {
+                        map.getCanvas().style.cursor = '';
+                    });
+
+                    let update_map_delay = 2000
+                    let map_update_timer = undefined
+                    const updateMapDelayed = () => {
+                        if(map_update_timer){
+                            clearTimeout(map_update_timer)
+                        }
+                        map_update_timer = setTimeout( () => updateMap(), update_map_delay)
+                    };
+
+                    const updateMap = () => {
+                        console.log('A map move end event occurred.');
+
+                        // cardinal direction sw_lng, sw_lat, ne_lng, ne_lat
+                        const {_ne, _sw} = map.getBounds();
+
+                        // Get new markers via json api when you move the map
+                        let search_params = $("form.filters-form input:not(.excluded)[value!=' ']").serialize()
+                        fetch(`${domain}/api/map_markers?${search_params}`)
+                            .then((response) => response.json())
+                            .then((res) => {
+                                if (!res) {
+                                    return;
+                                }
+                                console.log(res);
+                                map.getSource('hotels').setData(res);
+                            });
+                    }
+
+                    map.on('update-markers', () => {
+                        console.log('update-markers');
+                        updateMap();
+                    });
+
+                    updateMap();
+                    map.on('moveend', () => {
+                        if ($('.map-wrapper').is(':visible')) {
+                            $('#map').trigger('map-moved')
+                            console.log('map move triggered')
+                            $('#sw_lat').val(map.getBounds()._sw.lat)
+                            $('#sw_lng').val(map.getBounds()._sw.lng)
+                            $('#ne_lat').val(map.getBounds()._ne.lat)
+                            $('#ne_lng').val(map.getBounds()._ne.lng)
+                            updateMapDelayed();
+                        }
+                    });
+                });
+            })
+        });
+    }
+
+
+
+    window.onload=()=> {
+        let map_is_loaded = false
+        $(window).on('resize.map_load_handler', () => {
+            console.log('window resize')
+            if ($('#map').is(':visible') && !map_is_loaded) {
+                let script = document.createElement('script');
+                script.onload = function () {
+                    $('#map').trigger('load-map');
+                };
+                script.src = 'https://api.mapbox.com/mapbox-gl-js/v2.7.0/mapbox-gl.js';
+                map_is_loaded = true
+                $(window).off('resize.map_load_handler');
+                document.head.appendChild(script)
+
+                let fileref = document.createElement("link");
+                fileref.rel = "stylesheet";
+                fileref.type = "text/css";
+                fileref.href = "https://api.mapbox.com/mapbox-gl-js/v2.7.0/mapbox-gl.css";
+                document.getElementsByTagName("head")[0].appendChild(fileref)
+            }
+        });
+        $(window).trigger('resize.map_load_handler');
+    }
+</script>
+</body>
+</html>
