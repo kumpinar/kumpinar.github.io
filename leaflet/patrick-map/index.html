@@ -58,26 +58,26 @@
 
 
         .marker-unclustered-single {
-            background-color: rgba(97, 100, 195, 0.6);
+            /* background-color: rgba(97, 100, 195, 0.6); */
+            background-image: url('assets/marker.png');
+            background-repeat: no-repeat;
         }
 
 
         .marker-unclustered {
             background-clip: padding-box;
-            border-radius: 20px;
         }
 
         .marker-unclustered div {
-            width: 30px;
-            height: 30px;
-            padding: 5px;
+            width: 65px;
+            height: 33px;
             text-align: center;
-            border-radius: 15px;
-            font-size: 10px;
+            font-family:'Open Sans Semibold', 'Arial Unicode MS Bold';
         }
 
         .marker-unclustered span {
             color: white;
+            font-size: 14px;
         }
         
         
@@ -159,7 +159,7 @@
         var hotelsLayer = L.geoJson(null, {
 
             pointToLayer: function (feature, latlng) {
-                let unclusteredMarkerIcon = new L.DivIcon({ html: '<div><span>' + feature.properties.price + '</span></div>', className: 'marker-unclustered marker-unclustered-single', iconSize: new L.Point(40, 40) })
+                let unclusteredMarkerIcon = new L.DivIcon({ html: '<div><span>' + feature.properties.price + '</span></div>', className: 'marker-unclustered marker-unclustered-single', iconSize: new L.Point(70, 36) })
                 return L.marker(latlng, { icon: unclusteredMarkerIcon });
 
             },
