@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Load data from an external GeoJSON file</title>
+<meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+<link href="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.css" rel="stylesheet">
+<script src="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.js"></script>
+<style>
+body { margin: 0; padding: 0; }
+#map { position: absolute; top: 0; bottom: 0; width: 100%; }
+</style>
+</head>
+<body>
+<div id="map"></div>
+
+<script src='https://unpkg.com/@turf/turf@6/turf.min.js'></script>
+<script>
+	mapboxgl.accessToken = 'pk.eyJ1IjoieWFycmFyYW5nZXMiLCJhIjoiY2tydHpnM2pwOXdldzJubDM1b2dvcm15cCJ9.sAkVnbCzwrVLLRi7xxiHnA';
+    const map = new mapboxgl.Map({
+        container: 'map', // container ID
+        // Choose from Mapbox's core styles, or make your own style with Mapbox Studio
+        style: 'mapbox://styles/mapbox/satellite-v9', // style URL
+        projection: 'globe', // Display the map as a globe, since satellite-v9 defaults to Mercator
+        zoom: 2, // starting zoom
+        center: [108, 4] // // starting center in [lng, lat]
+    });
+
+    map.on('style.load', () => {
+        map.setFog({}); // Set the default atmosphere style
+    });
+
+    map.on('load', () => {
+        map.addSource('area-tags', {
+            type: 'geojson',
+            // Use a URL for the value for the `data` property.
+            data: '/data/area_drawings_new_1.json'
+        });
+
+
+        // Add a new layer to visualize the polygon.
+        map.addLayer({
+            'id': 'area-tags-layer',
+            'type': 'fill',
+            'source': 'area-tags', // reference the data source
+            'layout': {},
+            'paint': {
+                'fill-color': '#0080ff', // blue color fill
+                'fill-opacity': 0.5
+            }
+        });
+        // Add a black outline around the polygon.
+        map.addLayer({
+            'id': 'area-tags-layer-outline',
+            'type': 'line',
+            'source': 'area-tags',
+            'layout': {},
+            'paint': {
+                'line-color': '#000',
+                'line-width': 3
+            }
+        });
+
+        map.addLayer(
+            {
+                'id': 'area-tags-highlighted',
+                'type': 'fill',
+                'source': 'area-tags',
+                'paint': {
+                    'fill-outline-color': '#484896',
+                    'fill-color': '#FFFF00',
+                    'fill-opacity': 0.75
+                },
+                // Display none by adding a
+                // filter with an empty string.
+                'filter': ['in', 'name', '']
+            }
+        );
+
+
+        fitMap();
+
+        // Create a popup, but don't add it to the map yet.
+        const popup = new mapboxgl.Popup({
+            closeButton: false,
+            closeOnClick: false
+        });
+
+
+        map.on('mousemove', 'area-tags-layer', (e) => {
+            // Change the cursor style as a UI indicator.
+            map.getCanvas().style.cursor = 'pointer';
+
+            // Copy coordinates array.
+            const coordinates = e.lngLat;
+            const tagName = e.features.map(f=> f.properties.name).join('<br><hr>');
+
+            // Ensure that if the map is zoomed out such that multiple
+            // copies of the feature are visible, the popup appears
+            // over the copy being pointed to.
+            while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+                coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+            }
+
+            map.setFilter('area-tags-highlighted', buildFilter(e.features.map(f=> f.properties.name)));
+
+            // Populate the popup and set its coordinates
+            // based on the feature found.
+            popup.setLngLat(coordinates).setHTML(tagName).addTo(map);
+        });
+
+        map.on('mouseleave', 'area-tags-layer', () => {
+            map.getCanvas().style.cursor = '';
+            popup.remove();
+            map.setFilter('area-tags-highlighted', ['in', 'name', '']);
+        });
+
+
+    });
+
+    const fitMap = async () => {
+
+        const response = await fetch('/data/area_drawings_new_1.json');  
+        const geojson = await response.json();
+
+        var bbox = turf.bbox(geojson);
+
+        map.fitBounds(bbox, {
+            padding: 20
+        });
+    }
+    function buildFilter(arr) {
+        var filter = ['in', 'name'];
+
+        if (arr.length === 0) {
+            return filter;
+        }
+        
+        for(var i = 0; i < arr.length; i += 1) {
+            filter.push(arr[i]);
+        }
+        
+        return filter;
+    }
+</script>
+
+</body>
+</html>
