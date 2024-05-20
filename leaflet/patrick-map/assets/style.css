@@ -1,5 +1,5 @@
 #map {
 	width: 100%; 
-	height: calc(100vh - 20px); 
-	border: 1px solid #ccc;
+	height: 100vh; 
+	border: 0;
 }

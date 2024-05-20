@@ -5,8 +5,8 @@
     <title>Map with Dynamic Hotels in Copenhagen</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link rel="stylesheet" href="assets/leaflet.css" />
-    <script src="assets/leaflet.js"></script>
+    <link rel="stylesheet" href="assets/leaflet_2.0/leaflet.css" />
+    <script src="assets/leaflet_2.0/leaflet.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
     <link rel="stylesheet" href="assets/style.css" />
@@ -16,6 +16,10 @@
     <script src="assets/leaflet.markercluster-src.js"></script>
 
     <style>
+        body{
+            margin: 0;
+            padding: 0;
+        }
         .leaflet-popup-content {
             text-align: center;
             font-family: 'Open Sans', sans-serif;
@@ -116,6 +120,9 @@
             line-height: 100px;
 
         }
+
+        .leaflet-container img.leaflet-tile {
+        }
     </style>
 </head>
 
@@ -130,7 +137,7 @@
 
     <script type="text/javascript">
         let domain = 'https://kvikbolig.dk'
-        var tiles = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        var tiles = L.tileLayer('https://map.kvikbolig.dk/atlas/{z}/{x}/{y}@2x.png', {
             maxZoom: 18,
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         });
@@ -144,7 +151,7 @@
                 parseFloat(document.getElementById('ne_lng').value)
             ]
         ]
-        var map = L.map('map', { zoom: 7, layers: [tiles] });
+        var map = L.map('map', { zoom: 14, layers: [tiles], zoomDelta: 0.5, zoomSnap: 0.1, wheelPxPerZoomLevel: 10 });
         map.on('moveend', function(){
             let bounds=map.getBounds();
             $('#sw_lat').val(bounds.getSouthWest().lat)
