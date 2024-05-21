@@ -1,171 +1,193 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-<meta charset="utf-8">
-<title>Utah Area Tags</title>
-<meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
-<link href="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.css" rel="stylesheet">
-<script src="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.js"></script>
-<style>
-body { margin: 0; padding: 0; }
-#map { position: absolute; top: 0; bottom: 0; width: 100%; }
-#menu {
-        position: absolute;
-        background: #efefef;
-        padding: 10px;
-        font-family: 'Open Sans', sans-serif;
-    }
-</style>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-B45MJLMFP0"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'G-B45MJLMFP0');
+    </script>
+    <meta charset="utf-8">
+    <title>Utah Area Tags</title>
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+    <link href="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.css" rel="stylesheet">
+    <script src="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        #map {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 100%;
+        }
+
+        #menu {
+            position: absolute;
+            background: #efefef;
+            padding: 10px;
+            font-family: 'Open Sans', sans-serif;
+        }
+    </style>
 </head>
+
 <body>
-<div id="map"></div>
+    <div id="map"></div>
 
-<div id="menu">
-    <input id="satellite-streets-v12" type="radio" name="rtoggle" value="satellite" checked="checked">
-    <label for="satellite-streets-v12">satellite streets</label>
-    <input id="streets-v12" type="radio" name="rtoggle" value="streets">
-    <label for="streets-v12">streets</label>
-</div>
+    <div id="menu">
+        <input id="satellite-streets-v12" type="radio" name="rtoggle" value="satellite" checked="checked">
+        <label for="satellite-streets-v12">satellite streets</label>
+        <input id="streets-v12" type="radio" name="rtoggle" value="streets">
+        <label for="streets-v12">streets</label>
+    </div>
 
-<script src='https://unpkg.com/@turf/turf@6/turf.min.js'></script>
-<script>
-	mapboxgl.accessToken = 'pk.eyJ1IjoiYWNlbWltdWhlbmRpcyIsImEiOiJjbHdnMWVlYTUwMDQwMnFteWE4OTl1OGgwIn0.wFpyxhdIa6CJxecf2lRR_A';
-    const map = new mapboxgl.Map({
-        container: 'map', // container ID
-        // Choose from Mapbox's core styles, or make your own style with Mapbox Studio
-        style: 'mapbox://styles/mapbox/satellite-streets-v12', // style URL
-        projection: 'globe', // Display the map as a globe, since satellite-v9 defaults to Mercator
-        zoom: 2, // starting zoom
-        center: [108, 4] // // starting center in [lng, lat]
-    });
-
-    const layerList = document.getElementById('menu');
-    const inputs = layerList.getElementsByTagName('input');
-
-    for (const input of inputs) {
-        input.onclick = (layer) => {
-            const layerId = layer.target.id;
-            map.setStyle('mapbox://styles/mapbox/' + layerId);
-        };
-    }
-
-    map.on('style.load', () => {
-        map.setFog({}); // Set the default atmosphere style
-        addAdditionalLayers();
-    });
-
-    const addAdditionalLayers = () => {
-        map.addSource('area-tags', {
-            type: 'geojson',
-            // Use a URL for the value for the `data` property.
-            data: '/data/area_drawings_new_1.json'
+    <script src='https://unpkg.com/@turf/turf@6/turf.min.js'></script>
+    <script>
+        mapboxgl.accessToken = 'pk.eyJ1IjoiYWNlbWltdWhlbmRpcyIsImEiOiJjbHdnMWVlYTUwMDQwMnFteWE4OTl1OGgwIn0.wFpyxhdIa6CJxecf2lRR_A';
+        const map = new mapboxgl.Map({
+            container: 'map', // container ID
+            // Choose from Mapbox's core styles, or make your own style with Mapbox Studio
+            style: 'mapbox://styles/mapbox/satellite-streets-v12', // style URL
+            projection: 'globe', // Display the map as a globe, since satellite-v9 defaults to Mercator
+            zoom: 2, // starting zoom
+            center: [108, 4] // // starting center in [lng, lat]
         });
 
+        const layerList = document.getElementById('menu');
+        const inputs = layerList.getElementsByTagName('input');
 
-        // Add a new layer to visualize the polygon.
-        map.addLayer({
-            'id': 'area-tags-layer',
-            'type': 'fill',
-            'source': 'area-tags', // reference the data source
-            'layout': {},
-            'paint': {
-                'fill-color': '#0080ff', // blue color fill
-                'fill-opacity': 0.5
-            }
-        });
-        // Add a black outline around the polygon.
-        map.addLayer({
-            'id': 'area-tags-layer-outline',
-            'type': 'line',
-            'source': 'area-tags',
-            'layout': {},
-            'paint': {
-                'line-color': '#000',
-                'line-width': 3
-            }
+        for (const input of inputs) {
+            input.onclick = (layer) => {
+                const layerId = layer.target.id;
+                map.setStyle('mapbox://styles/mapbox/' + layerId);
+            };
+        }
+
+        map.on('style.load', () => {
+            map.setFog({}); // Set the default atmosphere style
+            addAdditionalLayers();
         });
 
-        map.addLayer(
-            {
-                'id': 'area-tags-highlighted',
+        const addAdditionalLayers = () => {
+            map.addSource('area-tags', {
+                type: 'geojson',
+                // Use a URL for the value for the `data` property.
+                data: '/data/area_drawings_new_1.json'
+            });
+
+
+            // Add a new layer to visualize the polygon.
+            map.addLayer({
+                'id': 'area-tags-layer',
                 'type': 'fill',
-                'source': 'area-tags',
+                'source': 'area-tags', // reference the data source
+                'layout': {},
                 'paint': {
-                    'fill-outline-color': '#484896',
-                    'fill-color': '#FFFF00',
-                    'fill-opacity': 0.75
-                },
-                // Display none by adding a
-                // filter with an empty string.
-                'filter': ['in', 'name', '']
+                    'fill-color': '#0080ff', // blue color fill
+                    'fill-opacity': 0.5
+                }
+            });
+            // Add a black outline around the polygon.
+            map.addLayer({
+                'id': 'area-tags-layer-outline',
+                'type': 'line',
+                'source': 'area-tags',
+                'layout': {},
+                'paint': {
+                    'line-color': '#000',
+                    'line-width': 3
+                }
+            });
+
+            map.addLayer(
+                {
+                    'id': 'area-tags-highlighted',
+                    'type': 'fill',
+                    'source': 'area-tags',
+                    'paint': {
+                        'fill-outline-color': '#484896',
+                        'fill-color': '#FFFF00',
+                        'fill-opacity': 0.75
+                    },
+                    // Display none by adding a
+                    // filter with an empty string.
+                    'filter': ['in', 'name', '']
+                }
+            );
+
+            // Create a popup, but don't add it to the map yet.
+            const popup = new mapboxgl.Popup({
+                closeButton: false,
+                closeOnClick: false
+            });
+
+
+            map.on('mousemove', 'area-tags-layer', (e) => {
+                // Change the cursor style as a UI indicator.
+                map.getCanvas().style.cursor = 'pointer';
+
+                // Copy coordinates array.
+                const coordinates = e.lngLat;
+                const tagName = e.features.map(f => f.properties.name).join('<br><hr>');
+
+                // Ensure that if the map is zoomed out such that multiple
+                // copies of the feature are visible, the popup appears
+                // over the copy being pointed to.
+                while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+                    coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+                }
+
+                map.setFilter('area-tags-highlighted', buildFilter(e.features.map(f => f.properties.name)));
+
+                // Populate the popup and set its coordinates
+                // based on the feature found.
+                popup.setLngLat(coordinates).setHTML(tagName).addTo(map);
+            });
+
+            map.on('mouseleave', 'area-tags-layer', () => {
+                map.getCanvas().style.cursor = '';
+                popup.remove();
+                map.setFilter('area-tags-highlighted', ['in', 'name', '']);
+            });
+        }
+
+        map.on('load', () => {
+            fitMap();
+        });
+
+        const fitMap = async () => {
+
+            const response = await fetch('/data/area_drawings_new_1.json');
+            const geojson = await response.json();
+
+            var bbox = turf.bbox(geojson);
+
+            map.fitBounds(bbox, {
+                padding: 20
+            });
+        }
+        function buildFilter(arr) {
+            var filter = ['in', 'name'];
+
+            if (arr.length === 0) {
+                return filter;
             }
-        ); 
-        
-        // Create a popup, but don't add it to the map yet.
-        const popup = new mapboxgl.Popup({
-            closeButton: false,
-            closeOnClick: false
-        });
 
-
-        map.on('mousemove', 'area-tags-layer', (e) => {
-            // Change the cursor style as a UI indicator.
-            map.getCanvas().style.cursor = 'pointer';
-
-            // Copy coordinates array.
-            const coordinates = e.lngLat;
-            const tagName = e.features.map(f=> f.properties.name).join('<br><hr>');
-
-            // Ensure that if the map is zoomed out such that multiple
-            // copies of the feature are visible, the popup appears
-            // over the copy being pointed to.
-            while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
-                coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+            for (var i = 0; i < arr.length; i += 1) {
+                filter.push(arr[i]);
             }
 
-            map.setFilter('area-tags-highlighted', buildFilter(e.features.map(f=> f.properties.name)));
-
-            // Populate the popup and set its coordinates
-            // based on the feature found.
-            popup.setLngLat(coordinates).setHTML(tagName).addTo(map);
-        });
-
-        map.on('mouseleave', 'area-tags-layer', () => {
-            map.getCanvas().style.cursor = '';
-            popup.remove();
-            map.setFilter('area-tags-highlighted', ['in', 'name', '']);
-        });
-    }
-
-    map.on('load', () => {
-        fitMap();
-    });
-
-    const fitMap = async () => {
-
-        const response = await fetch('/data/area_drawings_new_1.json');  
-        const geojson = await response.json();
-
-        var bbox = turf.bbox(geojson);
-
-        map.fitBounds(bbox, {
-            padding: 20
-        });
-    }
-    function buildFilter(arr) {
-        var filter = ['in', 'name'];
-
-        if (arr.length === 0) {
             return filter;
         }
-        
-        for(var i = 0; i < arr.length; i += 1) {
-            filter.push(arr[i]);
-        }
-        
-        return filter;
-    }
-</script>
+    </script>
 
 </body>
+
 </html>
