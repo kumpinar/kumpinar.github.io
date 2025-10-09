@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mapbox Fullscreen Map</title>
+    <script src='https://api.mapbox.com/mapbox-gl-js/v3.7.0/mapbox-gl.js'></script>
+    <link href='https://api.mapbox.com/mapbox-gl-js/v3.7.0/mapbox-gl.css' rel='stylesheet' />
+    <script src='https://unpkg.com/@turf/turf@6/turf.min.js'></script>
+    <link href='styles.css' rel='stylesheet' />
+</head>
+<body>
+    <div id="map"></div>
+    <div class="logo-container">
+        <img src="F1AGP_logo.png" alt="F1 AGP Logo">
+    </div>
+    <div class="theme-switcher">
+        <h3>Lighting</h3>
+        <div class="theme-buttons">
+            <button class="theme-btn dawn" data-theme="dawn">Dawn</button>
+            <button class="theme-btn day active" data-theme="day">Day</button>
+            <button class="theme-btn dusk" data-theme="dusk">Dusk</button>
+            <button class="theme-btn night" data-theme="night">Night</button>
+        </div>
+    </div>
+    <div class="animation-controls">
+        <button class="animate-btn" onclick="startFlythrough()">▶ Start Flythrough</button>
+    </div>
+    <div class="loading" id="loading">Loading map...</div>
+
+    <script src='script.js'></script>
+</body>
+</html>
