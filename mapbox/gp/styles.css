@@ -151,3 +151,48 @@ body {
     transform: translateY(0);
 }
 
+/* Mobile Responsive Styles */
+@media (max-width: 768px) {
+    .theme-switcher {
+        top: 10px;
+        right: 10px;
+        padding: 10px;
+    }
+    
+    .theme-switcher h3 {
+        font-size: 11px;
+        margin: 0 0 8px 0;
+    }
+    
+    .theme-buttons {
+        flex-direction: column;
+        gap: 6px;
+    }
+    
+    .theme-btn {
+        padding: 8px 12px;
+        font-size: 11px;
+        width: 100%;
+        text-align: center;
+    }
+    
+    .logo-container {
+        top: 10px;
+        left: 10px;
+        padding: 8px;
+    }
+    
+    .logo-container img {
+        height: 40px;
+    }
+    
+    .animation-controls {
+        bottom: 20px;
+    }
+    
+    .animate-btn {
+        padding: 10px 20px;
+        font-size: 14px;
+    }
+}
+
