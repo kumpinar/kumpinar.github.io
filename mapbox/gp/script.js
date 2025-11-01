@@ -55,7 +55,7 @@ map.on('load', () => {
                     'line-cap': 'round'
                 },
                 'paint': {
-                    'line-color': '#ff0000',
+                    'line-color': '#572AA3',
                     'line-width': 4,
                     'line-opacity': 0.8
                 }
@@ -92,7 +92,7 @@ map.on('load', () => {
                         'text-pitch-alignment': 'viewport'
                     },
                     'paint': {
-                        'text-color': '#ff0000',
+                        'text-color': '#572AA3',
                         'text-halo-color': '#ffffff',
                         'text-halo-width': 2
                     }
@@ -171,6 +171,27 @@ map.on('load', () => {
                         }
                     });
 
+                    // Add click handler for 3D buildings
+                    map.on('click', 'custom-buildings-3d', (e) => {
+                        if (e.features.length > 0) {
+                            const feature = e.features[0];
+                            const buildingName = feature.properties.name || 'Unknown Building';
+                            const buildingHeight = feature.properties.height_meter || 'N/A';
+                            
+                            // Show modal with building information
+                            showBuildingModal(buildingName, buildingHeight);
+                        }
+                    });
+                    
+                    // Change cursor to pointer when hovering over buildings
+                    map.on('mouseenter', 'custom-buildings-3d', () => {
+                        map.getCanvas().style.cursor = 'pointer';
+                    });
+                    
+                    map.on('mouseleave', 'custom-buildings-3d', () => {
+                        map.getCanvas().style.cursor = '';
+                    });
+                    
                     console.log('Custom buildings loaded successfully');
                 })
                 .catch(error => {
@@ -415,15 +436,28 @@ function buildCompletePath() {
     
     console.log('Generating', numSegments, 'segments at 2-meter intervals (2x speed)');
     
+    // Altitude oscillation settings
+    const minAltitude = 10;   // Minimum altitude in meters
+    const maxAltitude = 15;   // Maximum altitude in meters
+    const avgAltitude = (minAltitude + maxAltitude) / 2;  // 12.5
+    const altitudeAmplitude = (maxAltitude - minAltitude) / 2;  // 2.5
+    const altitudeWavelength = 450; // Complete one up-down cycle every 150 segments (300 meters)
+    
     for (let i = 0; i <= numSegments; i++) {
         const distanceAlongLine = i * segmentDistance;
         const point = turf.along(line, distanceAlongLine, {units: 'meters'});
         
         if (point && point.geometry && point.geometry.coordinates) {
+            // Calculate smooth varying altitude using sine wave
+            // Start at max (15), go down to min (10), then back up to max (15)
+            // Using positive cosine to start at maximum (15m)
+            const altitudePhase = (2 * Math.PI * i) / altitudeWavelength;
+            const altitude = avgAltitude + altitudeAmplitude * Math.cos(altitudePhase);
+            
             path.push({
                 lng: point.geometry.coordinates[0],
                 lat: point.geometry.coordinates[1],
-                altitude: 12.5 // Very low altitude, very close to the road
+                altitude: altitude
             });
         }
     }
@@ -732,6 +766,50 @@ function returnToInitialView() {
     });
 }
 
+// Building Modal Functions
+function showBuildingModal(name, height) {
+    const modal = document.getElementById('buildingModal');
+    const buildingName = document.getElementById('buildingName');
+    const buildingHeight = document.getElementById('buildingHeight');
+    
+    buildingName.textContent = name;
+    buildingHeight.textContent = `${height} meters`;
+    
+    modal.style.display = 'block';
+}
+
+function closeBuildingModal() {
+    const modal = document.getElementById('buildingModal');
+    modal.style.display = 'none';
+}
+
+// Modal event listeners
+document.addEventListener('DOMContentLoaded', () => {
+    const modal = document.getElementById('buildingModal');
+    const closeBtn = document.querySelector('.close');
+    
+    // Close modal when clicking X
+    if (closeBtn) {
+        closeBtn.onclick = closeBuildingModal;
+    }
+    
+    // Close modal when clicking outside
+    window.onclick = (event) => {
+        if (event.target === modal) {
+            closeBuildingModal();
+        }
+    };
+    
+    // Close modal with Escape key
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') {
+            closeBuildingModal();
+        }
+    });
+});
+
 // Make functions available globally
 window.startFlythrough = startFlythrough;
 window.stopFlythrough = stopFlythrough;
+window.showBuildingModal = showBuildingModal;
+window.closeBuildingModal = closeBuildingModal;
