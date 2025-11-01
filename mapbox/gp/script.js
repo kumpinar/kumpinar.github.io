@@ -11,6 +11,7 @@ const map = new mapboxgl.Map({
 
 let currentTheme = 'day';
 let circuitData = null;
+let flyPathData = null; // Store fly path data for animation
 let isAnimating = false;
 let animationFrameId = null;
 let lastBearing = 0; // For smooth bearing transitions
@@ -198,6 +199,17 @@ map.on('load', () => {
                 console.log('Initial view stored:', initialView);
             }, 1600); // Wait for fitBounds animation to complete
 
+            // Load the fly path GeoJSON for animation
+            fetch('au-1953-fly-path.geojson')
+                .then(response => response.json())
+                .then(flyData => {
+                    flyPathData = flyData;
+                    console.log('Fly path data loaded successfully');
+                })
+                .catch(error => {
+                    console.error('Error loading fly path:', error);
+                });
+
             // Hide loading indicator
             document.getElementById('loading').classList.add('hidden');
         })
@@ -298,8 +310,35 @@ function normalizeAngle(angle) {
     return angle;
 }
 
+// Calculate turn angle at a given position on the path
+function calculateTurnAngle(path, index, lookAheadSteps = 10) {
+    if (index < 1 || index >= path.length - lookAheadSteps) {
+        return 0; // No turn at start/end
+    }
+    
+    // Get previous, current, and future points
+    const prevPoint = path[index - 1];
+    const currentPoint = path[index];
+    const futurePoint = path[Math.min(index + lookAheadSteps, path.length - 1)];
+    
+    // Calculate bearing from previous to current
+    const dx1 = currentPoint.lng - prevPoint.lng;
+    const dy1 = currentPoint.lat - prevPoint.lat;
+    const bearing1 = Math.atan2(dx1, dy1) * (180 / Math.PI);
+    
+    // Calculate bearing from current to future
+    const dx2 = futurePoint.lng - currentPoint.lng;
+    const dy2 = futurePoint.lat - currentPoint.lat;
+    const bearing2 = Math.atan2(dx2, dy2) * (180 / Math.PI);
+    
+    // Calculate the turn angle (normalized to -180 to 180)
+    const turnAngle = normalizeAngle(bearing2 - bearing1);
+    
+    return Math.abs(turnAngle); // Return absolute value for turn sharpness
+}
+
 // Update camera position with pitch control and smooth bearing
-function updateCameraPosition(position, altitude, target, interpolationFactor = 1.0) {
+function updateCameraPosition(position, altitude, target, interpolationFactor = 1.0, turnAngle = 0) {
     // Calculate bearing (direction) towards target
     const dx = target[0] - position[0];
     const dy = target[1] - position[1];
@@ -309,9 +348,14 @@ function updateCameraPosition(position, altitude, target, interpolationFactor = 
     // Handle angle wrapping (e.g., 350° to 10° should interpolate through 360°, not backwards)
     let bearingDiff = normalizeAngle(targetBearing - lastBearing);
     
-    // Apply exponential smoothing with higher factor for faster response at high speed
-    // Higher speed = higher smoothing factor for quicker response
-    const smoothingFactor = 0.65 * interpolationFactor;
+    // Adaptive smoothing based on turn sharpness
+    // Sharp turns (>30°) get more smoothing, gentle turns get less
+    // This makes the camera turn more gradually through sharp corners
+    const turnFactor = Math.min(turnAngle / 45, 1.0); // Normalize turn angle to 0-1 range (45° = full effect)
+    const baseSmoothingFactor = 0.45; // Lower base for smoother turns
+    const turnSmoothingBoost = 0.25 * (1 - turnFactor); // Less smoothing on straight paths
+    const smoothingFactor = (baseSmoothingFactor + turnSmoothingBoost) * interpolationFactor;
+    
     const bearing = lastBearing + bearingDiff * smoothingFactor;
     lastBearing = bearing;
     
@@ -334,19 +378,35 @@ function updateCameraPosition(position, altitude, target, interpolationFactor = 
 
 // Build complete path using turf.js to generate optimized segments
 function buildCompletePath() {
-    if (!circuitData) {
-        console.error('Circuit data not loaded');
+    if (!flyPathData) {
+        console.error('Fly path data not loaded');
         return [];
     }
     
     const path = [];
     
-    // Get the line from circuit data
-    const line = circuitData.features[0];
+    // Get the line from fly path data
+    const feature = flyPathData.features[0];
+    
+    // Handle MultiLineString geometry - extract the first line
+    let line;
+    if (feature.geometry.type === 'MultiLineString') {
+        // Convert MultiLineString to LineString by taking the first line
+        line = {
+            type: 'Feature',
+            geometry: {
+                type: 'LineString',
+                coordinates: feature.geometry.coordinates[0]
+            },
+            properties: feature.properties
+        };
+    } else {
+        line = feature;
+    }
     
     // Calculate total length of the line in meters
     const lineLength = turf.length(line, {units: 'meters'});
-    console.log('Total circuit length:', lineLength.toFixed(2), 'meters');
+    console.log('Total fly path length:', lineLength.toFixed(2), 'meters');
     
     // Generate points along the line at 2-meter intervals for 2x speed
     // This reduces computational load while maintaining smooth animation
@@ -466,8 +526,8 @@ function startFlythrough() {
         return;
     }
     
-    if (!circuitData) {
-        console.error('Circuit data not loaded yet');
+    if (!flyPathData) {
+        console.error('Fly path data not loaded yet');
         return;
     }
     
@@ -509,14 +569,12 @@ function startFlythrough() {
 
 // Main flight along the circuit
 function startMainFlight(path, startSegmentIndex = 0, startAccumulatedTime = 0) {
-    // Animation: 10ms per segment at 2-meter intervals = 200 m/s
-    const millisecondsPerSegment = 10; // 10 milliseconds per 2-meter segment
+    // Base animation speed: 10ms per segment at 2-meter intervals = 200 m/s
+    const baseMillisecondsPerSegment = 10; // Base speed
     const segmentDistance = 2; // meters per segment
-    const speed = segmentDistance / (millisecondsPerSegment / 1000); // 200 m/s
-    const totalDuration = path.length * millisecondsPerSegment;
+    const baseSpeed = segmentDistance / (baseMillisecondsPerSegment / 1000); // 200 m/s
     
-    console.log('Animation duration:', (totalDuration / 1000).toFixed(2), 'seconds');
-    console.log('Speed:', speed, 'meters per second');
+    console.log('Base speed:', baseSpeed, 'meters per second');
     console.log('Starting from segment:', startSegmentIndex);
     
     let currentSegmentIndex = startSegmentIndex;
@@ -530,12 +588,33 @@ function startMainFlight(path, startSegmentIndex = 0, startAccumulatedTime = 0) 
         
         const deltaTime = time - lastTime;
         lastTime = time;
+        
+        // Calculate turn angle at current position for speed adjustment
+        const turnAngle = calculateTurnAngle(path, currentSegmentIndex, 15);
+        
+        // Dynamic speed adjustment based on turn sharpness
+        // Sharp turns (>45°) = 3x slower, medium turns (30°) = 2x slower, gentle turns = normal speed
+        let speedMultiplier = 1.0;
+        if (turnAngle > 45) {
+            speedMultiplier = 0.33; // Very sharp turn: 3x slower
+        } else if (turnAngle > 30) {
+            speedMultiplier = 0.5; // Sharp turn: 2x slower
+        } else if (turnAngle > 15) {
+            speedMultiplier = 0.7; // Medium turn: 1.4x slower
+        } else if (turnAngle > 8) {
+            speedMultiplier = 0.85; // Gentle turn: 1.2x slower
+        }
+        // else: straight path = normal speed (1.0)
+        
+        // Adjust milliseconds per segment based on turn
+        const adjustedMillisecondsPerSegment = baseMillisecondsPerSegment / speedMultiplier;
+        
         accumulatedTime += deltaTime;
         
-        // Move forward based on accumulated time for smoother progression
-        while (accumulatedTime >= millisecondsPerSegment && currentSegmentIndex < path.length - 1) {
+        // Move forward based on accumulated time and adjusted speed
+        while (accumulatedTime >= adjustedMillisecondsPerSegment && currentSegmentIndex < path.length - 1) {
             currentSegmentIndex++;
-            accumulatedTime -= millisecondsPerSegment;
+            accumulatedTime -= adjustedMillisecondsPerSegment;
         }
         
         // Continuously update current animation state for pause/resume
@@ -572,7 +651,7 @@ function startMainFlight(path, startSegmentIndex = 0, startAccumulatedTime = 0) 
         }
         
         // Smooth interpolation between current and next segment with easing
-        const segmentProgress = Math.min(accumulatedTime / millisecondsPerSegment, 1.0);
+        const segmentProgress = Math.min(accumulatedTime / adjustedMillisecondsPerSegment, 1.0);
         const easedProgress = easeInOutCubic(segmentProgress);
         
         const position = lerp(
@@ -582,9 +661,11 @@ function startMainFlight(path, startSegmentIndex = 0, startAccumulatedTime = 0) 
         );
         const altitude = lerp(currentPoint.altitude, nextPoint.altitude, easedProgress);
         
-        // Adaptive lookahead: dynamically adjust based on remaining path
-        // Use 25 steps (50m at 2m/step) for better responsiveness at 2x speed
-        const lookAheadSteps = 25;
+        // Adaptive lookahead: increase distance during turns for smoother bearing transitions
+        // Sharp turns need longer lookahead to anticipate the turn
+        const baseLookAheadSteps = 25;
+        const turnLookAheadBoost = Math.floor(turnAngle / 5); // +1 step per 5° of turn
+        const lookAheadSteps = Math.min(baseLookAheadSteps + turnLookAheadBoost, 50);
         const lookAheadIndex = Math.min(currentSegmentIndex + lookAheadSteps, path.length - 1);
         const targetPoint = path[lookAheadIndex];
         
@@ -596,8 +677,8 @@ function startMainFlight(path, startSegmentIndex = 0, startAccumulatedTime = 0) 
         
         const target = [targetPoint.lng, targetPoint.lat];
         
-        // Pass interpolation factor for adaptive smoothing
-        updateCameraPosition(position, altitude, target, easedProgress);
+        // Pass turn angle to updateCameraPosition for adaptive bearing smoothing
+        updateCameraPosition(position, altitude, target, easedProgress, turnAngle);
         
         animationFrameId = requestAnimationFrame(frame);
     }
