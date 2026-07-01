@@ -184,6 +184,21 @@
     .contact-card p{color:var(--muted);max-width:520px;margin:16px auto 0;font-size:17px}
     .contact-actions{display:flex;flex-wrap:wrap;gap:14px;justify-content:center;margin-top:30px}
 
+    /* ---------- Testimonials ---------- */
+    .traits{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:30px}
+    .traits span{font-size:12.5px;font-weight:600;color:var(--muted);background:var(--glass);border:1px solid var(--line);padding:6px 12px;border-radius:999px}
+    .traits span b{color:var(--c1);font-weight:700}
+    .tm-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:22px}
+    @media(max-width:520px){.tm-grid{grid-template-columns:1fr}}
+    .tm{position:relative;padding:26px 24px 22px;border-radius:var(--radius);background:var(--glass);border:1px solid var(--line);display:flex;flex-direction:column}
+    .tm .stars{color:#fbbf24;font-size:15px;letter-spacing:2px;margin-bottom:12px}
+    .tm .stars small{color:var(--muted-2);font-size:12px;letter-spacing:0;margin-left:6px}
+    .tm blockquote{margin:0;font-size:15.5px;line-height:1.65;color:var(--ink);flex:1}
+    .tm blockquote::before{content:"“";font-family:Sora;font-size:44px;line-height:0;color:var(--c2);opacity:.5;margin-right:2px;vertical-align:-14px}
+    .tm .meta{margin-top:18px;padding-top:16px;border-top:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:10px}
+    .tm .proj{font-size:13px;color:var(--muted)}
+    .tm .amt{font-size:12.5px;font-weight:600;color:var(--c4);white-space:nowrap}
+
     /* ---------- Footer ---------- */
     footer{border-top:1px solid var(--line);padding:34px 0;color:var(--muted-2);font-size:13.5px}
     .foot-inner{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px}
@@ -204,6 +219,7 @@
       <div class="nav-links">
         <a href="#work">Work</a>
         <a href="#stack">Stack</a>
+        <a href="#reviews">Reviews</a>
         <a href="#contact">Contact</a>
         <a class="btn btn-primary" href="mailto:seb@kumpinar.com">Hire me</a>
       </div>
@@ -222,10 +238,10 @@
       </div>
 
       <div class="trust reveal">
-        <span class="up" aria-label="Upwork">
+        <a class="up" href="https://www.upwork.com/freelancers/~01f960936a013e062b" target="_blank" rel="noopener" aria-label="View Upwork profile">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="#6fda44" aria-hidden="true"><path d="M18.6 6.3a5 5 0 0 0-4.9 4.2c-.5-.9-1-2-1.4-3.2H9.6v4.6c0 1.4-.8 2.4-2 2.4s-2-1-2-2.4V7.3H3v4.6a4.3 4.3 0 0 0 4.5 4.7c2.4 0 4-1.9 4.4-4 .3.6.6 1.2.9 1.7l-1.6 6h2.7l1.1-4.5c.9.7 2 1.1 3.2 1.1A4.6 4.6 0 0 0 23 11.9a4.6 4.6 0 0 0-4.4-5.6Zm0 6.9c-.9 0-1.8-.4-2.5-1l.2-.9v-.1c.2-1.2 1-2.4 2.3-2.4 1.1 0 2 .9 2 2.2 0 1.2-.9 2.2-2 2.2Z"/></svg>
           <b>Top Rated Plus</b>
-        </span>
+        </a>
         <span class="sep"></span>
         <span class="badge-t">✅ <b>100%</b> Job Success</span>
         <span class="sep"></span>
@@ -533,6 +549,52 @@
     </div>
   </section>
 
+  <!-- TESTIMONIALS -->
+  <section class="section" id="reviews">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <div>
+          <div class="eyebrow">Client reviews</div>
+          <h2>What clients say on Upwork</h2>
+          <p>A 100% Job Success score across 78 jobs and 2,284 hours — here's a sample in clients' own words.</p>
+        </div>
+      </div>
+
+      <div class="traits reveal">
+        <span><b>18×</b> Committed to Quality</span>
+        <span><b>15×</b> Collaborative</span>
+        <span><b>14×</b> Clear Communicator</span>
+        <span><b>14×</b> Reliable</span>
+        <span><b>8×</b> Professional</span>
+        <span><b>4×</b> Solution Oriented</span>
+      </div>
+
+      <div class="tm-grid">
+        <figure class="tm reveal">
+          <div class="stars">★★★★★ <small>5.0</small></div>
+          <blockquote>I've been working with Seb for a number of years. Seb is professional, efficient and great to work with.</blockquote>
+          <figcaption class="meta"><span class="proj">Monitoring &amp; assessment tool</span><span class="amt">$15,900 · 305 hrs</span></figcaption>
+        </figure>
+
+        <figure class="tm reveal">
+          <div class="stars">★★★★★ <small>4.8</small></div>
+          <blockquote>Seb was very helpful and understood the challenge at hand instantly. He provided us with the assistance we needed in a timely and professional manner.</blockquote>
+          <figcaption class="meta"><span class="proj">WordPress &amp; mapping full-stack</span><span class="amt">$5,880 · 131 hrs</span></figcaption>
+        </figure>
+
+        <figure class="tm reveal">
+          <div class="stars">★★★★★ <small>5.0</small></div>
+          <blockquote>Excellent developer, 100% recommended.</blockquote>
+          <figcaption class="meta"><span class="proj">Dynamic bubbles data viz</span><span class="amt">Fixed price</span></figcaption>
+        </figure>
+      </div>
+
+      <div style="margin-top:26px" class="reveal">
+        <a class="btn btn-upwork" href="https://www.upwork.com/freelancers/~01f960936a013e062b" target="_blank" rel="noopener">Read all reviews on Upwork ↗</a>
+      </div>
+    </div>
+  </section>
+
   <!-- CONTACT -->
   <section class="section contact" id="contact">
     <div class="wrap">
@@ -541,7 +603,7 @@
         <p>Tell me about your data and your goal — I'll help you turn it into an interactive map your users will love. <strong>Top Rated Plus</strong> on Upwork with a <strong>100% job-success</strong> track record, or book a 30-minute consultation to talk it through.</p>
         <div class="contact-actions">
           <a class="btn btn-primary" href="mailto:seb@kumpinar.com">✉️ seb@kumpinar.com</a>
-          <a class="btn btn-upwork" id="upwork-cta" href="mailto:seb@kumpinar.com?subject=Upwork%20project%20enquiry">Hire me on Upwork ↗</a>
+          <a class="btn btn-upwork" id="upwork-cta" href="https://www.upwork.com/freelancers/~01f960936a013e062b" target="_blank" rel="noopener">Hire me on Upwork ↗</a>
           <a class="btn btn-ghost" href="#work">Browse the demos</a>
         </div>
       </div>
