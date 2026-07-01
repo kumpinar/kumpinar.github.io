@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mushroom Map — Interactive Mushroom Encyclopedia</title>
+  <meta name="description" content="An interactive, map-based mushroom encyclopedia. Explore species by edibility, season and family, and see where they occur worldwide. Educational use only." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <link href="https://api.mapbox.com/mapbox-gl-js/v3.9.0/mapbox-gl.css" rel="stylesheet" />
+  <link href="./css/styles.css" rel="stylesheet" />
+</head>
+<body>
+  <!-- Liquid glass background -->
+  <div class="liquid-bg" aria-hidden="true">
+    <span class="orb orb-1"></span><span class="orb orb-2"></span>
+    <span class="orb orb-3"></span><span class="orb orb-4"></span>
+  </div>
+
+  <div class="app">
+    <!-- Safety disclaimer -->
+    <div class="disclaimer" role="alert">
+      <div class="disclaimer-inner glass-amber">
+        <span aria-hidden="true">⚠️</span>
+        <strong>For educational purposes only.</strong> Never eat any wild mushroom based solely on the
+        information here. When in doubt, <strong>throw it out</strong>. In case of suspected poisoning,
+        contact your local <strong>poison control center</strong> immediately.
+      </div>
+    </div>
+
+    <!-- Header -->
+    <header class="site">
+      <div class="header-inner glass-strong">
+        <a class="logo" href="#" aria-label="Home">
+          <span class="badge" aria-hidden="true">🍄</span>
+          <span class="name">Mushroom Map</span>
+        </a>
+        <div class="search">
+          <form id="search-form" class="glass" role="search">
+            <span aria-hidden="true">🔍</span>
+            <input id="search-input" type="search" placeholder="Search mushrooms… (e.g. chanterelle, Boletus)" aria-label="Search mushrooms" />
+          </form>
+        </div>
+        <nav class="nav">
+          <a href="#">Encyclopedia</a>
+        </nav>
+      </div>
+    </header>
+
+    <!-- Dynamic content (home / detail) -->
+    <main id="view"></main>
+
+    <!-- Footer -->
+    <footer class="site">
+      <div class="footer-inner glass">
+        <div class="footer-top">
+          <div style="max-width:440px">
+            <a class="logo" href="#"><span aria-hidden="true">🍄</span> Mushroom Map</a>
+            <p style="margin-top:8px;line-height:1.6;color:#57534e">
+              An interactive, map-based mushroom encyclopedia. Explore species by edibility, season and
+              family, and see where they occur worldwide.
+            </p>
+          </div>
+          <div class="footer-note glass-amber">
+            <strong>⚠️ Important:</strong> The information here is not medical or safety advice. Never eat a
+            mushroom you are unsure about. Many species are shown as <em>“unknown (unverified)”</em> — their
+            edibility has not been confirmed.
+          </div>
+        </div>
+        <div class="footer-copy">
+          Data from GBIF &amp; iNaturalist. Photos © their respective authors (Creative Commons).
+          Static build — no server required.
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <script src="https://api.mapbox.com/mapbox-gl-js/v3.9.0/mapbox-gl.js"></script>
+  <script src="./js/app.js"></script>
+</body>
+</html>
