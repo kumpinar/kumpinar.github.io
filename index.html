@@ -1,23 +1,559 @@
-<html>
-    <head>
-        <!-- Google tag (gtag.js) -->
-        <script async src="https://www.googletagmanager.com/gtag/js?id=G-B45MJLMFP0"></script>
-        <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Seb Kumpınar — Interactive Maps & Geospatial Web Developer</title>
+  <meta name="description" content="Sebahattin (Seb) Kumpınar builds interactive maps and geospatial web apps with Mapbox GL, Leaflet, Google Maps and HERE. Explore a portfolio of live map demos." />
+  <meta name="author" content="Sebahattin Kumpınar" />
 
-        gtag('config', 'G-B45MJLMFP0');
-        </script>
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Seb Kumpınar — Interactive Maps & Geospatial Web Developer" />
+  <meta property="og:description" content="A portfolio of live interactive map demos: Mapbox GL, Leaflet, Google Maps & HERE." />
+  <meta property="og:url" content="https://kumpinar.github.io/" />
+  <meta property="og:image" content="https://kumpinar.github.io/assets/thumbs/gp.jpg" />
+  <meta name="twitter:card" content="summary_large_image" />
 
-    </head>
-    <body>
-        <h1>Seb Sebahattin Kumpınar</h1>
-        <h3>My demo projects</h3>
-        <ul>
-            <li><a href="/mapbox/national-parks-of-turkey.html">Mapbox -  National Parks of Turkey</a></li>
-            <li><a href="/mapbox/mashroom-map/">Mapbox - Mushroom Map (interactive mushroom encyclopedia)</a></li>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🗺️%3C/text%3E%3C/svg%3E" />
 
-        </ul>
-    </body>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-B45MJLMFP0"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-B45MJLMFP0');
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    :root{
+      --bg:#070b16;
+      --bg-2:#0b1120;
+      --ink:#eef2ff;
+      --muted:#9aa6c4;
+      --muted-2:#6b779b;
+      --line:rgba(255,255,255,.10);
+      --glass:rgba(255,255,255,.045);
+      --glass-2:rgba(255,255,255,.07);
+      --c1:#22d3ee; /* cyan */
+      --c2:#6366f1; /* indigo */
+      --c3:#a855f7; /* violet */
+      --c4:#34d399; /* emerald */
+      --radius:20px;
+      --maxw:1200px;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+      color:var(--ink);
+      background:var(--bg);
+      -webkit-font-smoothing:antialiased;
+      overflow-x:hidden;
+      line-height:1.6;
+    }
+    a{color:inherit;text-decoration:none}
+    h1,h2,h3{font-family:Sora,Inter,sans-serif;line-height:1.1;margin:0;letter-spacing:-.02em}
+
+    /* ---------- Aurora background ---------- */
+    .aurora{position:fixed;inset:0;z-index:-2;overflow:hidden;background:
+        radial-gradient(1200px 700px at 80% -10%, rgba(99,102,241,.18), transparent 60%),
+        radial-gradient(900px 600px at 0% 10%, rgba(34,211,238,.14), transparent 55%),
+        var(--bg);}
+    .aurora span{position:absolute;border-radius:50%;filter:blur(70px);opacity:.55;mix-blend-mode:screen;animation:float 22s ease-in-out infinite}
+    .aurora .b1{width:520px;height:520px;left:-120px;top:-80px;background:radial-gradient(circle,#22d3ee,transparent 70%)}
+    .aurora .b2{width:560px;height:560px;right:-140px;top:-40px;background:radial-gradient(circle,#6366f1,transparent 70%);animation-delay:-6s}
+    .aurora .b3{width:600px;height:600px;left:35%;top:30%;background:radial-gradient(circle,#a855f7,transparent 70%);animation-delay:-12s;opacity:.4}
+    .grid-overlay{position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.35;
+      background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);
+      background-size:54px 54px;
+      -webkit-mask-image:radial-gradient(circle at 50% 0%,#000,transparent 70%);
+      mask-image:radial-gradient(circle at 50% 0%,#000,transparent 70%);}
+    @keyframes float{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(40px,30px) scale(1.08)}66%{transform:translate(-30px,20px) scale(.96)}}
+
+    .wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px}
+
+    /* ---------- Nav ---------- */
+    .nav{position:sticky;top:0;z-index:50;backdrop-filter:blur(14px);background:linear-gradient(180deg,rgba(7,11,22,.85),rgba(7,11,22,.35));border-bottom:1px solid var(--line)}
+    .nav-inner{display:flex;align-items:center;justify-content:space-between;height:66px}
+    .brand{display:flex;align-items:center;gap:10px;font-family:Sora;font-weight:700;font-size:17px}
+    .brand .dot{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;background:linear-gradient(135deg,var(--c1),var(--c3));box-shadow:0 6px 18px rgba(99,102,241,.45);font-size:15px}
+    .nav-links{display:flex;align-items:center;gap:26px}
+    .nav-links a{color:var(--muted);font-size:14.5px;font-weight:500;transition:color .2s}
+    .nav-links a:hover{color:var(--ink)}
+    .btn{display:inline-flex;align-items:center;gap:8px;padding:11px 20px;border-radius:999px;font-weight:600;font-size:14.5px;border:1px solid transparent;cursor:pointer;transition:transform .15s ease, box-shadow .2s, background .2s}
+    .btn-primary{background:linear-gradient(135deg,var(--c1),var(--c2) 55%,var(--c3));color:#08101f;box-shadow:0 10px 26px rgba(99,102,241,.4)}
+    .btn-primary:hover{transform:translateY(-2px);box-shadow:0 16px 34px rgba(99,102,241,.55)}
+    .btn-ghost{background:var(--glass);border-color:var(--line);color:var(--ink)}
+    .btn-ghost:hover{background:var(--glass-2);transform:translateY(-2px)}
+    @media(max-width:720px){.nav-links a:not(.btn){display:none}}
+
+    /* ---------- Hero ---------- */
+    .hero{padding:76px 0 34px;position:relative}
+    .pill{display:inline-flex;align-items:center;gap:9px;padding:7px 15px;border-radius:999px;background:var(--glass);border:1px solid var(--line);font-size:13px;color:var(--muted);margin-bottom:26px}
+    .pill .live{width:8px;height:8px;border-radius:50%;background:var(--c4);box-shadow:0 0 0 0 rgba(52,211,153,.7);animation:pulse 2s infinite}
+    @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(52,211,153,.6)}70%{box-shadow:0 0 0 10px rgba(52,211,153,0)}100%{box-shadow:0 0 0 0 rgba(52,211,153,0)}}
+    .hero h1{font-size:clamp(38px,6.4vw,74px);font-weight:800;letter-spacing:-.03em}
+    .hero h1 .grad{background:linear-gradient(120deg,var(--c1),var(--c2) 45%,var(--c3));-webkit-background-clip:text;background-clip:text;color:transparent}
+    .hero .lead{max-width:660px;margin:22px 0 0;color:var(--muted);font-size:clamp(16px,2.1vw,20px)}
+    .hero .lead strong{color:var(--ink);font-weight:600}
+    .cta{display:flex;flex-wrap:wrap;gap:14px;margin-top:34px}
+    .tech{display:flex;flex-wrap:wrap;gap:10px;margin-top:38px}
+    .tech span{padding:8px 14px;border-radius:11px;background:var(--glass);border:1px solid var(--line);font-size:13px;color:var(--muted);font-weight:500}
+    .tech span b{color:var(--ink);font-weight:600}
+
+    /* ---------- Stats ---------- */
+    .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin:56px 0 8px}
+    .stat{padding:22px;border-radius:var(--radius);background:var(--glass);border:1px solid var(--line);text-align:center}
+    .stat .n{font-family:Sora;font-weight:800;font-size:clamp(26px,4vw,38px);background:linear-gradient(120deg,var(--c1),var(--c3));-webkit-background-clip:text;background-clip:text;color:transparent}
+    .stat .l{color:var(--muted);font-size:13px;margin-top:4px}
+    @media(max-width:640px){.stats{grid-template-columns:repeat(2,1fr)}}
+
+    /* ---------- Section head ---------- */
+    .section{padding:72px 0 10px}
+    .sec-head{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-bottom:30px}
+    .sec-head .eyebrow{color:var(--c1);font-weight:600;font-size:13.5px;letter-spacing:.08em;text-transform:uppercase}
+    .sec-head h2{font-size:clamp(28px,4vw,42px);font-weight:700;margin-top:10px}
+    .sec-head p{color:var(--muted);max-width:520px;margin:8px 0 0}
+
+    /* ---------- Filters ---------- */
+    .filters{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:30px}
+    .filter{padding:9px 18px;border-radius:999px;background:var(--glass);border:1px solid var(--line);color:var(--muted);font-size:14px;font-weight:600;cursor:pointer;transition:all .2s}
+    .filter:hover{color:var(--ink);border-color:rgba(255,255,255,.22)}
+    .filter.active{background:linear-gradient(135deg,var(--c1),var(--c3));color:#08101f;border-color:transparent;box-shadow:0 8px 22px rgba(99,102,241,.35)}
+    .filter .c{opacity:.7;font-weight:500;margin-left:2px}
+
+    /* ---------- Project grid ---------- */
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:24px}
+    @media(max-width:520px){.grid{grid-template-columns:1fr}}
+    .card{position:relative;border-radius:var(--radius);overflow:hidden;background:var(--glass);border:1px solid var(--line);display:flex;flex-direction:column;transition:transform .28s cubic-bezier(.2,.7,.2,1),box-shadow .28s,border-color .28s;transform:translateY(16px);opacity:0}
+    .card.in{transform:translateY(0);opacity:1}
+    .card:hover{transform:translateY(-8px);border-color:rgba(255,255,255,.24);box-shadow:0 26px 60px -18px rgba(0,0,0,.7)}
+    .thumb{position:relative;aspect-ratio:16/10;overflow:hidden;background:var(--bg-2)}
+    .thumb img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s ease}
+    .card:hover .thumb img{transform:scale(1.06)}
+    .thumb::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 45%,rgba(7,11,22,.65));pointer-events:none}
+    .badge{position:absolute;top:12px;left:12px;z-index:2;padding:6px 12px;border-radius:999px;font-size:11.5px;font-weight:700;letter-spacing:.02em;color:#fff;backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.25)}
+    .b-mapbox{background:rgba(79,70,229,.72)}
+    .b-leaflet{background:rgba(16,163,127,.72)}
+    .b-google{background:rgba(217,48,37,.72)}
+    .b-here{background:rgba(0,175,204,.72)}
+    .card-body{padding:20px 20px 22px;display:flex;flex-direction:column;flex:1}
+    .card-body h3{font-size:19px;font-weight:700}
+    .card-body p{color:var(--muted);font-size:14px;margin:9px 0 0;flex:1}
+    .tags{display:flex;flex-wrap:wrap;gap:7px;margin-top:16px}
+    .tags span{font-size:11.5px;color:var(--muted-2);background:rgba(255,255,255,.04);border:1px solid var(--line);padding:4px 9px;border-radius:8px}
+    .card-foot{display:flex;align-items:center;gap:8px;margin-top:18px;color:var(--c1);font-weight:600;font-size:14px}
+    .card-foot .arrow{transition:transform .2s}
+    .card:hover .card-foot .arrow{transform:translateX(5px)}
+    .card a.stretch{position:absolute;inset:0;z-index:3}
+
+    /* placeholder thumbnail (demos that need a live map key) */
+    .ph{position:absolute;inset:0;display:grid;place-items:center;overflow:hidden}
+    .ph::before{content:"";position:absolute;inset:0;opacity:.5;
+      background-image:linear-gradient(rgba(255,255,255,.14) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.14) 1px,transparent 1px);
+      background-size:30px 30px;-webkit-mask-image:radial-gradient(circle at 50% 45%,#000,transparent 75%);mask-image:radial-gradient(circle at 50% 45%,#000,transparent 75%)}
+    .ph .ico{font-size:52px;filter:drop-shadow(0 8px 20px rgba(0,0,0,.4));z-index:1}
+    .ph .route{position:absolute;inset:0;z-index:1}
+    .ph .plabel{position:absolute;bottom:12px;right:14px;z-index:2;font-size:11.5px;font-weight:600;color:rgba(255,255,255,.8);letter-spacing:.04em}
+
+    /* ---------- Contact ---------- */
+    .contact{margin:80px 0 40px}
+    .contact-card{position:relative;overflow:hidden;border-radius:28px;padding:56px 40px;text-align:center;background:
+        radial-gradient(600px 300px at 20% -30%,rgba(34,211,238,.25),transparent 60%),
+        radial-gradient(600px 300px at 90% 130%,rgba(168,85,247,.28),transparent 60%),
+        rgba(255,255,255,.04);border:1px solid var(--line)}
+    .contact-card h2{font-size:clamp(28px,4.4vw,44px);font-weight:800}
+    .contact-card p{color:var(--muted);max-width:520px;margin:16px auto 0;font-size:17px}
+    .contact-actions{display:flex;flex-wrap:wrap;gap:14px;justify-content:center;margin-top:30px}
+
+    /* ---------- Footer ---------- */
+    footer{border-top:1px solid var(--line);padding:34px 0;color:var(--muted-2);font-size:13.5px}
+    .foot-inner{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px}
+    .foot-inner a{color:var(--muted)}
+    .foot-inner a:hover{color:var(--ink)}
+
+    ::selection{background:rgba(99,102,241,.4);color:#fff}
+  </style>
+</head>
+<body>
+  <div class="aurora"><span class="b1"></span><span class="b2"></span><span class="b3"></span></div>
+  <div class="grid-overlay"></div>
+
+  <!-- NAV -->
+  <nav class="nav">
+    <div class="wrap nav-inner">
+      <a class="brand" href="#top"><span class="dot">🗺️</span> Seb&nbsp;Kumpınar</a>
+      <div class="nav-links">
+        <a href="#work">Work</a>
+        <a href="#stack">Stack</a>
+        <a href="#contact">Contact</a>
+        <a class="btn btn-primary" href="mailto:seb@kumpinar.com">Hire me</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <header class="hero" id="top">
+    <div class="wrap">
+      <span class="pill"><span class="live"></span> Available for freelance & contract work</span>
+      <h1>I build <span class="grad">interactive maps</span><br />that turn data into stories.</h1>
+      <p class="lead">Hi, I'm <strong>Sebahattin “Seb” Kumpınar</strong> — a geospatial web developer. I design fast, beautiful, custom mapping experiences with <strong>Mapbox GL</strong>, <strong>Leaflet</strong>, <strong>Google Maps</strong> and <strong>HERE</strong>. Below are live demos from real client projects.</p>
+      <div class="cta">
+        <a class="btn btn-primary" href="#work">Explore the work →</a>
+        <a class="btn btn-ghost" href="mailto:seb@kumpinar.com">Get in touch</a>
+      </div>
+      <div class="tech">
+        <span><b>Mapbox GL JS</b></span>
+        <span><b>Leaflet</b></span>
+        <span><b>Google Maps</b></span>
+        <span><b>HERE Maps</b></span>
+        <span>GeoJSON</span>
+        <span>WebGL / 3D</span>
+        <span>Clustering</span>
+        <span>Geocoding</span>
+        <span>Data Viz</span>
+      </div>
+
+      <div class="stats reveal">
+        <div class="stat"><div class="n">17+</div><div class="l">Live map demos</div></div>
+        <div class="stat"><div class="n">4</div><div class="l">Mapping platforms</div></div>
+        <div class="stat"><div class="n">30k+</div><div class="l">Geodata points rendered</div></div>
+        <div class="stat"><div class="n">3D</div><div class="l">Cinematic flythroughs</div></div>
+      </div>
+    </div>
+  </header>
+
+  <!-- WORK -->
+  <main class="section" id="work">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <div>
+          <div class="eyebrow">Selected work</div>
+          <h2>Interactive map projects</h2>
+          <p>Every card is a real, clickable demo. Filter by the mapping platform.</p>
+        </div>
+      </div>
+
+      <div class="filters" id="filters">
+        <button class="filter active" data-f="all">All <span class="c">·17</span></button>
+        <button class="filter" data-f="mapbox">Mapbox <span class="c">·6</span></button>
+        <button class="filter" data-f="leaflet">Leaflet <span class="c">·8</span></button>
+        <button class="filter" data-f="google">Google Maps <span class="c">·2</span></button>
+        <button class="filter" data-f="here">HERE <span class="c">·1</span></button>
+      </div>
+
+      <div class="grid" id="grid">
+
+        <!-- ===== MAPBOX ===== -->
+        <article class="card" data-cat="mapbox">
+          <div class="thumb"><span class="badge b-mapbox">Mapbox GL</span><img src="assets/thumbs/mushroom.jpg" loading="lazy" alt="Mushroom Map interactive encyclopedia" /></div>
+          <div class="card-body">
+            <h3>Mushroom Map</h3>
+            <p>An interactive mushroom encyclopedia — 577 species with photos, taxonomy and edibility, plus a global occurrence map of 30k+ records. Client-side clustering, live search, filters and per-species detail pages. Fully static.</p>
+            <div class="tags"><span>Mapbox GL</span><span>Clustering</span><span>GeoJSON</span><span>Search</span></div>
+            <div class="card-foot">View demo <span class="arrow">→</span></div>
+          </div>
+          <a class="stretch" href="/mapbox/mashroom-map/" aria-label="Open Mushroom Map"></a>
+        </article>
+
+        <article class="card" data-cat="mapbox">
+          <div class="thumb"><span class="badge b-mapbox">Mapbox GL</span><img src="assets/thumbs/national-parks.jpg" loading="lazy" alt="National Parks of Turkey map" /></div>
+          <div class="card-body">
+            <h3>National Parks of Turkey</h3>
+            <p>Explore every national park in Turkey on a clustered, interactive map with rich custom popups and smooth zoom-to-cluster behaviour.</p>
+            <div class="tags"><span>Mapbox GL</span><span>Clustering</span><span>Custom Popups</span></div>
+            <div class="card-foot">View demo <span class="arrow">→</span></div>
+          </div>
+          <a class="stretch" href="/mapbox/national-parks-of-turkey.html" aria-label="Open National Parks of Turkey"></a>
+        </article>
+
+        <article class="card" data-cat="mapbox">
+          <div class="thumb"><span class="badge b-mapbox">Mapbox GL</span><img src="assets/thumbs/gp.jpg" loading="lazy" alt="Grand Prix 3D flythrough" /></div>
+          <div class="card-body">
+            <h3>Grand Prix Flythrough</h3>
+            <p>A cinematic 3D flythrough of the 1953 Australian Grand Prix circuit at Albert Park — animated camera path, custom 3D buildings and switchable day / dusk / night lighting.</p>
+            <div class="tags"><span>Mapbox GL</span><span>3D</span><span>Camera Animation</span></div>
+            <div class="card-foot">View demo <span class="arrow">→</span></div>
+          </div>
+          <a class="stretch" href="/mapbox/gp/" aria-label="Open Grand Prix Flythrough"></a>
+        </article>
+
+        <article class="card" data-cat="mapbox">
+          <div class="thumb"><span class="badge b-mapbox">Mapbox GL</span><img src="assets/thumbs/sales-map.jpg" loading="lazy" alt="Global sales map" /></div>
+          <div class="card-body">
+            <h3>Global Sales Map</h3>
+            <p>Worldwide sales visualised by country with switchable time ranges (24h / 7d / 30d / 365d) and a live top-10 leaderboard that updates with the map.</p>
+            <div class="tags"><span>Mapbox GL</span><span>Choropleth</span><span>Data Viz</span></div>
+            <div class="card-foot">View demo <span class="arrow">→</span></div>
+          </div>
+          <a class="stretch" href="/mapbox/sales-map/" aria-label="Open Global Sales Map"></a>
+        </article>
+
+        <article class="card" data-cat="mapbox">
+          <div class="thumb"><span class="badge b-mapbox">Mapbox GL</span><img src="assets/thumbs/product-journey.jpg" loading="lazy" alt="Product journey animation" /></div>
+          <div class="card-body">
+            <h3>Product Journey</h3>
+            <p>Supply-chain storytelling — follow a product from <em>harvest</em> to <em>processing</em> to <em>sale</em> with staged fly-to animations that guide the viewer step by step.</p>
+            <div class="tags"><span>Mapbox GL</span><span>Animation</span><span>Storytelling</span></div>
+            <div class="card-foot">View demo <span class="arrow">→</span></div>
+          </div>
+          <a class="stretch" href="/mapbox/product-journey/" aria-label="Open Product Journey"></a>
+        </article>
+
+        <article class="card" data-cat="mapbox">
+          <div class="thumb"><span class="badge b-mapbox">Mapbox GL</span><img src="assets/thumbs/utah.jpg" loading="lazy" alt="Utah area tags map" /></div>
+          <div class="card-body">
+            <h3>Utah Area Tags</h3>
+            <p>Region tagging and labelling across Utah using GeoJSON polygons, with a satellite / streets basemap switcher and per-area interaction.</p>
+            <div class="tags"><span>Mapbox GL</span><span>GeoJSON</span><span>Polygons</span></div>
+            <div class="card-foot">View demo <span class="arrow">→</span></div>
+          </div>
+          <a class="stretch" href="/mapbox/utah-area-tags/" aria-label="Open Utah Area Tags"></a>
+        </article>
+
+        <!-- ===== LEAFLET ===== -->
+        <article class="card" data-cat="leaflet">
+          <div class="thumb"><span class="badge b-leaflet">Leaflet</span><img src="assets/thumbs/wetlands.jpg" loading="lazy" alt="Ramsar wetlands monitoring tool" /></div>
+          <div class="card-body">
+            <h3>Ramsar Wetlands Monitor</h3>
+            <p>A GIS tool built for UNSW's Centre for Ecosystem Science to monitor Ramsar wetlands worldwide — clustered sites, multiple boundary sources and satellite water-occurrence layers.</p>
+            <div class="tags"><span>Leaflet</span><span>GIS</span><span>Clustering</span><span>WMS</span></div>
+            <div class="card-foot">View demo <span class="arrow">→</span></div>
+          </div>
+          <a class="stretch" href="/leaflet/Wetlands/" aria-label="Open Ramsar Wetlands Monitor"></a>
+        </article>
+
+        <article class="card" data-cat="leaflet">
+          <div class="thumb"><span class="badge b-leaflet">Leaflet</span><img src="assets/thumbs/platypus.jpg" loading="lazy" alt="Platypus Atlas species map" /></div>
+          <div class="card-body">
+            <h3>Platypus Atlas</h3>
+            <p>A citizen-science species-distribution atlas drawing on the Atlas of Living Australia — toggle between observations, grids and local-government areas with a time-coded legend.</p>
+            <div class="tags"><span>Leaflet</span><span>Species Data</span><span>Grids</span></div>
+            <div class="card-foot">View demo <span class="arrow">→</span></div>
+          </div>
+          <a class="stretch" href="/leaflet/Platypus-Atlas/" aria-label="Open Platypus Atlas"></a>
+        </article>
+
+        <article class="card" data-cat="leaflet">
+          <div class="thumb"><span class="badge b-leaflet">Leaflet</span><img src="assets/thumbs/us-map.jpg" loading="lazy" alt="US interactive clustered map" /></div>
+          <div class="card-body">
+            <h3>US Interactive Map</h3>
+            <p>Thousands of geolocated points rendered smoothly with marker clustering and spiderfy — zoom in to break clusters apart into individual pins.</p>
+            <div class="tags"><span>Leaflet</span><span>Clustering</span><span>Markers</span></div>
+            <div class="card-foot">View demo <span class="arrow">→</span></div>
+          </div>
+          <a class="stretch" href="/leaflet/US-Interactive-Map/" aria-label="Open US Interactive Map"></a>
+        </article>
+
+        <article class="card" data-cat="leaflet">
+          <div class="thumb"><span class="badge b-leaflet">Leaflet</span><img src="assets/thumbs/hunters.jpg" loading="lazy" alt="Hunters Ridge community map" /></div>
+          <div class="card-body">
+            <h3>Hunters Ridge</h3>
+            <p>A branded community / real-estate map for the Hunters Ridge development — navigable lots and points of interest over a high-resolution satellite basemap.</p>
+            <div class="tags"><span>Leaflet</span><span>Real Estate</span><span>Satellite</span></div>
+            <div class="card-foot">View demo <span class="arrow">→</span></div>
+          </div>
+          <a class="stretch" href="/leaflet/hunters/" aria-label="Open Hunters Ridge"></a>
+        </article>
+
+        <article class="card" data-cat="leaflet">
+          <div class="thumb"><span class="badge b-leaflet">Leaflet</span><img src="assets/thumbs/seffie.jpg" loading="lazy" alt="Location search map" /></div>
+          <div class="card-body">
+            <h3>Location Search</h3>
+            <p>A search-and-explore map with geocoding and clustered result markers, letting users find and browse locations across a region in seconds.</p>
+            <div class="tags"><span>Leaflet</span><span>Geocoding</span><span>Search</span></div>
+            <div class="card-foot">View demo <span class="arrow">→</span></div>
+          </div>
+          <a class="stretch" href="/leaflet/MapboxSearch/" aria-label="Open Location Search"></a>
+        </article>
+
+        <article class="card" data-cat="leaflet">
+          <div class="thumb"><span class="badge b-leaflet">Leaflet</span><img src="assets/thumbs/adnan.jpg" loading="lazy" alt="Amenities category map" /></div>
+          <div class="card-body">
+            <h3>Amenities Map</h3>
+            <p>Neighbourhood amenities categorised by type — retail, sport, dining and health — with a colour-coded legend and layer controls to toggle each category.</p>
+            <div class="tags"><span>Leaflet</span><span>Categories</span><span>Layers</span></div>
+            <div class="card-foot">View demo <span class="arrow">→</span></div>
+          </div>
+          <a class="stretch" href="/leaflet/AdnanArif/" aria-label="Open Amenities Map"></a>
+        </article>
+
+        <article class="card" data-cat="leaflet">
+          <div class="thumb"><span class="badge b-leaflet">Leaflet</span><img src="assets/thumbs/patrick.jpg" loading="lazy" alt="Copenhagen hotels map" /></div>
+          <div class="card-body">
+            <h3>Copenhagen Hotels</h3>
+            <p>A dynamic hotel-search map across Copenhagen with live-updating markers and property filtering — pan the map to refresh available results.</p>
+            <div class="tags"><span>Leaflet</span><span>Dynamic Data</span><span>Search</span></div>
+            <div class="card-foot">View demo <span class="arrow">→</span></div>
+          </div>
+          <a class="stretch" href="/leaflet/patrick-map/" aria-label="Open Copenhagen Hotels"></a>
+        </article>
+
+        <article class="card" data-cat="leaflet">
+          <div class="thumb">
+            <span class="badge b-leaflet">Leaflet</span>
+            <div class="ph" style="background:radial-gradient(120% 120% at 30% 20%,#0f2942,#0a1420)">
+              <div class="route">
+                <svg width="100%" height="100%" viewBox="0 0 340 210" preserveAspectRatio="none">
+                  <polyline points="20,150 90,120 150,140 210,90 270,110 320,60" fill="none" stroke="#22d3ee" stroke-width="2" opacity=".7"/>
+                  <circle cx="90" cy="120" r="4" fill="#34d399"/><circle cx="210" cy="90" r="4" fill="#f87171"/><circle cx="320" cy="60" r="4" fill="#34d399"/>
+                </svg>
+              </div>
+              <span class="ico">📈</span>
+              <span class="plabel">Real-time</span>
+            </div>
+          </div>
+          <div class="card-body">
+            <h3>Live FX Trades</h3>
+            <p>Real-time foreign-exchange trades streaming onto a world map, positioned by city with up / down movement indicators — a live data-visualisation concept.</p>
+            <div class="tags"><span>Leaflet</span><span>Real-time</span><span>Data Viz</span></div>
+            <div class="card-foot">View demo <span class="arrow">→</span></div>
+          </div>
+          <a class="stretch" href="/leaflet/Jean/" aria-label="Open Live FX Trades"></a>
+        </article>
+
+        <!-- ===== GOOGLE MAPS ===== -->
+        <article class="card" data-cat="google">
+          <div class="thumb">
+            <span class="badge b-google">Google Maps</span>
+            <div class="ph" style="background:radial-gradient(120% 120% at 30% 20%,#3a2a12,#1a1207)">
+              <span class="ico">🐾</span>
+              <span class="plabel">Locator</span>
+            </div>
+          </div>
+          <div class="card-body">
+            <h3>Dog Adoption Centers</h3>
+            <p>A friendly locator that maps dog-adoption centres with custom paw markers and rich info windows — click a marker to see each centre's details.</p>
+            <div class="tags"><span>Google Maps</span><span>Custom Markers</span><span>Info Windows</span></div>
+            <div class="card-foot">View demo <span class="arrow">→</span></div>
+          </div>
+          <a class="stretch" href="/googlemaps/dog-adoption-centers/" aria-label="Open Dog Adoption Centers"></a>
+        </article>
+
+        <article class="card" data-cat="google">
+          <div class="thumb">
+            <span class="badge b-google">Google Maps</span>
+            <div class="ph" style="background:radial-gradient(120% 120% at 30% 20%,#122a3a,#07131a)">
+              <span class="ico">📍</span>
+              <span class="plabel">Store finder</span>
+            </div>
+          </div>
+          <div class="card-body">
+            <h3>Product Map</h3>
+            <p>A product / store locator on Google Maps with custom branded pins and clustered locations, so customers can find the nearest stockist quickly.</p>
+            <div class="tags"><span>Google Maps</span><span>Locator</span><span>Clustering</span></div>
+            <div class="card-foot">View demo <span class="arrow">→</span></div>
+          </div>
+          <a class="stretch" href="/googlemaps/wanerby/" aria-label="Open Product Map"></a>
+        </article>
+
+        <!-- ===== HERE ===== -->
+        <article class="card" data-cat="here">
+          <div class="thumb">
+            <span class="badge b-here">HERE Maps</span>
+            <div class="ph" style="background:radial-gradient(120% 120% at 30% 20%,#0a3540,#05161b)">
+              <div class="route">
+                <svg width="100%" height="100%" viewBox="0 0 340 210" preserveAspectRatio="none">
+                  <path d="M60,40 h120 v70 h100 v60 h-140 v-60 h-80 z" fill="none" stroke="#00afcc" stroke-width="2" opacity=".6"/>
+                </svg>
+              </div>
+              <span class="ico">🧭</span>
+              <span class="plabel">Data sets</span>
+            </div>
+          </div>
+          <div class="card-body">
+            <h3>Postcode Explorer</h3>
+            <p>Postcode-boundary visualisation powered by HERE Maps Advanced Data Sets — render and inspect administrative postcode regions on the map.</p>
+            <div class="tags"><span>HERE Maps</span><span>Boundaries</span><span>Data Sets</span></div>
+            <div class="card-foot">View demo <span class="arrow">→</span></div>
+          </div>
+          <a class="stretch" href="/here/postcodes/" aria-label="Open Postcode Explorer"></a>
+        </article>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- STACK -->
+  <section class="section" id="stack">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <div>
+          <div class="eyebrow">What I do</div>
+          <h2>From raw geodata to a polished product</h2>
+          <p>Whatever your basemap or data source, I can turn it into a fast, on-brand interactive map.</p>
+        </div>
+      </div>
+      <div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(260px,1fr))">
+        <div class="card in" style="transform:none;opacity:1"><div class="card-body"><h3>🗺️ Custom map apps</h3><p>Bespoke mapping UIs built on Mapbox GL, Leaflet, Google Maps or HERE — tailored to your brand and workflow.</p></div></div>
+        <div class="card in" style="transform:none;opacity:1"><div class="card-body"><h3>📊 Geospatial data viz</h3><p>Choropleths, heatmaps, clustering and time-series overlays that make large datasets instantly readable.</p></div></div>
+        <div class="card in" style="transform:none;opacity:1"><div class="card-body"><h3>🎬 3D & animation</h3><p>Cinematic camera flythroughs, animated routes and story-driven map scrollytelling.</p></div></div>
+        <div class="card in" style="transform:none;opacity:1"><div class="card-body"><h3>🔌 Data & APIs</h3><p>GeoJSON, PostGIS, geocoding, routing and live data feeds wired into a smooth front-end experience.</p></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section class="section contact" id="contact">
+    <div class="wrap">
+      <div class="contact-card reveal">
+        <h2>Have a map in mind?</h2>
+        <p>Tell me about your data and your goal — I'll help you turn it into an interactive map your users will love.</p>
+        <div class="contact-actions">
+          <a class="btn btn-primary" href="mailto:seb@kumpinar.com">✉️ seb@kumpinar.com</a>
+          <a class="btn btn-ghost" href="#work">Browse the demos</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="wrap foot-inner">
+      <div>© <span id="yr"></span> Sebahattin Kumpınar · Interactive maps &amp; geospatial web</div>
+      <div><a href="mailto:seb@kumpinar.com">seb@kumpinar.com</a></div>
+    </div>
+  </footer>
+
+  <script>
+    // year
+    document.getElementById('yr').textContent = new Date().getFullYear();
+
+    // filters
+    const filters = document.querySelectorAll('.filter');
+    const cards = Array.from(document.querySelectorAll('#grid .card'));
+    filters.forEach(btn => btn.addEventListener('click', () => {
+      filters.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const f = btn.dataset.f;
+      cards.forEach(c => {
+        const show = f === 'all' || c.dataset.cat === f;
+        c.style.display = show ? '' : 'none';
+        if (show) { c.classList.remove('in'); requestAnimationFrame(() => io.observe(c)); }
+      });
+      if (typeof gtag === 'function') gtag('event', 'filter_projects', { platform: f });
+    }));
+
+    // scroll reveal
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+    }, { threshold: .12 });
+    document.querySelectorAll('#grid .card, .reveal').forEach(el => {
+      if (el.classList.contains('reveal')) { el.style.opacity = 0; el.style.transform = 'translateY(16px)'; el.style.transition = 'opacity .6s ease, transform .6s cubic-bezier(.2,.7,.2,1)';
+        new IntersectionObserver((en, o) => en.forEach(x => { if (x.isIntersecting) { x.target.style.opacity = 1; x.target.style.transform = 'none'; o.unobserve(x.target); } }), { threshold: .12 }).observe(el);
+      } else { io.observe(el); }
+    });
+
+    // track demo clicks
+    document.querySelectorAll('#grid .card a.stretch').forEach(a => a.addEventListener('click', () => {
+      if (typeof gtag === 'function') gtag('event', 'open_demo', { demo: a.getAttribute('href') });
+    }));
+  </script>
+</body>
 </html>
