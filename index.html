@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Seb Kumpınar — Interactive Maps & Geospatial Web Developer</title>
-  <meta name="description" content="Sebahattin (Seb) Kumpınar builds interactive maps and geospatial web apps with Mapbox GL, Leaflet, Google Maps and HERE. Explore a portfolio of live map demos." />
+  <title>Seb Kumpınar — GIS & Interactive Maps Developer (Top Rated Plus)</title>
+  <meta name="description" content="Sebahattin (Seb) Kumpınar — Top Rated Plus GIS &amp; geospatial web developer with 10+ years' experience. Interactive maps with Mapbox GL, Leaflet, OpenLayers, Google Maps &amp; HERE, powered by GeoServer, PostGIS and .NET. Explore live client demos." />
   <meta name="author" content="Sebahattin Kumpınar" />
 
   <!-- Open Graph -->
@@ -108,6 +108,17 @@
     .tech span{padding:8px 14px;border-radius:11px;background:var(--glass);border:1px solid var(--line);font-size:13px;color:var(--muted);font-weight:500}
     .tech span b{color:var(--ink);font-weight:600}
 
+    /* ---------- Upwork trust bar ---------- */
+    .trust{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;margin-top:34px;padding:16px 18px;border-radius:16px;background:linear-gradient(180deg,rgba(20,168,0,.10),rgba(255,255,255,.03));border:1px solid rgba(108,223,72,.22)}
+    .trust .up{display:inline-flex;align-items:center;gap:8px;font-weight:700;color:#6fda44;font-size:14px;white-space:nowrap}
+    .trust .up svg{display:block}
+    .trust .sep{width:1px;height:20px;background:var(--line)}
+    .trust .badge-t{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--muted);white-space:nowrap}
+    .trust .badge-t b{color:var(--ink);font-weight:700}
+    .btn-upwork{background:#14a800;color:#fff;box-shadow:0 10px 26px rgba(20,168,0,.35)}
+    .btn-upwork:hover{background:#108a00;transform:translateY(-2px)}
+    @media(max-width:640px){.trust .sep{display:none}}
+
     /* ---------- Stats ---------- */
     .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin:56px 0 8px}
     .stat{padding:22px;border-radius:var(--radius);background:var(--glass);border:1px solid var(--line);text-align:center}
@@ -202,30 +213,51 @@
   <!-- HERO -->
   <header class="hero" id="top">
     <div class="wrap">
-      <span class="pill"><span class="live"></span> Available for freelance & contract work</span>
+      <span class="pill"><span class="live"></span> Top Rated Plus on Upwork · available for new projects</span>
       <h1>I build <span class="grad">interactive maps</span><br />that turn data into stories.</h1>
-      <p class="lead">Hi, I'm <strong>Sebahattin “Seb” Kumpınar</strong> — a geospatial web developer. I design fast, beautiful, custom mapping experiences with <strong>Mapbox GL</strong>, <strong>Leaflet</strong>, <strong>Google Maps</strong> and <strong>HERE</strong>. Below are live demos from real client projects.</p>
+      <p class="lead">Hi, I'm <strong>Sebahattin “Seb” Kumpınar</strong> — a <strong>GIS &amp; geospatial web developer</strong> with <strong>10+ years</strong> of full-stack experience (front end + back end). I design fast, beautiful, custom mapping apps with <strong>Mapbox GL</strong>, <strong>Leaflet</strong>, <strong>OpenLayers</strong>, <strong>Google Maps</strong> and <strong>HERE</strong> — powered by <strong>GeoServer</strong>, <strong>PostGIS</strong> and <strong>.NET</strong>. Below are live demos from real client projects.</p>
       <div class="cta">
         <a class="btn btn-primary" href="#work">Explore the work →</a>
         <a class="btn btn-ghost" href="mailto:seb@kumpinar.com">Get in touch</a>
       </div>
+
+      <div class="trust reveal">
+        <span class="up" aria-label="Upwork">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="#6fda44" aria-hidden="true"><path d="M18.6 6.3a5 5 0 0 0-4.9 4.2c-.5-.9-1-2-1.4-3.2H9.6v4.6c0 1.4-.8 2.4-2 2.4s-2-1-2-2.4V7.3H3v4.6a4.3 4.3 0 0 0 4.5 4.7c2.4 0 4-1.9 4.4-4 .3.6.6 1.2.9 1.7l-1.6 6h2.7l1.1-4.5c.9.7 2 1.1 3.2 1.1A4.6 4.6 0 0 0 23 11.9a4.6 4.6 0 0 0-4.4-5.6Zm0 6.9c-.9 0-1.8-.4-2.5-1l.2-.9v-.1c.2-1.2 1-2.4 2.3-2.4 1.1 0 2 .9 2 2.2 0 1.2-.9 2.2-2 2.2Z"/></svg>
+          <b>Top Rated Plus</b>
+        </span>
+        <span class="sep"></span>
+        <span class="badge-t">✅ <b>100%</b> Job Success</span>
+        <span class="sep"></span>
+        <span class="badge-t">💰 <b>$100K+</b> earned</span>
+        <span class="sep"></span>
+        <span class="badge-t">💼 <b>78</b> jobs</span>
+        <span class="sep"></span>
+        <span class="badge-t">⏱️ <b>2,284</b> hours</span>
+        <span class="sep"></span>
+        <span class="badge-t">⭐ <b>10+</b> years</span>
+      </div>
+
       <div class="tech">
         <span><b>Mapbox GL JS</b></span>
         <span><b>Leaflet</b></span>
+        <span><b>OpenLayers</b></span>
         <span><b>Google Maps</b></span>
         <span><b>HERE Maps</b></span>
+        <span><b>GeoServer</b></span>
+        <span><b>PostGIS</b></span>
         <span>GeoJSON</span>
+        <span>C# / .NET Core</span>
+        <span>Angular</span>
         <span>WebGL / 3D</span>
         <span>Clustering</span>
-        <span>Geocoding</span>
-        <span>Data Viz</span>
       </div>
 
       <div class="stats reveal">
-        <div class="stat"><div class="n">17+</div><div class="l">Live map demos</div></div>
-        <div class="stat"><div class="n">4</div><div class="l">Mapping platforms</div></div>
-        <div class="stat"><div class="n">30k+</div><div class="l">Geodata points rendered</div></div>
-        <div class="stat"><div class="n">3D</div><div class="l">Cinematic flythroughs</div></div>
+        <div class="stat"><div class="n">10+</div><div class="l">Years of GIS experience</div></div>
+        <div class="stat"><div class="n">78</div><div class="l">Jobs delivered on Upwork</div></div>
+        <div class="stat"><div class="n">100%</div><div class="l">Job Success score</div></div>
+        <div class="stat"><div class="n">$100K+</div><div class="l">Earned on Upwork</div></div>
       </div>
     </div>
   </header>
@@ -492,10 +524,11 @@
         </div>
       </div>
       <div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(260px,1fr))">
-        <div class="card in" style="transform:none;opacity:1"><div class="card-body"><h3>🗺️ Custom map apps</h3><p>Bespoke mapping UIs built on Mapbox GL, Leaflet, Google Maps or HERE — tailored to your brand and workflow.</p></div></div>
+        <div class="card in" style="transform:none;opacity:1"><div class="card-body"><h3>🗺️ Custom map apps</h3><p>Bespoke mapping UIs built on Mapbox GL, Leaflet, OpenLayers, Google Maps or HERE — tailored to your brand and workflow.</p></div></div>
+        <div class="card in" style="transform:none;opacity:1"><div class="card-body"><h3>🛢️ Full-stack GIS</h3><p>End-to-end delivery — spatial back ends with GeoServer, PostGIS and .NET Core, wired to a polished front end.</p></div></div>
         <div class="card in" style="transform:none;opacity:1"><div class="card-body"><h3>📊 Geospatial data viz</h3><p>Choropleths, heatmaps, clustering and time-series overlays that make large datasets instantly readable.</p></div></div>
         <div class="card in" style="transform:none;opacity:1"><div class="card-body"><h3>🎬 3D & animation</h3><p>Cinematic camera flythroughs, animated routes and story-driven map scrollytelling.</p></div></div>
-        <div class="card in" style="transform:none;opacity:1"><div class="card-body"><h3>🔌 Data & APIs</h3><p>GeoJSON, PostGIS, geocoding, routing and live data feeds wired into a smooth front-end experience.</p></div></div>
+        <div class="card in" style="transform:none;opacity:1"><div class="card-body"><h3>🔌 Data & APIs</h3><p>GeoJSON, WMS/WFS, geocoding, routing and live data feeds integrated into a smooth experience.</p></div></div>
       </div>
     </div>
   </section>
@@ -505,9 +538,10 @@
     <div class="wrap">
       <div class="contact-card reveal">
         <h2>Have a map in mind?</h2>
-        <p>Tell me about your data and your goal — I'll help you turn it into an interactive map your users will love.</p>
+        <p>Tell me about your data and your goal — I'll help you turn it into an interactive map your users will love. <strong>Top Rated Plus</strong> on Upwork with a <strong>100% job-success</strong> track record, or book a 30-minute consultation to talk it through.</p>
         <div class="contact-actions">
           <a class="btn btn-primary" href="mailto:seb@kumpinar.com">✉️ seb@kumpinar.com</a>
+          <a class="btn btn-upwork" id="upwork-cta" href="mailto:seb@kumpinar.com?subject=Upwork%20project%20enquiry">Hire me on Upwork ↗</a>
           <a class="btn btn-ghost" href="#work">Browse the demos</a>
         </div>
       </div>
@@ -516,7 +550,7 @@
 
   <footer>
     <div class="wrap foot-inner">
-      <div>© <span id="yr"></span> Sebahattin Kumpınar · Interactive maps &amp; geospatial web</div>
+      <div>© <span id="yr"></span> Sebahattin Kumpınar · GIS &amp; interactive-maps developer · Top Rated Plus on Upwork</div>
       <div><a href="mailto:seb@kumpinar.com">seb@kumpinar.com</a></div>
     </div>
   </footer>
